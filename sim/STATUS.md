@@ -2,11 +2,13 @@
 
 ## Working
 
-- Spatial analysis and SUMO boundaries, modes, and result-labeling requirements documented.
+- Deterministic NetworkX graph smoke and OSMnx, GeoPandas, and Shapely import checks pass on Windows.
+- SUMO 1.28.0, TraCI, and sumolib are pinned where binary wheels are published.
+- Windows SUMO 1.28.0 passed a real synthetic network and TraCI simulation-step smoke test.
 
 ## In Progress
 
-- Nothing. No geographic processing or simulation code is implemented.
+- macOS Apple Silicon and Intel dependency/CI verification is pending.
 
 ## Next
 
@@ -16,4 +18,4 @@
 
 ## Blockers
 
-- No source data, analysis implementation, traffic demand, or simulator setup exists yet.
+- No OSM acquisition or urban analysis exists. SUMO remains optional; unsupported macOS targets need the official installer fallback.

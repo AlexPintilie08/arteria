@@ -10,6 +10,8 @@ The application has exactly three main components:
 
 The initial integration can call `sim` in-process from the backend. Keep the boundary explicit so it can become a service if deployment or scaling needs demand it. The frontend communicates only with the backend contract.
 
+The current runnable foundation implements the frontend shell and `GET /health`. The urban analysis, recommendation, and evaluation endpoints remain proposed interfaces; they are not simulated or stubbed.
+
 ## Data pipeline
 
 1. Select a supported geographic area and record its identifier, boundary source, and coordinate reference system.

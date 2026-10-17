@@ -1,0 +1,46 @@
+name: Cross-platform bootstrap
+
+on:
+  push:
+    branches: [main, "feat/**"]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  bootstrap:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            sumo: required
+          - os: macos-15
+            sumo: required
+          - os: macos-15-intel
+            sumo: optional
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+      - uses: astral-sh/setup-uv@v10.3.0
+      - name: Run Windows setup and checks
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/setup.ps1
+      - name: Run macOS setup and checks
+        if: runner.os == 'macOS'
+        shell: bash
+        run: bash scripts/setup.sh
+      - name: Report and verify optional SUMO
+        if: matrix.sumo == 'required'
+        run: uv run --locked python -m sim.sumo_support --smoke
+      - name: Report optional SUMO fallback
+        if: matrix.sumo == 'optional'
+        run: uv run --locked python -m sim.sumo_support --smoke
