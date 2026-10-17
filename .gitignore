@@ -1,0 +1,36 @@
+# Environment files and credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# JavaScript / build output
+node_modules/
+dist/
+coverage/
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local geographic and simulation data (may be large or licensed)
+data/raw/
+data/processed/
+*.osm.pbf
+*.net.xml
+*.rou.xml
+*.sumocfg
+*.sqlite
+*.gpkg
+*.parquet
