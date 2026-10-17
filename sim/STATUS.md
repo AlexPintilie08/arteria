@@ -17,7 +17,7 @@ Updated: 2026-10-17
 - Local `.venv/Scripts/python.exe -m sim.sumo_support --smoke` skipped because SUMO and `netconvert` are not installed locally; `traci` and `sumolib` 1.28.0 are present. GitHub Actions installed SUMO 1.28.0 on both supported runners and the synthetic TraCI smoke advanced to 1 s successfully. This validates the small synthetic smoke only, not real-area network conversion or calibrated traffic simulation.
 - GitHub Actions run [39044641288](https://github.com/AlexPintilie08/arteria/actions/runs/39044641288), for CI commit `55b26a0a17245a77ee8f95c429083b2c9300f801`, passed on `windows-latest` and `macos-15`. Logs reported Windows `RUNNER_ARCH=X64` and macOS `RUNNER_ARCH=ARM64`, `uname -m=arm64`; both jobs passed all 36 tests, backend health, frontend TypeScript checking and production build, and SUMO smoke. The macOS result is ARM64 runner coverage and does not establish direct Apple M5 hardware validation.
 - CI now targets Windows x64 and macOS Apple Silicon only. The workflow asserts each runner's architecture, and both standard check scripts explicitly run `uv run --locked pytest -q tests sim/test_engine.py`; the existing five project tests and all 31 simulation regression tests are included. `pyproject.toml` remains unchanged.
-- GitHub annotated possible longer queue times for macOS ARM64 runners due to capacity. No functional integration warnings remained in the verified run.
+- GitHub annotated possible longer queue times for macOS ARM64 runners due to capacity. Both frontend production builds also emitted a non-blocking Vite code-splitting/chunk-size advisory; the builds passed. No blocking integration warnings remained in the verified run.
 
 ## Verified real Iași snapshot
 
