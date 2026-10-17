@@ -95,6 +95,7 @@ def _add_connection(
     end: Point,
     *,
     max_snap_distance_m: float,
+    walking_speed_mps: float,
     requested_id: str | None = None,
 ) -> dict[str, Any]:
     start_node, start_snap_m = _snap_to_graph(graph, start, data, "start", max_snap_distance_m)
@@ -118,7 +119,7 @@ def _add_connection(
         "highway": "footway",
         "length": length_m,
         "length_m": length_m,
-        "estimated_walk_time_s": length_m / WALK_SPEED_MPS,
+        "estimated_walk_time_s": length_m / walking_speed_mps,
         "geometry": line,
         "assumption": "Straight-line hypothetical link; feasibility, safety, ownership, grade, and legal approval are not assessed.",
     }
@@ -136,7 +137,7 @@ def _add_connection(
         "start_snap_distance_m": start_snap_m,
         "end_snap_distance_m": end_snap_m,
         "connection_length_m": length_m,
-        "estimated_walk_time_s": length_m / WALK_SPEED_MPS,
+        "estimated_walk_time_s": length_m / walking_speed_mps,
         "geometry": line,
     }
 
@@ -147,6 +148,7 @@ def _apply_interventions(
     interventions: Iterable[dict[str, Any]],
     *,
     max_snap_distance_m: float,
+    walking_speed_mps: float,
 ) -> list[dict[str, Any]]:
     results: list[dict[str, Any]] = []
     for index, intervention in enumerate(interventions):
@@ -160,6 +162,7 @@ def _apply_interventions(
                 start,
                 end,
                 max_snap_distance_m=max_snap_distance_m,
+                walking_speed_mps=walking_speed_mps,
                 requested_id=intervention.get("connection_id"),
             )
             result.update({"type": kind, "status": "applied"})
@@ -176,6 +179,7 @@ def _apply_interventions(
                 descriptor = _add_connection(
                     graph if enabled else graph.copy(), data, start, end,
                     max_snap_distance_m=max_snap_distance_m,
+                    walking_speed_mps=walking_speed_mps,
                 )
                 connection_id = descriptor["connection_id"]
                 if enabled:
@@ -198,7 +202,15 @@ def _apply_interventions(
                     raise InterventionError("Enabling a connection not present in the baseline requires its start and end coordinates.")
                 start = _coordinate_point(intervention["start"], f"interventions[{index}].start")
                 end = _coordinate_point(intervention["end"], f"interventions[{index}].end")
-                descriptor = _add_connection(graph, data, start, end, max_snap_distance_m=max_snap_distance_m, requested_id=connection_id)
+                descriptor = _add_connection(
+                    graph,
+                    data,
+                    start,
+                    end,
+                    max_snap_distance_m=max_snap_distance_m,
+                    walking_speed_mps=walking_speed_mps,
+                    requested_id=connection_id,
+                )
                 results.append({**descriptor, "type": kind, "status": "enabled"})
             elif enabled:
                 results.append({"type": kind, "connection_id": connection_id, "status": "already_enabled"})
@@ -261,13 +273,24 @@ def evaluate_scenario(
     """Apply pedestrian interventions on an isolated graph and compare routes."""
     if "walk" not in data.graphs:
         raise InterventionError("A walking baseline network is required.")
-    if not (0 < max_snap_distance_m <= MAX_NODE_SNAP_M):
+    try:
+        walking_speed_mps = float(walking_speed_mps)
+        max_snap_distance_m = float(max_snap_distance_m)
+    except (TypeError, ValueError) as error:
+        raise InterventionError("Node snap tolerance and walking speed must be finite numbers.") from error
+    if not math.isfinite(max_snap_distance_m) or not (0 < max_snap_distance_m <= MAX_NODE_SNAP_M):
         raise InterventionError(f"Node snap tolerance must be in (0, {MAX_NODE_SNAP_M:g}] m.")
-    if walking_speed_mps <= 0:
-        raise InterventionError("Walking speed must be positive.")
+    if not math.isfinite(walking_speed_mps) or walking_speed_mps <= 0:
+        raise InterventionError("Walking speed must be finite and positive.")
     baseline_graph = project_graph(data.graphs["walk"], data.area.working_crs)
     scenario_graph = baseline_graph.copy()
-    applied = _apply_interventions(scenario_graph, data, interventions, max_snap_distance_m=max_snap_distance_m)
+    applied = _apply_interventions(
+        scenario_graph,
+        data,
+        interventions,
+        max_snap_distance_m=max_snap_distance_m,
+        walking_speed_mps=walking_speed_mps,
+    )
 
     origin_point = _coordinate_point(origin, "origin")
     destination_point = _coordinate_point(destination, "destination")

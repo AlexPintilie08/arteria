@@ -63,7 +63,7 @@ class AreaValidationError(ValueError):
 
 
 class OSMDataError(RuntimeError):
-    """Raised when the required OSM walking network cannot be acquired."""
+    """Raised when none of the requested OSM networks can be acquired."""
 
 
 @dataclass(frozen=True)
@@ -294,6 +294,11 @@ def _network_metadata_path(graph_path: Path) -> Path:
     return graph_path.with_suffix(".json")
 
 
+def _is_usable_network(graph: Any) -> bool:
+    """A routable OSM network must contain at least one node and one edge."""
+    return graph.number_of_nodes() > 0 and graph.number_of_edges() > 0
+
+
 def acquire_osm_data(
     area: Any,
     *,
@@ -309,12 +314,22 @@ def acquire_osm_data(
 
     OSMnx's standard Overpass rate limiting remains enabled. Both OSMnx HTTP
     responses and normalized GraphML/GeoJSON snapshots are cached under sim/.cache
-    by default. A failed optional mode or feature query is reported as a warning.
+    by default. Failed modes are reported when another requested graph succeeds;
+    an all-mode failure raises OSMDataError. POI-query failures remain warnings.
     """
-    normalized = normalize_area(area, max_area_km2=max_area_km2, max_extent_km=max_extent_km)
-    requested_modes = tuple(dict.fromkeys(modes))
-    if not requested_modes or any(mode not in SUPPORTED_MODES for mode in requested_modes):
+    if isinstance(modes, str):
+        raise ValueError(f"modes must be a non-empty iterable of mode names from {SUPPORTED_MODES}, not a string.")
+    try:
+        mode_values = tuple(modes)
+    except TypeError as error:
+        raise ValueError(f"modes must be a non-empty iterable of mode names from {SUPPORTED_MODES}.") from error
+    if not mode_values:
         raise ValueError(f"modes must be a non-empty selection from {SUPPORTED_MODES}.")
+    if any(not isinstance(mode, str) or mode not in SUPPORTED_MODES for mode in mode_values):
+        unsupported = [mode for mode in mode_values if not isinstance(mode, str) or mode not in SUPPORTED_MODES]
+        raise ValueError(f"Unsupported OSM network mode(s): {unsupported!r}. Supported modes are {SUPPORTED_MODES}.")
+    requested_modes = tuple(dict.fromkeys(mode_values))
+    normalized = normalize_area(area, max_area_km2=max_area_km2, max_extent_km=max_extent_km)
     base = Path(cache_dir) if cache_dir else Path(__file__).resolve().parent / ".cache" / "osm"
     base.mkdir(parents=True, exist_ok=True)
     http_cache = base / "http"
@@ -323,6 +338,7 @@ def acquire_osm_data(
     graphs: dict[str, Any] = {}
     warnings: list[str] = []
     network_retrieved: dict[str, str] = {}
+    network_failures: dict[str, str] = {}
     cache_hit_modes: list[str] = []
     feature_retrieved: str | None = None
     feature_cache_hit = False
@@ -349,18 +365,30 @@ def acquire_osm_data(
                 graph_metadata = _network_metadata_path(graph_path)
                 if use_cache and not force_refresh and graph_path.exists():
                     try:
-                        graphs[mode] = ox.load_graphml(filepath=graph_path)
-                        if not graphs[mode].number_of_nodes():
-                            del graphs[mode]
-                            raise ValueError("cached graph contains no nodes")
-                        if graph_metadata.exists():
-                            network_retrieved[mode] = json.loads(graph_metadata.read_text(encoding="utf-8"))["retrieved_at"]
-                        else:
-                            network_retrieved[mode] = "unknown"
-                        cache_hit_modes.append(mode)
-                        continue
+                        cached_graph = ox.load_graphml(filepath=graph_path)
+                        if not _is_usable_network(cached_graph):
+                            raise ValueError("cached graph has no routable edges")
+                        cached_area_key = cached_graph.graph.get("arteria_area_key")
+                        if cached_area_key not in (None, key):
+                            raise ValueError("cached graph belongs to a different study area")
+                        cached_mode = cached_graph.graph.get("arteria_mode")
+                        if cached_mode not in (None, mode):
+                            raise ValueError("cached graph belongs to a different network mode")
                     except Exception as error:
                         warnings.append(f"Ignoring unreadable {mode} graph cache: {error}")
+                    else:
+                        graphs[mode] = cached_graph
+                        network_retrieved[mode] = str(cached_graph.graph.get("arteria_retrieved_at") or "unknown")
+                        if graph_metadata.exists():
+                            try:
+                                cached_metadata = json.loads(graph_metadata.read_text(encoding="utf-8"))
+                                if cached_metadata.get("mode") not in (None, mode) or cached_metadata.get("area_key") not in (None, key):
+                                    raise ValueError("cache metadata does not match the graph mode and area")
+                                network_retrieved[mode] = str(cached_metadata.get("retrieved_at") or network_retrieved[mode])
+                            except Exception as error:
+                                warnings.append(f"Ignoring unreadable {mode} graph cache metadata: {error}")
+                        cache_hit_modes.append(mode)
+                        continue
                 try:
                     graph = ox.graph_from_polygon(
                         normalized.polygon,
@@ -369,15 +397,23 @@ def acquire_osm_data(
                         retain_all=True,
                         truncate_by_edge=True,
                     )
-                    if not graph.number_of_nodes():
-                        raise ValueError("OpenStreetMap returned an empty graph")
-                    timestamp = _timestamp()
-                    graph.graph["arteria_source"] = "OpenStreetMap"
-                    graph.graph["arteria_retrieved_at"] = timestamp
-                    graph.graph["arteria_area_key"] = key
-                    graphs[mode] = graph
-                    network_retrieved[mode] = timestamp
-                    if use_cache:
+                    if not _is_usable_network(graph):
+                        raise ValueError("OpenStreetMap returned a graph with no routable edges")
+                except Exception as error:  # upstream availability varies by area and time
+                    failure = f"OpenStreetMap {mode} network request failed: {type(error).__name__}: {error}"
+                    warnings.append(failure)
+                    network_failures[mode] = failure
+                    continue
+
+                timestamp = _timestamp()
+                graph.graph["arteria_source"] = "OpenStreetMap"
+                graph.graph["arteria_mode"] = mode
+                graph.graph["arteria_retrieved_at"] = timestamp
+                graph.graph["arteria_area_key"] = key
+                graphs[mode] = graph
+                network_retrieved[mode] = timestamp
+                if use_cache:
+                    try:
                         temporary = graph_path.with_name(graph_path.stem + ".tmp.graphml")
                         ox.save_graphml(graph, filepath=temporary)
                         temporary.replace(graph_path)
@@ -385,8 +421,12 @@ def acquire_osm_data(
                             json.dumps({"mode": mode, "area_key": key, "retrieved_at": timestamp}, indent=2),
                             encoding="utf-8",
                         )
-                except Exception as error:  # upstream availability varies by area and time
-                    warnings.append(f"OpenStreetMap {mode} network request failed: {type(error).__name__}: {error}")
+                    except Exception as error:
+                        warnings.append(f"Could not cache the acquired {mode} OSM network: {type(error).__name__}: {error}")
+
+            if not graphs:
+                details = "; ".join(network_failures.values()) or "no requested network produced a routable graph"
+                raise OSMDataError(f"None of the requested OSM networks {requested_modes!r} is available: {details}")
 
             if use_cache and not force_refresh and features_path.exists():
                 try:
@@ -419,10 +459,6 @@ def acquire_osm_data(
             settings.overpass_url = previous["overpass_url"]
             settings.http_user_agent = previous["http_user_agent"]
 
-    if "walk" not in graphs or not graphs["walk"].number_of_nodes():
-        details = "; ".join(warnings) or "no walking graph was returned"
-        raise OSMDataError(f"Required walking network is unavailable for this area: {details}")
-
     layers = _layer_masks(features)
     feature_status = "available" if feature_retrieved not in (None, "unknown") else "unknown"
     availability: dict[str, dict[str, Any]] = {}
@@ -438,7 +474,7 @@ def acquire_osm_data(
         if mode not in graphs:
             availability[f"{mode}_network"] = {
                 "status": "request_failed",
-                "reason": next((item for item in warnings if f"{mode} network" in item), "Network request failed."),
+                "reason": network_failures.get(mode, "Network request failed."),
             }
         else:
             availability[f"{mode}_network"] = {"status": "available", "node_count": int(graphs[mode].number_of_nodes()), "edge_count": int(graphs[mode].number_of_edges())}
@@ -447,6 +483,7 @@ def acquire_osm_data(
     metadata = {
         "source": "OpenStreetMap",
         "source_version": "live OSM snapshot",
+        "requested_network_modes": list(requested_modes),
         "retrieved_at": max(retrieved_values) if retrieved_values else None,
         "extent_wgs84": normalized.extent,
         "area_key": key,

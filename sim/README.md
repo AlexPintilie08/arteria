@@ -45,6 +45,22 @@ print(scenario["comparison"]["distance_delta_m"])
 
 `acquire_osm_data` retrieves OSMnx network graphs for `walk`, `bike`, and/or `drive`, then requests supported infrastructure and POI tags. OSMnx's normal Overpass rate limiting remains enabled, requests are sequential, and the request identifies ARTERIA in its user-agent.
 
+Network modes are independent: a drive-only or bike-only request does not require a walking graph. The iterable must contain at least one supported mode (`walk`, `bike`, or `drive`); duplicate modes are removed while preserving request order. A graph is available only when it contains nodes and routable edges. For partial success, the returned `OSMData.graphs` contains only successful modes, `layer_availability["<mode>_network"]` reports `available` or `request_failed`, and `warnings` includes each failed network request. If every requested mode fails, acquisition raises `OSMDataError` with the per-mode errors and skips the POI query. A POI-query failure does not discard successfully acquired networks; its layers remain `unknown`.
+
+```python
+from sim import analyze_snapshot
+
+drive_snapshot = acquire_osm_data(area, modes=("drive",))
+drive_result = analyze_snapshot(drive_snapshot)
+assert set(drive_result["network_metrics"]) == {"drive"}
+
+mixed_snapshot = acquire_osm_data(area, modes=("walk", "bike", "drive"))
+for mode in mixed_snapshot.metadata["requested_network_modes"]:
+    print(mode, mixed_snapshot.layer_availability[f"{mode}_network"]["status"])
+```
+
+Analysis only emits network metrics for graphs present in the snapshot. Walking/cycling access indicators are calculated only for their corresponding available modes; a driving-only snapshot does not produce pedestrian-access claims. Missing networks, POI layers, or snap-eligible POIs are unknown rather than zero.
+
 The default cache is `sim/.cache/osm/` and contains local GraphML/GeoJSON snapshots plus OSMnx's HTTP response cache. `sim/.gitignore` excludes those generated files. Use `force_refresh=True` to reacquire a snapshot or `cache_dir=...` to provide a different local cache directory. `overpass_url` can select an Overpass-compatible endpoint when the default endpoint is unavailable. The selected endpoint's usage policy still applies.
 
 Metadata records the source, retrieval time, area extent, working CRS, query tags, cached modes, and limitations. An empty OSM layer is `no_features_returned`; a failed or unproven query is `unknown`. Neither status means the real-world feature is absent. OSM tags and network coverage are incomplete and may change after the snapshot was retrieved.
@@ -73,11 +89,19 @@ The hypothetical link does not evaluate street crossing safety, grade, accessibi
 
 ## Tests and verified Iași snapshot
 
-Offline engine tests use small in-memory fixtures and need no network:
+Offline engine tests use small in-memory fixtures and mocks; they do not require Overpass access. The explicit local verification command is:
 
 ```powershell
-uv run --locked pytest -p no:cacheprovider sim/test_engine.py
+.\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-stabilization tests sim/test_engine.py
 ```
+
+Verified locally after stabilization: 36 passed (5 repository tests and 31 simulation-engine tests). The default `pytest -q` collected only the 5 repository tests, confirming the CI coverage gap below.
+
+CI coverage gap: `pyproject.toml` sets `testpaths = ["tests"]`, and the shared Windows/macOS check scripts run `pytest -q` without naming `sim/test_engine.py`. The regular CI therefore does not collect the simulation-engine regression tests. The smallest proposed shared change is to pass `tests sim/test_engine.py` explicitly in both `scripts/check.ps1` and `scripts/check.sh`; those files were left untouched because this component owns only `sim/`.
+
+Scenario parameter validation rejects non-finite travel speeds and thresholds so results cannot silently contain NaN or Infinity. The baseline and scenario use the same configured walking speed, including the estimate attached to a hypothetical connection. Scenario outputs include deterministic route comparisons, WGS84 GeoJSON, source provenance, and explicit warnings that the intervention is hypothetical.
+
+Backend integration is ready at the Python-library boundary: the backend can call `acquire_osm_data`, `analyze_snapshot`/`analyze_area`, and `evaluate_scenario` without a FastAPI or LLM dependency. For persistent evaluations, the backend should store the source snapshot and its retrieval metadata under a stable `baseline_id`; persist the serialized analysis and scenario identifiers; and retain each response's `layer_availability`, warnings, provenance, and uncertainty. Persistence, request validation, and API response adaptation belong in the backend and are not implemented here.
 
 The real bounded study run used `[27.5755, 47.1610, 27.5825, 47.1655]` in central Iași (EPSG:32635 working CRS). The retrieved snapshot produced 136 walking-graph nodes and 354 directed edges; 107 nodes were inside the study polygon. It returned 151 road features, 88 walking-infrastructure features, 17 crossing features, 275 buildings, 4 schools, 3 healthcare features, 9 other supported services, 3 public-transport features, 8 parking features, and 5 green-space features. No explicit cycling-infrastructure features were returned; that is not proof that none exist.
 

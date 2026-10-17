@@ -330,8 +330,29 @@ def analyze_snapshot(
     detour_ratio_threshold: float = 2.0,
 ) -> dict[str, Any]:
     """Produce JSON-ready indicators, explainable issues, and map GeoJSON."""
-    if access_threshold_minutes <= 0 or walking_speed_mps <= 0 or cycling_speed_mps <= 0 or detour_ratio_threshold <= 1:
-        raise ValueError("Travel-time thresholds and speeds must be positive; detour ratio threshold must be greater than 1.")
+    try:
+        access_threshold_minutes = float(access_threshold_minutes)
+        walking_speed_mps = float(walking_speed_mps)
+        cycling_speed_mps = float(cycling_speed_mps)
+        poi_snap_tolerance_m = float(poi_snap_tolerance_m)
+        detour_ratio_threshold = float(detour_ratio_threshold)
+    except (TypeError, ValueError) as error:
+        raise ValueError("Analysis thresholds and speeds must be finite numbers.") from error
+    if (
+        not all(math.isfinite(value) for value in (
+            access_threshold_minutes,
+            walking_speed_mps,
+            cycling_speed_mps,
+            poi_snap_tolerance_m,
+            detour_ratio_threshold,
+        ))
+        or access_threshold_minutes <= 0
+        or walking_speed_mps <= 0
+        or cycling_speed_mps <= 0
+        or poi_snap_tolerance_m < 0
+        or detour_ratio_threshold <= 1
+    ):
+        raise ValueError("Travel-time thresholds and speeds must be finite and positive, POI snap tolerance must be non-negative, and detour ratio threshold must be greater than 1.")
     area = data.area
     metrics_by_mode: dict[str, dict[str, Any]] = {}
     metric_graphs: dict[str, nx.Graph] = {}
