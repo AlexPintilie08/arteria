@@ -1,44 +1,90 @@
-# Spatial analysis and simulation
+# Geospatial analysis and simulation
 
-## Current foundation
+This package acquires bounded OpenStreetMap snapshots, builds walking/cycling/driving networks, calculates reproducible network indicators, detects evidence-backed access/connectivity issues, exports GeoJSON, and evaluates hypothetical pedestrian-network changes. The backend can import the Python functions directly; no FastAPI or LLM dependency is required.
 
-The repository includes a deterministic NetworkX smoke test and verifies OSMnx, GeoPandas, and Shapely imports. It does not download OSM data or implement city analysis yet.
+## Public Python API
 
-## Responsibilities
+```python
+from sim import analyze_area, acquire_osm_data, evaluate_pedestrian_connection
 
-Acquire and prepare OpenStreetMap data; construct geographic networks; calculate accessibility and connectivity; detect mobility issues; apply virtual infrastructure modifications; recompute measurable indicators; and run microscopic vehicle simulation for suitable traffic scenarios.
+area = {
+    "city_id": "iasi-ro",
+    "area_id": "iasi-example-area",
+    "bbox": [27.5755, 47.1610, 27.5825, 47.1655],  # west, south, east, north
+    "crs": "EPSG:4326",
+    "boundary_source": "user_selected",
+}
 
-## Planned technology
+# Full acquisition and analysis. Each requested mode is fetched serially.
+result = analyze_area(area, modes=("walk", "bike", "drive"))
+print(result["network_metrics"]["walk"])
+print(result["layer_availability"]["schools"])
 
-Python, OSMnx, NetworkX, GeoPandas, Shapely, Eclipse SUMO, and TraCI/libsumo. Network and geographic analysis must work independently of SUMO. SUMO runs on CPU and is used only where traffic questions and available inputs justify it.
+# Reuse the same immutable baseline snapshot for scenario evaluations.
+snapshot = acquire_osm_data(area, modes=("walk",))
+scenario = evaluate_pedestrian_connection(
+    snapshot,
+    start=[27.5800, 47.1620],
+    end=[27.5810, 47.1630],
+)
+print(scenario["baseline"]["network_distance_m"])
+print(scenario["scenario"]["network_distance_m"])
+print(scenario["comparison"]["distance_delta_m"])
+```
 
-## Inputs and outputs
+`analyze_area` returns the API-friendly JSON-ready result. For a preloaded or synthetic snapshot, call `analyze_snapshot`. `evaluate_scenario` accepts a sequence of `add_pedestrian_connection` and `set_connection_enabled` interventions plus a route origin and destination. `route_between` calculates a weighted graph route and returns network distance, straight-line reference, and detour ratio when node coordinates and CRS are available.
 
-- **Inputs:** bounded geographic areas, versioned source data, analysis parameters, baseline networks, and validated virtual intervention definitions.
-- **Outputs:** network-derived indicators, detected issues, modified scenario networks, evaluation measurements, and simulation run metadata. Each result should include units, source/version, method, timestamp, and uncertainty or limitations where known.
+## Geographic inputs and limits
 
-## Integration interfaces
+- Inputs may be a valid Polygon/MultiPolygon, GeoJSON geometry/Feature, CRS-declared GeoDataFrame, or `[west, south, east, north]` bounding box. GeoJSON and bbox coordinates use longitude/latitude in EPSG:4326.
+- The default limit is 5 km² and 5 km in either dimension. Both bounds can be lowered or raised explicitly for a controlled local analysis.
+- Invalid, empty, self-intersecting, out-of-range, or oversized geometries are rejected. Distances and areas use a locally estimated metric UTM CRS; exported geometry uses EPSG:4326.
+- `graph_from_polygon` retains disconnected components and one-edge boundary connectors for routing. Area accessibility counts and issue geometry use nodes inside the selected polygon; component totals describe the retrieved graph and may include boundary connectors.
 
-The backend coordinates this component for the API operations in `docs/API_CONTRACT.md`. The initial implementation may use an in-process Python interface; a service boundary can be introduced when independent scaling or deployment requires it. Avoid coupling the frontend to simulation file formats.
+## Acquisition, cache, and provenance
 
-## Implementation objectives
+`acquire_osm_data` retrieves OSMnx network graphs for `walk`, `bike`, and/or `drive`, then requests supported infrastructure and POI tags. OSMnx's normal Overpass rate limiting remains enabled, requests are sequential, and the request identifies ARTERIA in its user-agent.
 
-Make geographic analysis useful without SUMO. Preserve baseline inputs and create scenario variants rather than mutating source networks. Track data acquisition and processing versions for reproducibility. Support small live simulations for responsive demonstrations and reproducible offline simulations for controlled comparisons.
+The default cache is `sim/.cache/osm/` and contains local GraphML/GeoJSON snapshots plus OSMnx's HTTP response cache. `sim/.gitignore` excludes those generated files. Use `force_refresh=True` to reacquire a snapshot or `cache_dir=...` to provide a different local cache directory. `overpass_url` can select an Overpass-compatible endpoint when the default endpoint is unavailable. The selected endpoint's usage policy still applies.
 
-## Simulation modes and honest replay labels
+Metadata records the source, retrieval time, area extent, working CRS, query tags, cached modes, and limitations. An empty OSM layer is `no_features_returned`; a failed or unproven query is `unknown`. Neither status means the real-world feature is absent. OSM tags and network coverage are incomplete and may change after the snapshot was retrieved.
 
-- **Small live simulation:** run a bounded scenario with the CPU simulator during a user-requested evaluation; return the actual run status, configuration, and computed measurements.
-- **Reproducible offline simulation:** execute a versioned scenario with fixed inputs, configuration, random seed where applicable, and recorded tool versions; store enough metadata to rerun it.
-- **Replay:** display previously recorded output. Label it as a replay and show its run identifier and timestamp. A replay is not a new simulation and must not be described as one.
+## Layers and analysis
 
-Geographic measures such as connectivity or network access can be recomputed without claiming a SUMO result. If required inputs or simulator execution are unavailable, report that clearly.
+The feature query classifies roads, walking infrastructure, cycling infrastructure, crossings, buildings, schools, healthcare, supported services, public-transport stops/stations, parking, and mapped green space. Each layer reports an availability status and tagged-feature count. The output includes clipped feature GeoJSON, clipped network-edge GeoJSON, heatmap-ready GeoJSON, and analysis issues.
 
-## Portable SUMO installation
+Network indicators cover node/edge counts, weakly connected components, largest-component share, and isolated nodes. Walking and cycling access use weighted NetworkX shortest paths to the nearest snap-eligible mapped service. Default constant speeds are 1.3 m/s walking and 4.5 m/s cycling; the default threshold is 15 minutes. These are explicit estimates, not measured travel times. The engine does not infer population access, traffic counts, congestion, or real-time conditions.
 
-`pyproject.toml` pins `eclipse-sumo`, `traci`, and `sumolib` to 1.28.0 where the binary wheel is published: Windows x64, Linux x64/ARM64, and macOS 15+ ARM64. On macOS, the wheel is ARM64-only and requires macOS 15 or newer. Intel Macs and older macOS versions can use the [official SUMO installers](https://sumo.dlr.de/docs/Installing/); SUMO is optional for setup and app startup. Discovery checks executable names on `PATH` and searches an explicitly provided `SUMO_HOME` root for `sumo` and `netconvert`; it does not hardcode an installation path.
+Detour ratios compare a calculated network route with straight-line distance to the nearest mapped target geometry. The default issue threshold is a ratio greater than 2.0 and can be changed with `detour_ratio_threshold`. It is a screening assumption, not a feasibility judgment.
 
-Run `uv run --locked python -m sim.sumo_support --smoke` to inspect executable and Python package versions and, when available, build a temporary network and advance a real SUMO simulation through TraCI. SUMO is only marked verified when that smoke test passes. The temporary scenario is removed after the check.
+Issue IDs are stable for an area/type/component. Every issue includes its geometry, calculated metrics and units, OSM evidence references, method provenance, severity, coverage, and uncertainty. Severity rules are deterministic:
 
-## Technical risks
+- A disconnected component is high when it contains one in-area node and medium when it contains more.
+- Poor access is high when at least 25% of in-area graph nodes are unreachable, medium when any are unreachable or at least 25% are outside the time threshold, and low for other threshold exceedances.
+- A detour issue is high when at least 25% of in-area graph nodes exceed the configured ratio, medium at 10% or more, and low below 10%.
 
-OSM coverage, tags, and update dates vary by area. Coordinate reference systems, topology repair, and network simplification affect measurements. SUMO requires defensible demand and calibration; uncalibrated traffic output is scenario-specific and uncertain. Data licensing, download size, CPU time, and reproducibility need explicit handling.
+Issue/heatmap point samples are capped for response size, but indicator counts use all in-area nodes. No issue is a claim that a physical project is safe, legal, funded, or automatically feasible.
+
+## Virtual interventions
+
+`evaluate_pedestrian_connection` adds a straight-line hypothetical link between two EPSG:4326 locations snapped to existing walking nodes. `evaluate_scenario` also supports enabling/disabling an identified modeled ARTERIA connection. It validates the area, node snap distance, and maximum 1,000 m link length; copies the projected baseline graph; and recalculates the same weighted route before and after. The response includes both route geometries, distances, estimated walking times, delta, and any reachability change. Baseline inputs are not mutated. No impact percentage is fabricated.
+
+The hypothetical link does not evaluate street crossing safety, grade, accessibility standards, land ownership, utilities, legal approval, or construction feasibility.
+
+## Tests and verified Iași snapshot
+
+Offline engine tests use small in-memory fixtures and need no network:
+
+```powershell
+uv run --locked pytest -p no:cacheprovider sim/test_engine.py
+```
+
+The real bounded study run used `[27.5755, 47.1610, 27.5825, 47.1655]` in central Iași (EPSG:32635 working CRS). The retrieved snapshot produced 136 walking-graph nodes and 354 directed edges; 107 nodes were inside the study polygon. It returned 151 road features, 88 walking-infrastructure features, 17 crossing features, 275 buildings, 4 schools, 3 healthcare features, 9 other supported services, 3 public-transport features, 8 parking features, and 5 green-space features. No explicit cycling-infrastructure features were returned; that is not proof that none exist.
+
+The same snapshot produced 105 of 107 in-area walking nodes within 15 estimated minutes of each of the supported school, healthcare, service, public-transport, and green-space feature groups. Median route detour ratios were 1.04 for schools, 1.31 for healthcare, 1.32 for services, 1.64 for public transport, and 1.41 for green space. Two graph components each contained one in-area node outside the largest component. These counts refer to mapped network nodes, not people.
+
+A real-graph hypothetical connection between OSM nodes `641092475` and `12079937967` changed their calculated walking route from 648.7 m to 34.4 m (delta −614.3 m). This is a graph-only comparison; the connecting segment has not been checked for physical feasibility.
+
+## SUMO
+
+The existing portable discovery and TraCI smoke support in `sumo_support.py` is preserved. The engine exports a driving graph suitable for later conversion, but does not yet convert a real OSM graph into a SUMO network or claim calibrated traffic simulation. Any future synthetic vehicle demand must be labeled as synthetic and kept separate from graph-only accessibility results.
