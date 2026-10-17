@@ -1,0 +1,50 @@
+.figure { margin: 0; border: 1px solid var(--marketing-line); border-radius: 16px; background: #fff; overflow: hidden; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--marketing-line); }
+.modelLabel { font: 500 14px/1.4 var(--font-display); }
+.modelLabel > span { display: block; color: var(--marketing-subtle); font: 10px/1.7 var(--font-body); letter-spacing: .04em; }
+.switch { display: flex; border: 1px solid #cbd5d8; border-radius: 8px; padding: 3px; margin: 0; background: #f5f6f3; }
+.option { position: relative; cursor: pointer; }
+.option input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.option > span { display: block; padding: 9px 13px; border-radius: 5px; color: var(--marketing-muted); font: 600 12px/1.5 var(--font-body); transition: background-color 150ms, color 150ms; }
+.option input:checked + span { background: var(--marketing-primary); color: white; }
+.option input:focus-visible + span { outline: 3px solid var(--marketing-teal); outline-offset: 3px; }
+.viewport { position: relative; width: 100%; aspect-ratio: 1.4; background: #f2f3ee; overflow: hidden; }
+.fallback { position: absolute; inset: 20px 48px 36px; }
+.canvasHost { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.canvasHost.ready { opacity: 1; }
+.canvasHost > canvas { display: block; width: 100%; height: 100%; }
+.viewLabel { position: absolute; bottom: 12px; left: 20px; color: #526873; font: 10px/1.5 ui-monospace, monospace; }
+.orientation { position: absolute; top: 16px; right: 20px; font: 12px/1.5 ui-monospace, monospace; color: #526873; }
+.interventions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 16px 20px 0; }
+.interventions > button { display: flex; align-items: center; gap: 8px; background: #fff; color: var(--marketing-primary); border: 1px solid #cbd5d8; border-radius: 8px; padding: 10px; min-height: 48px; font: 600 12px/1.4 var(--font-body); text-align: left; cursor: pointer; transition: background-color 160ms, border-color 160ms; }
+.interventions > button:hover { background: #f2f6f4; border-color: #648f98; }
+.interventions > button[aria-pressed='true'] { background: #e7f3ee; border-color: #027f82; color: #025c64; }
+.interventions > button:focus-visible { outline: 3px solid var(--marketing-teal); outline-offset: 3px; }
+.number { display: inline-flex; justify-content: center; align-items: center; border: 1px solid currentColor; border-radius: 50%; width: 22px; height: 22px; flex-shrink: 0; font: 12px/1 var(--font-display); }
+.explanation { min-height: 88px; padding: 12px 20px 16px; margin: 0; color: var(--marketing-muted); font-size: 12px; line-height: 1.7; }
+.caption { border-top: 1px solid var(--marketing-line); padding: 12px 20px; color: var(--marketing-subtle); font-size: 10px; line-height: 1.7; }
+.srOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0; }
+@media (max-width: 767px) {
+  .toolbar { padding: 14px; gap: 8px; }
+  .modelLabel { font-size: 12px; }
+  .option > span { padding: 10px; font-size: 11px; }
+  .viewport { aspect-ratio: 1.1; }
+  .interventions { padding: 14px 14px 0; }
+  .interventions > button { font-size: 11px; padding: 9px 7px; gap: 6px; }
+  .number { width: 19px; height: 19px; }
+  .explanation { min-height: 116px; padding: 12px 14px; }
+  .caption { padding: 12px 14px; }
+  .viewLabel { left: 14px; font-size: 9px; }
+  .fallback { inset: 20px 12px 32px; }
+}
+@media (prefers-reduced-motion: reduce) { .option > span, .interventions > button { transition: none; } }
+
+.revealRow { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; padding: 12px 20px; }
+.revealRow > span { font-size: 10px; color: var(--marketing-subtle); max-width: 30ch; }
+.revealButton { display: inline-flex; align-items: center; justify-content: space-between; gap: 14px; padding: 10px 12px; min-height: 44px; border: 1px solid #819b9c; border-radius: 8px; color: var(--marketing-primary); background: #fff; font: 600 12px/1.5 var(--font-body); cursor: pointer; }
+.revealButton > span { font-size: 10px; color: var(--marketing-subtle); }
+.revealButton[aria-pressed='true'] { background: #e7f3ee; border-color: #027f82; }
+.revealButton:hover:enabled { background: #eff5f2; }
+.revealButton:disabled { color: #68757c; background: #f2f3f1; border-color: #d2d8d5; cursor: default; }
+.revealButton:focus-visible { outline: 3px solid var(--marketing-teal); outline-offset: 3px; }
+@media (max-width:767px) { .revealRow { padding: 12px 14px; }.revealRow > span { max-width: none; } }

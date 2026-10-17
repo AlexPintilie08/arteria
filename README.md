@@ -19,11 +19,11 @@ Observed data, calculated results, estimates, and unknown information must remai
 
 ## Planned technology
 
-- **Frontend:** React, TypeScript, Vite, MapLibre GL JS, WebGL, and Tailwind CSS if useful.
+- **Frontend:** web with React, TypeScript, Next.js, MapLibre GL JS and WebGL; Android with Expo/React Native. Shared API contracts and visual tokens live inside `frontend/`.
 - **Backend:** Python, FastAPI, Pydantic, and a cloud LLM API. Local Qwen may be an optional fallback.
 - **Simulation and spatial analysis:** Python, OSMnx, NetworkX, GeoPandas, Shapely, Eclipse SUMO, and TraCI/libsumo.
 
-The bootstrap uses these technologies for its runnable shell. Urban analysis and scenario functionality remains planned.
+The frontend now has an initial web and Expo React Native scaffold under `frontend/`, with shared API types and design tokens. Backend and simulation choices remain planned; their functionality is not implemented yet.
 
 ## System architecture
 
@@ -31,25 +31,10 @@ The product has exactly three application components: `frontend/`, `backend/`, a
 
 ## Current status
 
-The repository has a runnable development foundation: a React/MapLibre shell with an OpenFreeMap public style and fallback, a FastAPI `GET /health` endpoint, and deterministic NetworkX/geospatial import checks. Local Windows setup and the Windows, macOS 15 ARM64, and macOS 15 Intel CI jobs passed. SUMO 1.28.0 passed a real smoke test on Windows and macOS ARM64; no SUMO binary is installed on Intel macOS, where the optional fallback is reported. SUMO is optional and not required to start either service. The planned `/analyze`, `/propose`, and `/evaluate` APIs, live urban data pipelines, and real city scenarios are not implemented. See each component's `STATUS.md` and the [roadmap](docs/ROADMAP.md).
-
-## Quick start
-
-Prerequisites: Node.js 24 LTS and `uv`. Setup acquires a project-local, uv-managed Python 3.12 runtime, installs locked dependencies, and runs validation. No AI key or SUMO installation is needed for basic app startup.
-
-| Platform | Setup once | Start both services | Checks |
-| --- | --- | --- | --- |
-| Windows 10/11 x64, PowerShell | `./scripts/setup.ps1` | `./scripts/dev.ps1` | `./scripts/check.ps1` |
-| macOS, Terminal | `bash scripts/setup.sh` | `bash scripts/dev.sh` | `bash scripts/check.sh` |
-
-Open <http://127.0.0.1:5173>. The API health response is at <http://127.0.0.1:8000/health>. The npm and Python lockfiles are committed; installed dependencies, `.venv`, and the uv-managed Python runtime stay local and ignored.
-
-### Optional SUMO
-
-The project pins the `eclipse-sumo` 1.28.0 package on Windows x64, Linux x64/ARM64, and macOS 15+ ARM64. That release does not publish a wheel for Intel Macs or older macOS versions. On those configurations, install SUMO using the [official platform instructions](https://sumo.dlr.de/docs/Installing/). SUMO discovery checks `PATH` and an optional `SUMO_HOME` value; it does not assume an installation directory. The check command runs a temporary one-step SUMO/TraCI scenario when a complete installation is found and reports unavailable or failed SUMO separately from the core app checks.
+**Frontend scaffold initialized.** Web and Android have initial navigation and UI shells, a typed API client, honest empty/demo states, a design brief, and an AI implementation prompt. There are no implemented backend endpoints, data pipelines, or simulations. See [frontend setup](frontend/README.md), each component's `STATUS.md`, and the [roadmap](docs/ROADMAP.md).
 
 ## Developer onboarding and collaboration
 
 Three developers collaborate through one shared GitHub repository. Use feature branches when working concurrently, integrate frequently, communicate in short messages, and update the relevant component `STATUS.md` when meaningful work is completed. There are no permanent component owners or required project-management systems.
 
-For an initial checkout, clone the repository and read this document, the architecture, API contract, roadmap, and the relevant component README and STATUS. Use feature branches when working concurrently, integrate frequently, communicate briefly, and update the relevant `STATUS.md` when meaningful work is completed.
+For an initial checkout, clone the repository and read this document, the architecture, API contract, roadmap, and the relevant component README and STATUS. Frontend setup and local web/Android commands are documented in [frontend/README.md](frontend/README.md).

@@ -1,0 +1,8 @@
+.plan { display: block; width: 100%; height: 100%; }
+.section { border-top: 1px solid var(--marketing-line); padding: 16px 20px; background: #f6f7f2; color: var(--marketing-muted); }
+.sectionTitle { margin: 0 0 10px; font: 500 13px/1.5 var(--font-display); color: var(--marketing-primary); }
+.sectionTitle > span { display: block; font: 10px/1.7 var(--font-body); color: var(--marketing-subtle); }
+.sectionDrawing { display: block; width: 100%; height: 140px; }
+.sectionLegend { display: flex; justify-content: space-between; gap: 12px; font-size: 10px; }
+.sectionNote { font-size: 10px; line-height: 1.7; margin: 12px 0 0; }
+@media (max-width: 767px) { .section { padding: 14px; }.sectionDrawing { height: 130px; }.sectionLegend { flex-wrap: wrap; } }
