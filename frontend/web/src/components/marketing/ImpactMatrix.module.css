@@ -1,0 +1,13 @@
+.matrix { padding: 32px; border: 1px solid #334155; border-radius: 16px; background: #0f172a; }
+.header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; padding-bottom: 24px; border-bottom: 1px solid #334155; }
+.title { font: 500 20px/1.4 var(--font-display); margin: 0; }
+.badge { color: #b6c8d7; font-size: 11px; }
+.row { padding-block: 28px; border-bottom: 1px solid #334155; }
+.name { font: 500 20px/1.4 var(--font-display); margin: 0 0 20px; color: #83d9cb; }
+.comparison { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin: 0; }
+.comparison dt { font-size: 11px; color: #a7bdd0; margin-bottom: 8px; }
+.comparison dd { font-size: 14px; margin: 0; color: #e1e9ef; line-height: 1.7; }
+.question { margin: 20px 0 0; padding: 16px; background: #1e293b; border-left: 2px solid #cfb477; color: #dce5ed; font-size: 13px; }
+.question > span { display: block; color: #edcc87; font-size: 11px; margin-bottom: 4px; }
+.footnote { color: #b6c8d7; font-size: 12px; margin: 24px 0 0; }
+@media (max-width: 767px) { .matrix { padding: 20px; }.title { font-size: 18px; }.name { font-size: 18px; }.comparison { grid-template-columns: 1fr; gap: 20px; }.question { padding: 12px; }.row { padding-block: 24px; } }

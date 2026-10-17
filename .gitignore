@@ -17,6 +17,11 @@ venv/
 node_modules/
 dist/
 coverage/
+.expo/
+.next/
+web-build/
+*.tsbuildinfo
+.qa/
 
 # Editors and operating systems
 .vscode/

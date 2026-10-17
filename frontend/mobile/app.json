@@ -1,0 +1,8 @@
+{
+  "expo": {
+    "name": "ARTERIA", "slug": "arteria", "version": "0.1.0", "scheme": "arteria",
+    "userInterfaceStyle": "dark",
+    "android": { "package": "ro.arion.arteria" },
+    "splash": { "backgroundColor": "#101820" }
+  }
+}

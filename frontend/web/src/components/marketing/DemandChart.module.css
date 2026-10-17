@@ -1,0 +1,25 @@
+.figure { margin: 0; padding: 32px; background: white; border: 1px solid var(--marketing-line); border-radius: 16px; }
+.header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 20px; border-bottom: 1px solid var(--marketing-line); padding-bottom: 20px; margin-bottom: 24px; }
+.title { font: 500 20px/1.4 var(--font-display); margin: 0; }
+.subtitle { font-size: 13px; color: var(--marketing-muted); margin: 4px 0 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 20px; font-size: 12px; color: var(--marketing-muted); }
+.demand, .delay { display: inline-flex; align-items: center; gap: 8px; }
+.demand::before, .delay::before { content: ''; display: inline-block; width: 16px; height: 3px; background: #1b4965; }
+.delay::before { background: #b66306; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.controls > button { padding: 10px 16px; min-height: 44px; border: 1px solid #cbd5d8; border-radius: 8px; background: #fff; color: var(--marketing-primary); font: 600 13px/1.5 var(--font-body); cursor: pointer; transition: background-color 150ms; }
+.controls > button > span { padding-left: 8px; font-size: 11px; font-weight: 400; }
+.controls > button[aria-pressed='true'] { background: #eaf0f3; border-color: var(--marketing-primary); }
+.controls > button:hover { background: #f1f5f6; }
+.controls > button:focus-visible { outline: 3px solid var(--marketing-teal); outline-offset: 3px; }
+.scale { font-size: 11px; color: var(--marketing-subtle); margin: 0 0 12px; }
+.plot { position: relative; height: 220px; overflow: hidden; }
+.svg { display: block; width: 100%; height: 100%; }
+.cursor { position: absolute; inset: 0; transform: translateX(24%); transition: transform 220ms ease-out; pointer-events: none; }
+.cursor::before { content: ''; display: block; height: 100%; width: 1px; background: #a5702d; opacity: .55; }
+.evening { transform: translateX(76%); }
+.axis { display: flex; justify-content: space-between; font-size: 12px; color: var(--marketing-muted); margin-top: 10px; font-variant-numeric: tabular-nums; }
+.explanation { min-height: 48px; font-size: 14px; color: var(--marketing-muted); margin: 24px 0; }
+.caption { font-size: 11px; color: var(--marketing-subtle); border-top: 1px solid var(--marketing-line); padding-top: 16px; }
+@media (max-width: 767px) { .figure { padding: 20px; }.header { gap: 16px; }.title { font-size: 18px; }.legend { font-size: 11px; gap: 14px; }.controls > button { padding: 10px 11px; font-size: 11px; }.controls > button > span { display: block; padding: 0; }.plot { height: 170px; }.axis { font-size: 11px; }.explanation { min-height: 110px; font-size: 13px; } }
+@media (prefers-reduced-motion: reduce) { .cursor, .controls > button { transition: none; } }

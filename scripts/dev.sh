@@ -24,7 +24,7 @@ fi
 
 (cd "$ROOT" && exec uv run --locked uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000) &
 BACKEND_PID=$!
-(cd "$ROOT/frontend" && exec npm run dev -- --host 127.0.0.1) &
+(cd "$ROOT/frontend" && exec npm exec --workspace @arteria/web -- next dev --hostname 127.0.0.1 --port 3000) &
 FRONTEND_PID=$!
 
 cleanup() {
@@ -38,7 +38,7 @@ trap 'exit 130' INT
 trap 'exit 143' TERM
 
 printf 'ARTERIA development services are starting:\n'
-printf '  Frontend: http://127.0.0.1:5173\n'
+printf '  Frontend: http://127.0.0.1:3000\n'
 printf '  Backend:  http://127.0.0.1:8000/health\n'
 printf 'Press Ctrl+C to stop both services.\n'
 

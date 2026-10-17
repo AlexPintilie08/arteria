@@ -23,11 +23,11 @@ try {
     $frontendJob = Start-Job -Name 'arteria-frontend' -ArgumentList $repoRoot -ScriptBlock {
         param($root)
         Set-Location -LiteralPath (Join-Path $root 'frontend')
-        npm run dev -- --host 127.0.0.1
+        npm exec --workspace @arteria/web -- next dev --hostname 127.0.0.1 --port 3000
     }
 
     Write-Host 'ARTERIA development services are starting:'
-    Write-Host '  Frontend: http://127.0.0.1:5173'
+    Write-Host '  Frontend: http://127.0.0.1:3000'
     Write-Host '  Backend:  http://127.0.0.1:8000/health'
     Write-Host 'Press Ctrl+C to stop both services.'
 

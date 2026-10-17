@@ -14,6 +14,12 @@ The current runnable foundation implements the frontend shell and `GET /health`.
 
 ## Data pipeline
 
+### Frontend platform structure
+
+The `frontend/` component has three directories: `web` (Next.js, with presentation at `/` and the browser product at `/app`), `mobile` (Expo/React Native), and `shared` (API contracts, transport, fixtures and visual tokens). One npm install and lockfile serve these three workspaces. The system still has three main application components: frontend, backend and sim. UI renderers and map adapters stay platform-specific; both clients communicate only with the backend. See `docs/frontend/IMPLEMENTATION.md` for setup and current limits.
+
+### Planned processing flow
+
 1. Select a supported geographic area and record its identifier, boundary source, and coordinate reference system.
 2. Acquire source datasets such as OpenStreetMap extracts and any separately licensed public datasets. Record source, retrieval time, version, coverage, and license.
 3. Normalize geometries and networks in `sim`, retaining source identifiers and reporting invalid or missing coverage.

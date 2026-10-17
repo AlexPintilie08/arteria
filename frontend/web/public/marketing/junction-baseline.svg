@@ -1,0 +1,18 @@
+<svg fill="none" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+<!-- Roads -->
+<rect fill="#E2E8F0" height="280" width="50" x="175" y="10"></rect>
+<rect fill="#E2E8F0" height="50" width="360" x="20" y="125"></rect>
+<!-- Central Roundabout -->
+<circle cx="200" cy="150" fill="#F8FAFC" r="54" stroke="#CBD5E1" stroke-width="18"></circle>
+<circle cx="200" cy="150" fill="#E2E8F0" r="30"></circle>
+<!-- Mixed Tram Lane in center -->
+<line stroke="#94A3B8" stroke-dasharray="3 3" stroke-width="1.5" x1="195" x2="195" y1="10" y2="290"></line>
+<line stroke="#94A3B8" stroke-dasharray="3 3" stroke-width="1.5" x1="205" x2="205" y1="10" y2="290"></line>
+<!-- Conflict Point / Merge Congestion -->
+<circle cx="220" cy="190" fill="#FEE2E2" r="14" stroke="#EF4444" stroke-dasharray="2 2" stroke-width="1.5"></circle>
+<circle cx="220" cy="190" fill="#EF4444" r="4"></circle>
+<!-- Queue tail in red -->
+<path d="M 215 210 L 215 285" stroke="#EF4444" stroke-linecap="round" stroke-width="6"></path>
+<text fill="#B91C1C" font-family="Manrope" font-size="11" font-weight="600" x="235" y="250">Illustrative queue</text>
+<text fill="#64748B" font-family="Space Grotesk" font-size="11" text-anchor="middle" x="200" y="95">Unchanneled Merge</text>
+</svg>

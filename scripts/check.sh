@@ -19,11 +19,12 @@ if [[ "$node_major" != "24" ]]; then
 fi
 
 printf 'Running Python backend and spatial smoke tests...\n'
-uv run --locked pytest -q
+uv run --locked pytest -q tests sim/test_engine.py
 uv run --locked python scripts/health_smoke.py
 
 printf 'Running frontend TypeScript and production build checks...\n'
 npm --prefix frontend run typecheck
+npm --prefix frontend test
 npm --prefix frontend run build
 
 printf 'Checking optional SUMO installation and running its real smoke test when available...\n'

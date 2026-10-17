@@ -1,4 +1,8 @@
-# Proposed API contract
+# Proposed geographic API contract
+
+> A working synthetic backend subset is now implemented. See [DEMO_API.md](DEMO_API.md)
+> for the current frontend contract and `/docs` for authoritative schemas. The
+> geographic examples below remain future design, not implemented capabilities.
 
 This document defines a draft JSON contract for the backend. It is not an implemented API. All coordinates use GeoJSON ordering `[longitude, latitude]`; spatial calculations must also identify the working CRS. Timestamps use ISO 8601 UTC. Each numeric measurement includes a unit and provenance. `observed`, `calculated`, `estimated`, and `unknown` describe epistemic status and must not be collapsed into one another.
 

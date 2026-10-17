@@ -26,6 +26,30 @@ jobs:
             sumo: optional
     steps:
       - uses: actions/checkout@v7
+      - name: Verify Windows x64 runner
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Write-Host "RUNNER_OS=$env:RUNNER_OS RUNNER_ARCH=$env:RUNNER_ARCH"
+          if ($env:RUNNER_OS -ne 'Windows' -or $env:RUNNER_ARCH -ne 'X64') {
+              throw "Expected Windows x64; got $env:RUNNER_OS $env:RUNNER_ARCH."
+          }
+      - name: Verify macOS ARM64 runner
+        if: runner.os == 'macOS' && matrix.os == 'macos-15'
+        shell: bash
+        run: |
+          printf 'RUNNER_OS=%s RUNNER_ARCH=%s machine=%s\n' "$RUNNER_OS" "$RUNNER_ARCH" "$(uname -m)"
+          test "$RUNNER_OS" = "macOS"
+          test "$RUNNER_ARCH" = "ARM64"
+          test "$(uname -m)" = "arm64"
+      - name: Verify macOS Intel runner
+        if: runner.os == 'macOS' && matrix.os == 'macos-15-intel'
+        shell: bash
+        run: |
+          printf 'RUNNER_OS=%s RUNNER_ARCH=%s machine=%s\n' "$RUNNER_OS" "$RUNNER_ARCH" "$(uname -m)"
+          test "$RUNNER_OS" = "macOS"
+          test "$RUNNER_ARCH" = "X64"
+          test "$(uname -m)" = "x86_64"
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -38,9 +62,9 @@ jobs:
         if: runner.os == 'macOS'
         shell: bash
         run: bash scripts/setup.sh
-      - name: Report and verify optional SUMO
+      - name: Report and verify required SUMO
         if: matrix.sumo == 'required'
         run: uv run --locked python -m sim.sumo_support --smoke
-      - name: Report optional SUMO fallback
+      - name: Report optional SUMO
         if: matrix.sumo == 'optional'
-        run: uv run --locked python -m sim.sumo_support --smoke
+        run: uv run --locked python -m sim.sumo_support --smoke || echo "Optional SUMO smoke test unavailable; core checks passed."

@@ -1,0 +1,6428 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "catalog_version": "1.0",
+    "coordinate_reference_system": "EPSG:4326",
+    "source": "OpenStreetMap via Overpass API",
+    "source_snapshot_at": "2026-10-17T16:06:06Z",
+    "retrieved_at": "2026-10-17T16:07:22Z",
+    "query_bounds_wgs84": [
+      27.4765545,
+      47.0848238,
+      27.692127,
+      47.2279047
+    ],
+    "query_tags": [
+      "place=suburb",
+      "place=quarter",
+      "place=neighbourhood",
+      "boundary=place"
+    ],
+    "license": "ODbL-1.0",
+    "attribution": "© OpenStreetMap contributors",
+    "attribution_url": "https://www.openstreetmap.org/copyright",
+    "coverage": "Partial bounded OSM place query; not a complete neighborhood inventory or a municipal boundary source.",
+    "limitations": [
+      "Source-mapped OSM place polygons are not verified official or legal neighborhood boundaries.",
+      "Point-only named places remain points; no polygon is inferred.",
+      "The catalog is a partial OSM-derived database and is distributed under ODbL-1.0."
+    ],
+    "query_bounds_source": {
+      "service": "Nominatim",
+      "osm_object": "relation/1207838",
+      "object_url": "https://www.openstreetmap.org/relation/1207838",
+      "display_name": "Iași, Iași Metropolitan Area, Iași, Romania",
+      "note": "The city-relation bounding box only bounded the OSM place query; it is not used as a neighborhood boundary."
+    },
+    "source_query": "[out:json][timeout:45];(nwr[\"place\"~\"^(suburb|quarter|neighbourhood)$\"](47.0848238,27.4765545,47.2279047,27.6921270);nwr[\"boundary\"=\"place\"][\"name\"](47.0848238,27.4765545,47.2279047,27.6921270););out center geom;",
+    "record_counts": {
+      "polygon_features": 24,
+      "point_only_features": 7,
+      "total_features": 31
+    },
+    "reproduction_note": "The stored catalog is a normalized derivative of the bounded query and can be loaded with sim.load_neighborhood_catalog(path). The original Overpass response remains in the ignored local demo cache; re-querying the recorded bounds/tags can produce a different snapshot."
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "id": "osm-w-75400220",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.680881,
+              47.149503
+            ],
+            [
+              27.680226,
+              47.149684
+            ],
+            [
+              27.679572,
+              47.149912
+            ],
+            [
+              27.678642,
+              47.150153
+            ],
+            [
+              27.678073,
+              47.150275
+            ],
+            [
+              27.677468,
+              47.15029
+            ],
+            [
+              27.677107,
+              47.150398
+            ],
+            [
+              27.676954,
+              47.150623
+            ],
+            [
+              27.677027,
+              47.150953
+            ],
+            [
+              27.67717,
+              47.151306
+            ],
+            [
+              27.676983,
+              47.151543
+            ],
+            [
+              27.676449,
+              47.151711
+            ],
+            [
+              27.67595,
+              47.151855
+            ],
+            [
+              27.675303,
+              47.151937
+            ],
+            [
+              27.674449,
+              47.151972
+            ],
+            [
+              27.673706,
+              47.152051
+            ],
+            [
+              27.672788,
+              47.152251
+            ],
+            [
+              27.672155,
+              47.152374
+            ],
+            [
+              27.671674,
+              47.152452
+            ],
+            [
+              27.671039,
+              47.15247
+            ],
+            [
+              27.670709,
+              47.152308
+            ],
+            [
+              27.670551,
+              47.15195
+            ],
+            [
+              27.670329,
+              47.151698
+            ],
+            [
+              27.669913,
+              47.15173
+            ],
+            [
+              27.669676,
+              47.15197
+            ],
+            [
+              27.669638,
+              47.152449
+            ],
+            [
+              27.669577,
+              47.152837
+            ],
+            [
+              27.669208,
+              47.153064
+            ],
+            [
+              27.668969,
+              47.153274
+            ],
+            [
+              27.668929,
+              47.153558
+            ],
+            [
+              27.668935,
+              47.154006
+            ],
+            [
+              27.668719,
+              47.154261
+            ],
+            [
+              27.668195,
+              47.154369
+            ],
+            [
+              27.667671,
+              47.154506
+            ],
+            [
+              27.667346,
+              47.154807
+            ],
+            [
+              27.667196,
+              47.155062
+            ],
+            [
+              27.667201,
+              47.155465
+            ],
+            [
+              27.667162,
+              47.155869
+            ],
+            [
+              27.666991,
+              47.156183
+            ],
+            [
+              27.666445,
+              47.156306
+            ],
+            [
+              27.665899,
+              47.156399
+            ],
+            [
+              27.6662679,
+              47.1568172
+            ],
+            [
+              27.6662003,
+              47.1571205
+            ],
+            [
+              27.665029,
+              47.156912
+            ],
+            [
+              27.664857,
+              47.157152
+            ],
+            [
+              27.664334,
+              47.157334
+            ],
+            [
+              27.663897,
+              47.157381
+            ],
+            [
+              27.663457,
+              47.157235
+            ],
+            [
+              27.663191,
+              47.156997
+            ],
+            [
+              27.662709,
+              47.156955
+            ],
+            [
+              27.662118,
+              47.157003
+            ],
+            [
+              27.6619077,
+              47.1575866
+            ],
+            [
+              27.6614,
+              47.157381
+            ],
+            [
+              27.661316,
+              47.157665
+            ],
+            [
+              27.660945,
+              47.157787
+            ],
+            [
+              27.660529,
+              47.157789
+            ],
+            [
+              27.660199,
+              47.157612
+            ],
+            [
+              27.659847,
+              47.157524
+            ],
+            [
+              27.659497,
+              47.157556
+            ],
+            [
+              27.659392,
+              47.15787
+            ],
+            [
+              27.659374,
+              47.158214
+            ],
+            [
+              27.659047,
+              47.15838
+            ],
+            [
+              27.658587,
+              47.158338
+            ],
+            [
+              27.6583,
+              47.158146
+            ],
+            [
+              27.658078,
+              47.157878
+            ],
+            [
+              27.657855,
+              47.157566
+            ],
+            [
+              27.657503,
+              47.157418
+            ],
+            [
+              27.656933,
+              47.157407
+            ],
+            [
+              27.656101,
+              47.157441
+            ],
+            [
+              27.655379,
+              47.15749
+            ],
+            [
+              27.654787,
+              47.157419
+            ],
+            [
+              27.654347,
+              47.157242
+            ],
+            [
+              27.65406,
+              47.15702
+            ],
+            [
+              27.653947,
+              47.156751
+            ],
+            [
+              27.654041,
+              47.156471
+            ],
+            [
+              27.654576,
+              47.155725
+            ],
+            [
+              27.655045,
+              47.155025
+            ],
+            [
+              27.655242,
+              47.154467
+            ],
+            [
+              27.655233,
+              47.15377
+            ],
+            [
+              27.654885,
+              47.153121
+            ],
+            [
+              27.654742,
+              47.152565
+            ],
+            [
+              27.654938,
+              47.151867
+            ],
+            [
+              27.655025,
+              47.151491
+            ],
+            [
+              27.655289,
+              47.15126
+            ],
+            [
+              27.655625,
+              47.151191
+            ],
+            [
+              27.656046,
+              47.151169
+            ],
+            [
+              27.65679,
+              47.151165
+            ],
+            [
+              27.657773,
+              47.15115
+            ],
+            [
+              27.658756,
+              47.151144
+            ],
+            [
+              27.659616,
+              47.151076
+            ],
+            [
+              27.660173,
+              47.150982
+            ],
+            [
+              27.660662,
+              47.150817
+            ],
+            [
+              27.661252,
+              47.150804
+            ],
+            [
+              27.661674,
+              47.150849
+            ],
+            [
+              27.661859,
+              47.151049
+            ],
+            [
+              27.661918,
+              47.151298
+            ],
+            [
+              27.662061,
+              47.151518
+            ],
+            [
+              27.6624,
+              47.15164
+            ],
+            [
+              27.662739,
+              47.151775
+            ],
+            [
+              27.663103,
+              47.15177
+            ],
+            [
+              27.663622,
+              47.151681
+            ],
+            [
+              27.664336,
+              47.151524
+            ],
+            [
+              27.66498,
+              47.151328
+            ],
+            [
+              27.665567,
+              47.151114
+            ],
+            [
+              27.666418,
+              47.150935
+            ],
+            [
+              27.667165,
+              47.150875
+            ],
+            [
+              27.667755,
+              47.15091
+            ],
+            [
+              27.6685,
+              47.150963
+            ],
+            [
+              27.669346,
+              47.150991
+            ],
+            [
+              27.670282,
+              47.150934
+            ],
+            [
+              27.670985,
+              47.150891
+            ],
+            [
+              27.672051,
+              47.150751
+            ],
+            [
+              27.673105,
+              47.150603
+            ],
+            [
+              27.674608,
+              47.150278
+            ],
+            [
+              27.675762,
+              47.149955
+            ],
+            [
+              27.677109,
+              47.149552
+            ],
+            [
+              27.678416,
+              47.149149
+            ],
+            [
+              27.679641,
+              47.1488
+            ],
+            [
+              27.680535,
+              47.148689
+            ],
+            [
+              27.680881,
+              47.149503
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-75400220",
+        "name": "Dancu",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-75400220",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/75400220",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "name": "Dancu",
+          "place": "suburb",
+          "siruta:code": "95186",
+          "source": "Mircea Angelescu, geo-spatial.org"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-75400220",
+          "source_url": "https://www.openstreetmap.org/way/75400220",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-669880045",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.559905,
+              47.1706014
+            ],
+            [
+              27.5612513,
+              47.1696737
+            ],
+            [
+              27.5624184,
+              47.1684129
+            ],
+            [
+              27.5606493,
+              47.1668516
+            ],
+            [
+              27.5649928,
+              47.1649194
+            ],
+            [
+              27.5662016,
+              47.1644489
+            ],
+            [
+              27.5674461,
+              47.1636756
+            ],
+            [
+              27.5692163,
+              47.1630058
+            ],
+            [
+              27.5726174,
+              47.1633401
+            ],
+            [
+              27.5733041,
+              47.1620416
+            ],
+            [
+              27.5728964,
+              47.1601303
+            ],
+            [
+              27.5729687,
+              47.1596018
+            ],
+            [
+              27.5729577,
+              47.1586167
+            ],
+            [
+              27.5728964,
+              47.1578542
+            ],
+            [
+              27.5698012,
+              47.157819
+            ],
+            [
+              27.5681328,
+              47.1578688
+            ],
+            [
+              27.5659226,
+              47.1583065
+            ],
+            [
+              27.5633692,
+              47.1592695
+            ],
+            [
+              27.5584061,
+              47.1613754
+            ],
+            [
+              27.556374,
+              47.1622313
+            ],
+            [
+              27.5566024,
+              47.163635
+            ],
+            [
+              27.5573181,
+              47.1665205
+            ],
+            [
+              27.5573323,
+              47.1665806
+            ],
+            [
+              27.5578331,
+              47.1685774
+            ],
+            [
+              27.559905,
+              47.1706014
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-669880045",
+        "name": "Alexandru cel Bun",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-669880045",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/669880045",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Alexandru cel Bun",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-669880045",
+          "source_url": "https://www.openstreetmap.org/way/669880045",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-669880405",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.559905,
+              47.1706014
+            ],
+            [
+              27.5591782,
+              47.1708423
+            ],
+            [
+              27.5576576,
+              47.1713323
+            ],
+            [
+              27.5561666,
+              47.1715067
+            ],
+            [
+              27.5530077,
+              47.1718537
+            ],
+            [
+              27.5518035,
+              47.1718158
+            ],
+            [
+              27.5458856,
+              47.171897
+            ],
+            [
+              27.543907,
+              47.1718887
+            ],
+            [
+              27.5392993,
+              47.1719339
+            ],
+            [
+              27.5361808,
+              47.1718824
+            ],
+            [
+              27.5316127,
+              47.1718967
+            ],
+            [
+              27.5309515,
+              47.1719069
+            ],
+            [
+              27.5309372,
+              47.171446
+            ],
+            [
+              27.5368176,
+              47.1704322
+            ],
+            [
+              27.5393599,
+              47.1696017
+            ],
+            [
+              27.5414839,
+              47.1677023
+            ],
+            [
+              27.543671,
+              47.1656889
+            ],
+            [
+              27.5521716,
+              47.1658814
+            ],
+            [
+              27.5532669,
+              47.1655506
+            ],
+            [
+              27.5538477,
+              47.1650762
+            ],
+            [
+              27.5553225,
+              47.163238
+            ],
+            [
+              27.556374,
+              47.1622313
+            ],
+            [
+              27.5566024,
+              47.163635
+            ],
+            [
+              27.5573181,
+              47.1665205
+            ],
+            [
+              27.5573323,
+              47.1665806
+            ],
+            [
+              27.5578331,
+              47.1685774
+            ],
+            [
+              27.559905,
+              47.1706014
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-669880405",
+        "name": "Dacia",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-669880405",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/669880405",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Dacia",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-669880405",
+          "source_url": "https://www.openstreetmap.org/way/669880405",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-669880901",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5698012,
+              47.157819
+            ],
+            [
+              27.5668018,
+              47.1569614
+            ],
+            [
+              27.5649779,
+              47.1557212
+            ],
+            [
+              27.5647418,
+              47.1545685
+            ],
+            [
+              27.5650422,
+              47.1536784
+            ],
+            [
+              27.5660717,
+              47.1528598
+            ],
+            [
+              27.5696425,
+              47.1546696
+            ],
+            [
+              27.5704121,
+              47.155057
+            ],
+            [
+              27.5726483,
+              47.1549631
+            ],
+            [
+              27.5736468,
+              47.154977
+            ],
+            [
+              27.573691,
+              47.1550062
+            ],
+            [
+              27.5736886,
+              47.1550648
+            ],
+            [
+              27.5747322,
+              47.1572597
+            ],
+            [
+              27.5748055,
+              47.1574138
+            ],
+            [
+              27.5738184,
+              47.1577785
+            ],
+            [
+              27.5728964,
+              47.1578542
+            ],
+            [
+              27.5698012,
+              47.157819
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-669880901",
+        "name": "Mircea cel Bătrân",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-669880901",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/669880901",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Mircea cel Bătrân",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-669880901",
+          "source_url": "https://www.openstreetmap.org/way/669880901",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-669881385",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5736886,
+              47.1550648
+            ],
+            [
+              27.5736323,
+              47.1544436
+            ],
+            [
+              27.5735699,
+              47.1541211
+            ],
+            [
+              27.573756,
+              47.1536865
+            ],
+            [
+              27.5741618,
+              47.1527299
+            ],
+            [
+              27.5774697,
+              47.1502769
+            ],
+            [
+              27.5784081,
+              47.149698
+            ],
+            [
+              27.5790579,
+              47.1502994
+            ],
+            [
+              27.5798847,
+              47.1508456
+            ],
+            [
+              27.5810667,
+              47.1515952
+            ],
+            [
+              27.5831469,
+              47.1530904
+            ],
+            [
+              27.5837065,
+              47.1538111
+            ],
+            [
+              27.5748055,
+              47.1574138
+            ],
+            [
+              27.5747322,
+              47.1572597
+            ],
+            [
+              27.5736886,
+              47.1550648
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-669881385",
+        "name": "Cantemir",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-669881385",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/669881385",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Cantemir",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-669881385",
+          "source_url": "https://www.openstreetmap.org/way/669881385",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-669882818",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5833798,
+              47.1464834
+            ],
+            [
+              27.5821303,
+              47.144883
+            ],
+            [
+              27.5818546,
+              47.1445299
+            ],
+            [
+              27.5814703,
+              47.1440746
+            ],
+            [
+              27.5810978,
+              47.1436333
+            ],
+            [
+              27.5809596,
+              47.1434221
+            ],
+            [
+              27.5807373,
+              47.1430823
+            ],
+            [
+              27.5805238,
+              47.1427561
+            ],
+            [
+              27.5802128,
+              47.1422808
+            ],
+            [
+              27.579649,
+              47.1408211
+            ],
+            [
+              27.5791614,
+              47.139785
+            ],
+            [
+              27.5787586,
+              47.1394562
+            ],
+            [
+              27.5751917,
+              47.1365446
+            ],
+            [
+              27.5737326,
+              47.1353915
+            ],
+            [
+              27.5726383,
+              47.1341945
+            ],
+            [
+              27.5703208,
+              47.1358294
+            ],
+            [
+              27.5666516,
+              47.137508
+            ],
+            [
+              27.5657718,
+              47.1388071
+            ],
+            [
+              27.5658473,
+              47.1388605
+            ],
+            [
+              27.5684326,
+              47.1406899
+            ],
+            [
+              27.5699558,
+              47.14214
+            ],
+            [
+              27.5713139,
+              47.1434328
+            ],
+            [
+              27.5710504,
+              47.1465716
+            ],
+            [
+              27.574925,
+              47.1485781
+            ],
+            [
+              27.5774697,
+              47.1502769
+            ],
+            [
+              27.5805686,
+              47.1481836
+            ],
+            [
+              27.5833798,
+              47.1464834
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-669882818",
+        "name": "Nicolina",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-669882818",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/669882818",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Nicolina",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-669882818",
+          "source_url": "https://www.openstreetmap.org/way/669882818",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-669884156",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5774697,
+              47.1502769
+            ],
+            [
+              27.5741618,
+              47.1527299
+            ],
+            [
+              27.573756,
+              47.1536865
+            ],
+            [
+              27.5735699,
+              47.1541211
+            ],
+            [
+              27.5736468,
+              47.154977
+            ],
+            [
+              27.5726483,
+              47.1549631
+            ],
+            [
+              27.5704121,
+              47.155057
+            ],
+            [
+              27.5696425,
+              47.1546696
+            ],
+            [
+              27.5660717,
+              47.1528598
+            ],
+            [
+              27.5650422,
+              47.1536784
+            ],
+            [
+              27.5647418,
+              47.1545685
+            ],
+            [
+              27.5649779,
+              47.1557212
+            ],
+            [
+              27.5668018,
+              47.1569614
+            ],
+            [
+              27.5698012,
+              47.157819
+            ],
+            [
+              27.5681328,
+              47.1578688
+            ],
+            [
+              27.5659226,
+              47.1583065
+            ],
+            [
+              27.5633692,
+              47.1592695
+            ],
+            [
+              27.5584061,
+              47.1613754
+            ],
+            [
+              27.5546996,
+              47.1594273
+            ],
+            [
+              27.5544207,
+              47.1583768
+            ],
+            [
+              27.554528,
+              47.1576034
+            ],
+            [
+              27.5571244,
+              47.154408
+            ],
+            [
+              27.5625317,
+              47.1502783
+            ],
+            [
+              27.5642771,
+              47.1485678
+            ],
+            [
+              27.5692479,
+              47.1474618
+            ],
+            [
+              27.5710504,
+              47.1465716
+            ],
+            [
+              27.574925,
+              47.1485781
+            ],
+            [
+              27.5774697,
+              47.1502769
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-669884156",
+        "name": "Galata",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-669884156",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/669884156",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Galata",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-669884156",
+          "source_url": "https://www.openstreetmap.org/way/669884156",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670142323",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5784081,
+              47.149698
+            ],
+            [
+              27.5790579,
+              47.1502994
+            ],
+            [
+              27.5798847,
+              47.1508456
+            ],
+            [
+              27.5810667,
+              47.1515952
+            ],
+            [
+              27.5831469,
+              47.1530904
+            ],
+            [
+              27.5837065,
+              47.1538111
+            ],
+            [
+              27.5852344,
+              47.1543278
+            ],
+            [
+              27.5860806,
+              47.1544281
+            ],
+            [
+              27.5867736,
+              47.1543489
+            ],
+            [
+              27.5870098,
+              47.1543092
+            ],
+            [
+              27.5892729,
+              47.1549573
+            ],
+            [
+              27.5898613,
+              47.1549116
+            ],
+            [
+              27.5901555,
+              47.1553402
+            ],
+            [
+              27.5902374,
+              47.1554506
+            ],
+            [
+              27.590824,
+              47.1562585
+            ],
+            [
+              27.5919837,
+              47.1558051
+            ],
+            [
+              27.5933505,
+              47.1550349
+            ],
+            [
+              27.593815,
+              47.1547719
+            ],
+            [
+              27.594182,
+              47.1541713
+            ],
+            [
+              27.5948396,
+              47.1527392
+            ],
+            [
+              27.5910415,
+              47.1518914
+            ],
+            [
+              27.5903456,
+              47.1507182
+            ],
+            [
+              27.5902763,
+              47.1506037
+            ],
+            [
+              27.5901137,
+              47.1503337
+            ],
+            [
+              27.5904036,
+              47.1501365
+            ],
+            [
+              27.5894758,
+              47.1495943
+            ],
+            [
+              27.5920323,
+              47.1474527
+            ],
+            [
+              27.5920621,
+              47.1474303
+            ],
+            [
+              27.5917726,
+              47.1472429
+            ],
+            [
+              27.5906842,
+              47.146557
+            ],
+            [
+              27.5904641,
+              47.1464861
+            ],
+            [
+              27.5896512,
+              47.1462524
+            ],
+            [
+              27.5889942,
+              47.1461631
+            ],
+            [
+              27.5881092,
+              47.1461046
+            ],
+            [
+              27.5872255,
+              47.1460989
+            ],
+            [
+              27.5868159,
+              47.1461271
+            ],
+            [
+              27.5849145,
+              47.146104
+            ],
+            [
+              27.5847833,
+              47.1461046
+            ],
+            [
+              27.5833798,
+              47.1464834
+            ],
+            [
+              27.5805686,
+              47.1481836
+            ],
+            [
+              27.5793285,
+              47.1489742
+            ],
+            [
+              27.5784081,
+              47.149698
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670142323",
+        "name": "Podul Roș",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670142323",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670142323",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Podul Roș",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670142323",
+          "source_url": "https://www.openstreetmap.org/way/670142323",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670142974",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5837065,
+              47.1538111
+            ],
+            [
+              27.5852344,
+              47.1543278
+            ],
+            [
+              27.5860806,
+              47.1544281
+            ],
+            [
+              27.5867736,
+              47.1543489
+            ],
+            [
+              27.5856269,
+              47.1555102
+            ],
+            [
+              27.5854079,
+              47.1554717
+            ],
+            [
+              27.5839363,
+              47.1552134
+            ],
+            [
+              27.5835438,
+              47.1555096
+            ],
+            [
+              27.5832482,
+              47.1563694
+            ],
+            [
+              27.5832482,
+              47.1572226
+            ],
+            [
+              27.5832077,
+              47.1576079
+            ],
+            [
+              27.5823712,
+              47.1584611
+            ],
+            [
+              27.5814935,
+              47.1591816
+            ],
+            [
+              27.5809006,
+              47.159984
+            ],
+            [
+              27.5812532,
+              47.1604179
+            ],
+            [
+              27.5805607,
+              47.1614227
+            ],
+            [
+              27.5793759,
+              47.162727
+            ],
+            [
+              27.5792174,
+              47.1632051
+            ],
+            [
+              27.5791917,
+              47.1632967
+            ],
+            [
+              27.5791466,
+              47.1637911
+            ],
+            [
+              27.5793085,
+              47.1640021
+            ],
+            [
+              27.578499,
+              47.1645066
+            ],
+            [
+              27.5779053,
+              47.1646626
+            ],
+            [
+              27.5766101,
+              47.1653597
+            ],
+            [
+              27.5756656,
+              47.1659835
+            ],
+            [
+              27.5753823,
+              47.1665155
+            ],
+            [
+              27.5751208,
+              47.1669141
+            ],
+            [
+              27.5745974,
+              47.1676594
+            ],
+            [
+              27.5719677,
+              47.1663917
+            ],
+            [
+              27.5714338,
+              47.1662145
+            ],
+            [
+              27.5710648,
+              47.1661028
+            ],
+            [
+              27.5726174,
+              47.1633401
+            ],
+            [
+              27.5733041,
+              47.1620416
+            ],
+            [
+              27.5728964,
+              47.1601303
+            ],
+            [
+              27.5729687,
+              47.1596018
+            ],
+            [
+              27.5729577,
+              47.1586167
+            ],
+            [
+              27.5728964,
+              47.1578542
+            ],
+            [
+              27.5738184,
+              47.1577785
+            ],
+            [
+              27.5748055,
+              47.1574138
+            ],
+            [
+              27.5837065,
+              47.1538111
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670142974",
+        "name": "Uzinei",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670142974",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670142974",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Uzinei",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670142974",
+          "source_url": "https://www.openstreetmap.org/way/670142974",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670143836",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.559905,
+              47.1706014
+            ],
+            [
+              27.5612513,
+              47.1696737
+            ],
+            [
+              27.5624184,
+              47.1684129
+            ],
+            [
+              27.5606493,
+              47.1668516
+            ],
+            [
+              27.5649928,
+              47.1649194
+            ],
+            [
+              27.5662016,
+              47.1644489
+            ],
+            [
+              27.5674461,
+              47.1636756
+            ],
+            [
+              27.5692163,
+              47.1630058
+            ],
+            [
+              27.5726174,
+              47.1633401
+            ],
+            [
+              27.5710648,
+              47.1661028
+            ],
+            [
+              27.5714338,
+              47.1662145
+            ],
+            [
+              27.5719677,
+              47.1663917
+            ],
+            [
+              27.5745974,
+              47.1676594
+            ],
+            [
+              27.575424,
+              47.1679375
+            ],
+            [
+              27.5760435,
+              47.1680698
+            ],
+            [
+              27.5764151,
+              47.1683669
+            ],
+            [
+              27.5753458,
+              47.1685835
+            ],
+            [
+              27.574628,
+              47.1687659
+            ],
+            [
+              27.5743414,
+              47.1690488
+            ],
+            [
+              27.5744377,
+              47.1693715
+            ],
+            [
+              27.5741307,
+              47.1694305
+            ],
+            [
+              27.5736419,
+              47.1695244
+            ],
+            [
+              27.5732508,
+              47.1693582
+            ],
+            [
+              27.5727082,
+              47.1692836
+            ],
+            [
+              27.5718245,
+              47.1690984
+            ],
+            [
+              27.5712806,
+              47.1693656
+            ],
+            [
+              27.5695405,
+              47.1699749
+            ],
+            [
+              27.5686761,
+              47.170077
+            ],
+            [
+              27.5675614,
+              47.1705416
+            ],
+            [
+              27.5672154,
+              47.1707945
+            ],
+            [
+              27.5666718,
+              47.1709902
+            ],
+            [
+              27.5662517,
+              47.1708394
+            ],
+            [
+              27.5658315,
+              47.1706886
+            ],
+            [
+              27.5638162,
+              47.1714295
+            ],
+            [
+              27.5631934,
+              47.1716765
+            ],
+            [
+              27.5626658,
+              47.1718941
+            ],
+            [
+              27.5619133,
+              47.172141
+            ],
+            [
+              27.559905,
+              47.1706014
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670143836",
+        "name": "Gară",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670143836",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670143836",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Gară",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670143836",
+          "source_url": "https://www.openstreetmap.org/way/670143836",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670144919",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5619133,
+              47.172141
+            ],
+            [
+              27.5597769,
+              47.1729289
+            ],
+            [
+              27.5592,
+              47.1731397
+            ],
+            [
+              27.5585984,
+              47.1732486
+            ],
+            [
+              27.5583304,
+              47.1733277
+            ],
+            [
+              27.5579023,
+              47.1733534
+            ],
+            [
+              27.5572167,
+              47.1734613
+            ],
+            [
+              27.5563465,
+              47.1735989
+            ],
+            [
+              27.5548421,
+              47.1737548
+            ],
+            [
+              27.5547552,
+              47.1736414
+            ],
+            [
+              27.5526681,
+              47.1734499
+            ],
+            [
+              27.5509376,
+              47.1736962
+            ],
+            [
+              27.5505096,
+              47.1737496
+            ],
+            [
+              27.5500722,
+              47.1739768
+            ],
+            [
+              27.5497386,
+              47.1741809
+            ],
+            [
+              27.5484454,
+              47.1742081
+            ],
+            [
+              27.54742,
+              47.1742815
+            ],
+            [
+              27.5472985,
+              47.1741806
+            ],
+            [
+              27.5468465,
+              47.1742127
+            ],
+            [
+              27.5467521,
+              47.1742769
+            ],
+            [
+              27.5452559,
+              47.1743192
+            ],
+            [
+              27.5450926,
+              47.1743044
+            ],
+            [
+              27.5425223,
+              47.1743916
+            ],
+            [
+              27.5413352,
+              47.1732971
+            ],
+            [
+              27.5403128,
+              47.1732636
+            ],
+            [
+              27.5402629,
+              47.1730461
+            ],
+            [
+              27.5380289,
+              47.1729236
+            ],
+            [
+              27.5375136,
+              47.1727806
+            ],
+            [
+              27.5372211,
+              47.1726927
+            ],
+            [
+              27.5361822,
+              47.172365
+            ],
+            [
+              27.5361814,
+              47.1720745
+            ],
+            [
+              27.5361808,
+              47.1718824
+            ],
+            [
+              27.5458856,
+              47.171897
+            ],
+            [
+              27.5530077,
+              47.1718537
+            ],
+            [
+              27.5561666,
+              47.1715067
+            ],
+            [
+              27.5576576,
+              47.1713323
+            ],
+            [
+              27.5591782,
+              47.1708423
+            ],
+            [
+              27.559905,
+              47.1706014
+            ],
+            [
+              27.5619133,
+              47.172141
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670144919",
+        "name": "Canta",
+        "alternative_names": [],
+        "place_level": "neighbourhood",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670144919",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670144919",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "addr:city": "Iași",
+          "landuse": "residential",
+          "name": "Canta",
+          "place": "neighbourhood"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670144919",
+          "source_url": "https://www.openstreetmap.org/way/670144919",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670146320",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5744377,
+              47.1693715
+            ],
+            [
+              27.574714,
+              47.170065
+            ],
+            [
+              27.5745796,
+              47.1701474
+            ],
+            [
+              27.5746018,
+              47.1704942
+            ],
+            [
+              27.5743585,
+              47.1705789
+            ],
+            [
+              27.5734403,
+              47.1705852
+            ],
+            [
+              27.5734801,
+              47.171076
+            ],
+            [
+              27.5732734,
+              47.1711327
+            ],
+            [
+              27.5727466,
+              47.1713403
+            ],
+            [
+              27.570774,
+              47.1719171
+            ],
+            [
+              27.5683549,
+              47.1724298
+            ],
+            [
+              27.5683647,
+              47.1729091
+            ],
+            [
+              27.5686926,
+              47.1730182
+            ],
+            [
+              27.5686999,
+              47.1736532
+            ],
+            [
+              27.5658848,
+              47.1747527
+            ],
+            [
+              27.5657511,
+              47.1747352
+            ],
+            [
+              27.5651743,
+              47.1750875
+            ],
+            [
+              27.562806,
+              47.1765917
+            ],
+            [
+              27.5625716,
+              47.1768213
+            ],
+            [
+              27.562592,
+              47.1770066
+            ],
+            [
+              27.5615369,
+              47.1778403
+            ],
+            [
+              27.5613216,
+              47.1777109
+            ],
+            [
+              27.56126,
+              47.1777055
+            ],
+            [
+              27.5611944,
+              47.1777186
+            ],
+            [
+              27.5610292,
+              47.1778186
+            ],
+            [
+              27.5602557,
+              47.1782108
+            ],
+            [
+              27.5596277,
+              47.1785127
+            ],
+            [
+              27.5590142,
+              47.178701
+            ],
+            [
+              27.5578363,
+              47.1791425
+            ],
+            [
+              27.5548504,
+              47.1797707
+            ],
+            [
+              27.5538456,
+              47.1793938
+            ],
+            [
+              27.5521602,
+              47.1787324
+            ],
+            [
+              27.5509987,
+              47.1783129
+            ],
+            [
+              27.5504931,
+              47.1793627
+            ],
+            [
+              27.5502809,
+              47.1800693
+            ],
+            [
+              27.5493233,
+              47.1799813
+            ],
+            [
+              27.5491301,
+              47.1808296
+            ],
+            [
+              27.5487005,
+              47.1809244
+            ],
+            [
+              27.5477868,
+              47.18123
+            ],
+            [
+              27.5477724,
+              47.1805686
+            ],
+            [
+              27.5479254,
+              47.1799876
+            ],
+            [
+              27.5445943,
+              47.1800124
+            ],
+            [
+              27.5415753,
+              47.1793355
+            ],
+            [
+              27.5412244,
+              47.1785736
+            ],
+            [
+              27.5399992,
+              47.1782511
+            ],
+            [
+              27.5399885,
+              47.1777393
+            ],
+            [
+              27.5389029,
+              47.1774495
+            ],
+            [
+              27.5391701,
+              47.1767786
+            ],
+            [
+              27.5343589,
+              47.1761062
+            ],
+            [
+              27.5320743,
+              47.1758029
+            ],
+            [
+              27.5322497,
+              47.1743467
+            ],
+            [
+              27.5326559,
+              47.1729607
+            ],
+            [
+              27.5327522,
+              47.1726153
+            ],
+            [
+              27.5298105,
+              47.1723812
+            ],
+            [
+              27.5269589,
+              47.1722846
+            ],
+            [
+              27.5191828,
+              47.1723078
+            ],
+            [
+              27.5172293,
+              47.1723147
+            ],
+            [
+              27.5153711,
+              47.1723252
+            ],
+            [
+              27.5125061,
+              47.1723774
+            ],
+            [
+              27.50999,
+              47.1724534
+            ],
+            [
+              27.5070797,
+              47.1725048
+            ],
+            [
+              27.5043354,
+              47.1727512
+            ],
+            [
+              27.4973031,
+              47.1742375
+            ],
+            [
+              27.4901818,
+              47.1760977
+            ],
+            [
+              27.4837552,
+              47.1770691
+            ],
+            [
+              27.4826281,
+              47.1765325
+            ],
+            [
+              27.4790428,
+              47.1772271
+            ],
+            [
+              27.4774946,
+              47.1776087
+            ],
+            [
+              27.4773963,
+              47.1770627
+            ],
+            [
+              27.4774884,
+              47.1768678
+            ],
+            [
+              27.4776472,
+              47.1766485
+            ],
+            [
+              27.478135,
+              47.1759919
+            ],
+            [
+              27.4787252,
+              47.1752413
+            ],
+            [
+              27.4788999,
+              47.1750086
+            ],
+            [
+              27.4793317,
+              47.1747172
+            ],
+            [
+              27.5080908,
+              47.1697416
+            ],
+            [
+              27.5081103,
+              47.169746
+            ],
+            [
+              27.5315141,
+              47.1688534
+            ],
+            [
+              27.530443,
+              47.1711817
+            ],
+            [
+              27.5303733,
+              47.1718467
+            ],
+            [
+              27.5304499,
+              47.1721636
+            ],
+            [
+              27.5325044,
+              47.1721263
+            ],
+            [
+              27.5361814,
+              47.1720745
+            ],
+            [
+              27.5361822,
+              47.172365
+            ],
+            [
+              27.5372211,
+              47.1726927
+            ],
+            [
+              27.5375136,
+              47.1727806
+            ],
+            [
+              27.5380289,
+              47.1729236
+            ],
+            [
+              27.5402629,
+              47.1730461
+            ],
+            [
+              27.5403128,
+              47.1732636
+            ],
+            [
+              27.5413352,
+              47.1732971
+            ],
+            [
+              27.5425223,
+              47.1743916
+            ],
+            [
+              27.5450926,
+              47.1743044
+            ],
+            [
+              27.5452559,
+              47.1743192
+            ],
+            [
+              27.5467521,
+              47.1742769
+            ],
+            [
+              27.5468465,
+              47.1742127
+            ],
+            [
+              27.5472985,
+              47.1741806
+            ],
+            [
+              27.54742,
+              47.1742815
+            ],
+            [
+              27.5484454,
+              47.1742081
+            ],
+            [
+              27.5497386,
+              47.1741809
+            ],
+            [
+              27.5500722,
+              47.1739768
+            ],
+            [
+              27.5505096,
+              47.1737496
+            ],
+            [
+              27.5509376,
+              47.1736962
+            ],
+            [
+              27.5526681,
+              47.1734499
+            ],
+            [
+              27.5547552,
+              47.1736414
+            ],
+            [
+              27.5548421,
+              47.1737548
+            ],
+            [
+              27.5563465,
+              47.1735989
+            ],
+            [
+              27.5572167,
+              47.1734613
+            ],
+            [
+              27.5579023,
+              47.1733534
+            ],
+            [
+              27.5583304,
+              47.1733277
+            ],
+            [
+              27.5585984,
+              47.1732486
+            ],
+            [
+              27.5619133,
+              47.172141
+            ],
+            [
+              27.5658315,
+              47.1706886
+            ],
+            [
+              27.5662517,
+              47.1708394
+            ],
+            [
+              27.5666718,
+              47.1709902
+            ],
+            [
+              27.5672154,
+              47.1707945
+            ],
+            [
+              27.5675614,
+              47.1705416
+            ],
+            [
+              27.5686761,
+              47.170077
+            ],
+            [
+              27.5695405,
+              47.1699749
+            ],
+            [
+              27.5712806,
+              47.1693656
+            ],
+            [
+              27.5718245,
+              47.1690984
+            ],
+            [
+              27.5727082,
+              47.1692836
+            ],
+            [
+              27.5732508,
+              47.1693582
+            ],
+            [
+              27.5736419,
+              47.1695244
+            ],
+            [
+              27.5741307,
+              47.1694305
+            ],
+            [
+              27.5744377,
+              47.1693715
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670146320",
+        "name": "Păcurari",
+        "alternative_names": [],
+        "place_level": "quarter",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670146320",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670146320",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Păcurari",
+          "place": "quarter"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670146320",
+          "source_url": "https://www.openstreetmap.org/way/670146320",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670147612",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.574714,
+              47.170065
+            ],
+            [
+              27.5751286,
+              47.1700167
+            ],
+            [
+              27.5755346,
+              47.1699644
+            ],
+            [
+              27.5757449,
+              47.1699335
+            ],
+            [
+              27.5758422,
+              47.1699272
+            ],
+            [
+              27.576418,
+              47.1699244
+            ],
+            [
+              27.5774292,
+              47.1699269
+            ],
+            [
+              27.579,
+              47.1695115
+            ],
+            [
+              27.5791011,
+              47.1694953
+            ],
+            [
+              27.5804159,
+              47.1693704
+            ],
+            [
+              27.5813675,
+              47.1687591
+            ],
+            [
+              27.5823104,
+              47.1683089
+            ],
+            [
+              27.5848486,
+              47.1678684
+            ],
+            [
+              27.5852918,
+              47.1675475
+            ],
+            [
+              27.5857941,
+              47.1679402
+            ],
+            [
+              27.5853672,
+              47.1688195
+            ],
+            [
+              27.5853602,
+              47.1692408
+            ],
+            [
+              27.5856434,
+              47.1698268
+            ],
+            [
+              27.5859825,
+              47.1701085
+            ],
+            [
+              27.5852881,
+              47.1704636
+            ],
+            [
+              27.584497,
+              47.1707197
+            ],
+            [
+              27.583957,
+              47.1727855
+            ],
+            [
+              27.5834171,
+              47.1731952
+            ],
+            [
+              27.5835702,
+              47.1733965
+            ],
+            [
+              27.583648,
+              47.1741491
+            ],
+            [
+              27.5834837,
+              47.1743255
+            ],
+            [
+              27.5831031,
+              47.1744137
+            ],
+            [
+              27.5827572,
+              47.1748487
+            ],
+            [
+              27.5822468,
+              47.1752015
+            ],
+            [
+              27.5815116,
+              47.1762598
+            ],
+            [
+              27.5807419,
+              47.1772534
+            ],
+            [
+              27.5799894,
+              47.177712
+            ],
+            [
+              27.5795655,
+              47.1782411
+            ],
+            [
+              27.5792929,
+              47.1784381
+            ],
+            [
+              27.5786634,
+              47.1787346
+            ],
+            [
+              27.5779177,
+              47.1793653
+            ],
+            [
+              27.5776959,
+              47.1798477
+            ],
+            [
+              27.5771414,
+              47.1801567
+            ],
+            [
+              27.5767089,
+              47.1802321
+            ],
+            [
+              27.5764467,
+              47.1803326
+            ],
+            [
+              27.5753893,
+              47.1810462
+            ],
+            [
+              27.5743357,
+              47.1818903
+            ],
+            [
+              27.5730604,
+              47.1839932
+            ],
+            [
+              27.5726834,
+              47.1844681
+            ],
+            [
+              27.5718716,
+              47.1851258
+            ],
+            [
+              27.5701438,
+              47.1865257
+            ],
+            [
+              27.5673825,
+              47.1900452
+            ],
+            [
+              27.5648983,
+              47.1928938
+            ],
+            [
+              27.5625515,
+              47.1924392
+            ],
+            [
+              27.5605928,
+              47.1922415
+            ],
+            [
+              27.5601582,
+              47.1920029
+            ],
+            [
+              27.5589051,
+              47.1915411
+            ],
+            [
+              27.5591608,
+              47.191176
+            ],
+            [
+              27.5583871,
+              47.1908755
+            ],
+            [
+              27.5558369,
+              47.1898417
+            ],
+            [
+              27.5543284,
+              47.1894557
+            ],
+            [
+              27.5520054,
+              47.188896
+            ],
+            [
+              27.5501846,
+              47.1883243
+            ],
+            [
+              27.5502976,
+              47.1873002
+            ],
+            [
+              27.5499335,
+              47.1856532
+            ],
+            [
+              27.5498079,
+              47.1849619
+            ],
+            [
+              27.5537508,
+              47.1809165
+            ],
+            [
+              27.5548504,
+              47.1797707
+            ],
+            [
+              27.5578363,
+              47.1791425
+            ],
+            [
+              27.5590142,
+              47.178701
+            ],
+            [
+              27.5596277,
+              47.1785127
+            ],
+            [
+              27.5602557,
+              47.1782108
+            ],
+            [
+              27.5610292,
+              47.1778186
+            ],
+            [
+              27.5611944,
+              47.1777186
+            ],
+            [
+              27.56126,
+              47.1777055
+            ],
+            [
+              27.5613216,
+              47.1777109
+            ],
+            [
+              27.5615369,
+              47.1778403
+            ],
+            [
+              27.562592,
+              47.1770066
+            ],
+            [
+              27.5625716,
+              47.1768213
+            ],
+            [
+              27.562806,
+              47.1765917
+            ],
+            [
+              27.5651743,
+              47.1750875
+            ],
+            [
+              27.5657511,
+              47.1747352
+            ],
+            [
+              27.5658848,
+              47.1747527
+            ],
+            [
+              27.5686999,
+              47.1736532
+            ],
+            [
+              27.5686926,
+              47.1730182
+            ],
+            [
+              27.5683647,
+              47.1729091
+            ],
+            [
+              27.5683549,
+              47.1724298
+            ],
+            [
+              27.5727466,
+              47.1713403
+            ],
+            [
+              27.5732734,
+              47.1711327
+            ],
+            [
+              27.5734801,
+              47.171076
+            ],
+            [
+              27.5734403,
+              47.1705852
+            ],
+            [
+              27.5743585,
+              47.1705789
+            ],
+            [
+              27.5746018,
+              47.1704942
+            ],
+            [
+              27.5745796,
+              47.1701474
+            ],
+            [
+              27.574714,
+              47.170065
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670147612",
+        "name": "Copou",
+        "alternative_names": [],
+        "place_level": "quarter",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670147612",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670147612",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Copou",
+          "place": "quarter"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670147612",
+          "source_url": "https://www.openstreetmap.org/way/670147612",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670149962",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5859825,
+              47.1701085
+            ],
+            [
+              27.5864675,
+              47.1703189
+            ],
+            [
+              27.5852021,
+              47.1715301
+            ],
+            [
+              27.5854046,
+              47.1716884
+            ],
+            [
+              27.5859917,
+              47.1726037
+            ],
+            [
+              27.5867712,
+              47.1732781
+            ],
+            [
+              27.5867307,
+              47.1735809
+            ],
+            [
+              27.5873483,
+              47.1740557
+            ],
+            [
+              27.5877937,
+              47.1743723
+            ],
+            [
+              27.5884315,
+              47.174909
+            ],
+            [
+              27.5911445,
+              47.1762784
+            ],
+            [
+              27.5863306,
+              47.1832319
+            ],
+            [
+              27.575895,
+              47.1887893
+            ],
+            [
+              27.5747133,
+              47.1883313
+            ],
+            [
+              27.5742306,
+              47.1881468
+            ],
+            [
+              27.5718716,
+              47.1851258
+            ],
+            [
+              27.5726834,
+              47.1844681
+            ],
+            [
+              27.5730604,
+              47.1839932
+            ],
+            [
+              27.5743357,
+              47.1818903
+            ],
+            [
+              27.5753893,
+              47.1810462
+            ],
+            [
+              27.5764467,
+              47.1803326
+            ],
+            [
+              27.5767089,
+              47.1802321
+            ],
+            [
+              27.5771414,
+              47.1801567
+            ],
+            [
+              27.5776959,
+              47.1798477
+            ],
+            [
+              27.5779177,
+              47.1793653
+            ],
+            [
+              27.5786634,
+              47.1787346
+            ],
+            [
+              27.5792929,
+              47.1784381
+            ],
+            [
+              27.5795655,
+              47.1782411
+            ],
+            [
+              27.5799894,
+              47.177712
+            ],
+            [
+              27.5807419,
+              47.1772534
+            ],
+            [
+              27.5815116,
+              47.1762598
+            ],
+            [
+              27.5822468,
+              47.1752015
+            ],
+            [
+              27.5827572,
+              47.1748487
+            ],
+            [
+              27.5831031,
+              47.1744137
+            ],
+            [
+              27.5834837,
+              47.1743255
+            ],
+            [
+              27.583648,
+              47.1741491
+            ],
+            [
+              27.5835702,
+              47.1733965
+            ],
+            [
+              27.5834171,
+              47.1731952
+            ],
+            [
+              27.583957,
+              47.1727855
+            ],
+            [
+              27.584497,
+              47.1707197
+            ],
+            [
+              27.5859825,
+              47.1701085
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670149962",
+        "name": "Țicău",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670149962",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670149962",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Țicău",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670149962",
+          "source_url": "https://www.openstreetmap.org/way/670149962",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670151036",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5744377,
+              47.1693715
+            ],
+            [
+              27.574714,
+              47.170065
+            ],
+            [
+              27.5751286,
+              47.1700167
+            ],
+            [
+              27.5755346,
+              47.1699644
+            ],
+            [
+              27.5757449,
+              47.1699335
+            ],
+            [
+              27.5758422,
+              47.1699272
+            ],
+            [
+              27.576418,
+              47.1699244
+            ],
+            [
+              27.5774292,
+              47.1699269
+            ],
+            [
+              27.5791011,
+              47.1694953
+            ],
+            [
+              27.5804159,
+              47.1693704
+            ],
+            [
+              27.5814485,
+              47.1686056
+            ],
+            [
+              27.5823104,
+              47.1683089
+            ],
+            [
+              27.5848486,
+              47.1678684
+            ],
+            [
+              27.5852918,
+              47.1675475
+            ],
+            [
+              27.5861169,
+              47.1672221
+            ],
+            [
+              27.5869419,
+              47.1668967
+            ],
+            [
+              27.5896416,
+              47.1668967
+            ],
+            [
+              27.5899012,
+              47.1665702
+            ],
+            [
+              27.5905891,
+              47.1665525
+            ],
+            [
+              27.5911083,
+              47.1666849
+            ],
+            [
+              27.5917312,
+              47.1667488
+            ],
+            [
+              27.5918229,
+              47.1670684
+            ],
+            [
+              27.5926826,
+              47.1672008
+            ],
+            [
+              27.5932213,
+              47.1661566
+            ],
+            [
+              27.5939779,
+              47.165346
+            ],
+            [
+              27.5940581,
+              47.1645277
+            ],
+            [
+              27.5940857,
+              47.1644806
+            ],
+            [
+              27.5943332,
+              47.1640367
+            ],
+            [
+              27.5961455,
+              47.1636083
+            ],
+            [
+              27.5977847,
+              47.1615975
+            ],
+            [
+              27.5986446,
+              47.1608829
+            ],
+            [
+              27.599758,
+              47.1597265
+            ],
+            [
+              27.5994812,
+              47.1593194
+            ],
+            [
+              27.5993656,
+              47.1582298
+            ],
+            [
+              27.5976024,
+              47.1580125
+            ],
+            [
+              27.5960641,
+              47.1578338
+            ],
+            [
+              27.5950788,
+              47.1578526
+            ],
+            [
+              27.5947388,
+              47.1578749
+            ],
+            [
+              27.5942248,
+              47.1579102
+            ],
+            [
+              27.5941028,
+              47.157919
+            ],
+            [
+              27.5939981,
+              47.1579265
+            ],
+            [
+              27.5937084,
+              47.1579563
+            ],
+            [
+              27.5932822,
+              47.1580439
+            ],
+            [
+              27.593233,
+              47.1580327
+            ],
+            [
+              27.5928068,
+              47.1581621
+            ],
+            [
+              27.5922918,
+              47.1582952
+            ],
+            [
+              27.5921952,
+              47.1582714
+            ],
+            [
+              27.590824,
+              47.1562585
+            ],
+            [
+              27.5902374,
+              47.1554506
+            ],
+            [
+              27.5901555,
+              47.1553402
+            ],
+            [
+              27.5898613,
+              47.1549116
+            ],
+            [
+              27.5892729,
+              47.1549573
+            ],
+            [
+              27.5870098,
+              47.1543092
+            ],
+            [
+              27.5867736,
+              47.1543489
+            ],
+            [
+              27.5856269,
+              47.1555102
+            ],
+            [
+              27.5854079,
+              47.1554717
+            ],
+            [
+              27.5839363,
+              47.1552134
+            ],
+            [
+              27.5835438,
+              47.1555096
+            ],
+            [
+              27.5832482,
+              47.1563694
+            ],
+            [
+              27.5832482,
+              47.1572226
+            ],
+            [
+              27.5832077,
+              47.1576079
+            ],
+            [
+              27.5823712,
+              47.1584611
+            ],
+            [
+              27.5814935,
+              47.1591816
+            ],
+            [
+              27.5809006,
+              47.159984
+            ],
+            [
+              27.5812532,
+              47.1604179
+            ],
+            [
+              27.5793759,
+              47.162727
+            ],
+            [
+              27.5791208,
+              47.1633703
+            ],
+            [
+              27.5791466,
+              47.1637911
+            ],
+            [
+              27.5793085,
+              47.1640021
+            ],
+            [
+              27.578499,
+              47.1645066
+            ],
+            [
+              27.5779053,
+              47.1646626
+            ],
+            [
+              27.5766101,
+              47.1653597
+            ],
+            [
+              27.5756656,
+              47.1659835
+            ],
+            [
+              27.5753823,
+              47.1665155
+            ],
+            [
+              27.5751208,
+              47.1669141
+            ],
+            [
+              27.5745974,
+              47.1676594
+            ],
+            [
+              27.575424,
+              47.1679375
+            ],
+            [
+              27.5764151,
+              47.1683669
+            ],
+            [
+              27.5753458,
+              47.1685835
+            ],
+            [
+              27.574628,
+              47.1687659
+            ],
+            [
+              27.5743414,
+              47.1690488
+            ],
+            [
+              27.5744377,
+              47.1693715
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670151036",
+        "name": "Centru",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670151036",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670151036",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Centru",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670151036",
+          "source_url": "https://www.openstreetmap.org/way/670151036",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670152373",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5943332,
+              47.1640367
+            ],
+            [
+              27.5950981,
+              47.1642839
+            ],
+            [
+              27.5973405,
+              47.1656291
+            ],
+            [
+              27.5984205,
+              47.1659706
+            ],
+            [
+              27.5985938,
+              47.166025
+            ],
+            [
+              27.5987064,
+              47.1660876
+            ],
+            [
+              27.5988668,
+              47.1660903
+            ],
+            [
+              27.599625,
+              47.166904
+            ],
+            [
+              27.5998706,
+              47.1672563
+            ],
+            [
+              27.5999685,
+              47.1673777
+            ],
+            [
+              27.600054,
+              47.167602
+            ],
+            [
+              27.6020882,
+              47.1679455
+            ],
+            [
+              27.6030894,
+              47.1684616
+            ],
+            [
+              27.6038227,
+              47.1684988
+            ],
+            [
+              27.6056402,
+              47.1695432
+            ],
+            [
+              27.6058405,
+              47.1708268
+            ],
+            [
+              27.6045271,
+              47.1717423
+            ],
+            [
+              27.6044832,
+              47.1722889
+            ],
+            [
+              27.6059815,
+              47.1731794
+            ],
+            [
+              27.6020783,
+              47.1780879
+            ],
+            [
+              27.5981561,
+              47.1800158
+            ],
+            [
+              27.5961381,
+              47.1796061
+            ],
+            [
+              27.5956697,
+              47.1795993
+            ],
+            [
+              27.5954729,
+              47.1786217
+            ],
+            [
+              27.5911445,
+              47.1762784
+            ],
+            [
+              27.5884315,
+              47.174909
+            ],
+            [
+              27.5877937,
+              47.1743723
+            ],
+            [
+              27.5873483,
+              47.1740557
+            ],
+            [
+              27.5867307,
+              47.1735809
+            ],
+            [
+              27.5867712,
+              47.1732781
+            ],
+            [
+              27.5859917,
+              47.1726037
+            ],
+            [
+              27.5854046,
+              47.1716884
+            ],
+            [
+              27.5852021,
+              47.1715301
+            ],
+            [
+              27.5864675,
+              47.1703189
+            ],
+            [
+              27.5859825,
+              47.1701085
+            ],
+            [
+              27.5856434,
+              47.1698268
+            ],
+            [
+              27.5853602,
+              47.1692408
+            ],
+            [
+              27.5853672,
+              47.1688195
+            ],
+            [
+              27.5857941,
+              47.1679402
+            ],
+            [
+              27.5852918,
+              47.1675475
+            ],
+            [
+              27.5861169,
+              47.1672221
+            ],
+            [
+              27.5869419,
+              47.1668967
+            ],
+            [
+              27.587945,
+              47.1669155
+            ],
+            [
+              27.5896416,
+              47.1668967
+            ],
+            [
+              27.5899012,
+              47.1665702
+            ],
+            [
+              27.5905891,
+              47.1665525
+            ],
+            [
+              27.5911083,
+              47.1666849
+            ],
+            [
+              27.5917312,
+              47.1667488
+            ],
+            [
+              27.5918229,
+              47.1670684
+            ],
+            [
+              27.5926826,
+              47.1672008
+            ],
+            [
+              27.5932213,
+              47.1661566
+            ],
+            [
+              27.5939779,
+              47.165346
+            ],
+            [
+              27.5940581,
+              47.1645277
+            ],
+            [
+              27.5940857,
+              47.1644806
+            ],
+            [
+              27.5943332,
+              47.1640367
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670152373",
+        "name": "Moara de Vânt",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670152373",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670152373",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Moara de Vânt",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670152373",
+          "source_url": "https://www.openstreetmap.org/way/670152373",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670152751",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5948396,
+              47.1527392
+            ],
+            [
+              27.5955033,
+              47.1528808
+            ],
+            [
+              27.6021241,
+              47.1542938
+            ],
+            [
+              27.6032184,
+              47.1542752
+            ],
+            [
+              27.6043313,
+              47.1541256
+            ],
+            [
+              27.6107279,
+              47.153038
+            ],
+            [
+              27.611918,
+              47.1562006
+            ],
+            [
+              27.612301,
+              47.1572424
+            ],
+            [
+              27.610003,
+              47.1575493
+            ],
+            [
+              27.6084983,
+              47.1585259
+            ],
+            [
+              27.6063918,
+              47.1583864
+            ],
+            [
+              27.6047778,
+              47.1583678
+            ],
+            [
+              27.6040118,
+              47.1583306
+            ],
+            [
+              27.6036547,
+              47.1583637
+            ],
+            [
+              27.6028081,
+              47.1584422
+            ],
+            [
+              27.6024524,
+              47.1587305
+            ],
+            [
+              27.6019463,
+              47.1591119
+            ],
+            [
+              27.6011092,
+              47.158904
+            ],
+            [
+              27.6006742,
+              47.1587398
+            ],
+            [
+              27.6003345,
+              47.1589043
+            ],
+            [
+              27.599692,
+              47.1592166
+            ],
+            [
+              27.5994812,
+              47.1593194
+            ],
+            [
+              27.5993656,
+              47.1582298
+            ],
+            [
+              27.5976024,
+              47.1580125
+            ],
+            [
+              27.5960641,
+              47.1578338
+            ],
+            [
+              27.5950788,
+              47.1578526
+            ],
+            [
+              27.5947388,
+              47.1578749
+            ],
+            [
+              27.5942248,
+              47.1579102
+            ],
+            [
+              27.5941028,
+              47.157919
+            ],
+            [
+              27.5939981,
+              47.1579265
+            ],
+            [
+              27.5937084,
+              47.1579563
+            ],
+            [
+              27.5932822,
+              47.1580439
+            ],
+            [
+              27.593233,
+              47.1580327
+            ],
+            [
+              27.5928068,
+              47.1581621
+            ],
+            [
+              27.5922918,
+              47.1582952
+            ],
+            [
+              27.5921952,
+              47.1582714
+            ],
+            [
+              27.590824,
+              47.1562585
+            ],
+            [
+              27.5919837,
+              47.1558051
+            ],
+            [
+              27.5933505,
+              47.1550349
+            ],
+            [
+              27.593815,
+              47.1547719
+            ],
+            [
+              27.5948396,
+              47.1527392
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670152751",
+        "name": "Tudor Vladimirescu",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670152751",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670152751",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Tudor Vladimirescu",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670152751",
+          "source_url": "https://www.openstreetmap.org/way/670152751",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670153116",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.6019463,
+              47.1591119
+            ],
+            [
+              27.6057763,
+              47.159828
+            ],
+            [
+              27.6068569,
+              47.1600048
+            ],
+            [
+              27.607898,
+              47.1600948
+            ],
+            [
+              27.6088864,
+              47.1601745
+            ],
+            [
+              27.6089391,
+              47.1601847
+            ],
+            [
+              27.6124788,
+              47.1601815
+            ],
+            [
+              27.6191448,
+              47.1586945
+            ],
+            [
+              27.6221665,
+              47.1587675
+            ],
+            [
+              27.621999,
+              47.1595676
+            ],
+            [
+              27.6192839,
+              47.162358
+            ],
+            [
+              27.6184153,
+              47.1632506
+            ],
+            [
+              27.6156112,
+              47.1651571
+            ],
+            [
+              27.6143391,
+              47.1652315
+            ],
+            [
+              27.6142776,
+              47.1655445
+            ],
+            [
+              27.6132507,
+              47.1664911
+            ],
+            [
+              27.6120266,
+              47.1670467
+            ],
+            [
+              27.6108762,
+              47.1677994
+            ],
+            [
+              27.6092193,
+              47.1703713
+            ],
+            [
+              27.6066122,
+              47.1726109
+            ],
+            [
+              27.6059815,
+              47.1731794
+            ],
+            [
+              27.6045443,
+              47.1722447
+            ],
+            [
+              27.6045429,
+              47.171793
+            ],
+            [
+              27.6058405,
+              47.1708268
+            ],
+            [
+              27.6055478,
+              47.1694974
+            ],
+            [
+              27.6038227,
+              47.1684988
+            ],
+            [
+              27.6030894,
+              47.1684616
+            ],
+            [
+              27.6026425,
+              47.168392
+            ],
+            [
+              27.6020094,
+              47.1680411
+            ],
+            [
+              27.601579,
+              47.1678604
+            ],
+            [
+              27.6011007,
+              47.1677289
+            ],
+            [
+              27.600054,
+              47.167602
+            ],
+            [
+              27.5999685,
+              47.1673777
+            ],
+            [
+              27.5998706,
+              47.1672563
+            ],
+            [
+              27.599625,
+              47.166904
+            ],
+            [
+              27.5988668,
+              47.1660903
+            ],
+            [
+              27.5987064,
+              47.1660876
+            ],
+            [
+              27.5985938,
+              47.166025
+            ],
+            [
+              27.5984205,
+              47.1659706
+            ],
+            [
+              27.5973405,
+              47.1656291
+            ],
+            [
+              27.5950981,
+              47.1642839
+            ],
+            [
+              27.5943332,
+              47.1640367
+            ],
+            [
+              27.5961455,
+              47.1636083
+            ],
+            [
+              27.5977847,
+              47.1615975
+            ],
+            [
+              27.5986446,
+              47.1608829
+            ],
+            [
+              27.599758,
+              47.1597265
+            ],
+            [
+              27.5994812,
+              47.1593194
+            ],
+            [
+              27.599692,
+              47.1592166
+            ],
+            [
+              27.6003345,
+              47.1589043
+            ],
+            [
+              27.6006742,
+              47.1587398
+            ],
+            [
+              27.6011092,
+              47.158904
+            ],
+            [
+              27.6019463,
+              47.1591119
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670153116",
+        "name": "Tătărași Nord",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670153116",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670153116",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Tătărași Nord",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670153116",
+          "source_url": "https://www.openstreetmap.org/way/670153116",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670356965",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.6019463,
+              47.1591119
+            ],
+            [
+              27.6057763,
+              47.159828
+            ],
+            [
+              27.6068569,
+              47.1600048
+            ],
+            [
+              27.607898,
+              47.1600948
+            ],
+            [
+              27.6088864,
+              47.1601745
+            ],
+            [
+              27.6124788,
+              47.1601815
+            ],
+            [
+              27.6191448,
+              47.1586945
+            ],
+            [
+              27.6221665,
+              47.1587675
+            ],
+            [
+              27.6224878,
+              47.1586733
+            ],
+            [
+              27.6244971,
+              47.1562372
+            ],
+            [
+              27.6254161,
+              47.1558348
+            ],
+            [
+              27.6259585,
+              47.1553752
+            ],
+            [
+              27.6284846,
+              47.154426
+            ],
+            [
+              27.6281111,
+              47.1539093
+            ],
+            [
+              27.6281107,
+              47.1533986
+            ],
+            [
+              27.6277168,
+              47.1526307
+            ],
+            [
+              27.6282959,
+              47.1505316
+            ],
+            [
+              27.6280329,
+              47.1501784
+            ],
+            [
+              27.6107279,
+              47.153038
+            ],
+            [
+              27.612301,
+              47.1572424
+            ],
+            [
+              27.610003,
+              47.1575493
+            ],
+            [
+              27.6084983,
+              47.1585259
+            ],
+            [
+              27.6063918,
+              47.1583864
+            ],
+            [
+              27.6041805,
+              47.1582874
+            ],
+            [
+              27.6028081,
+              47.1584422
+            ],
+            [
+              27.6024524,
+              47.1587305
+            ],
+            [
+              27.6019463,
+              47.1591119
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670356965",
+        "name": "Tătărași Sud",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670356965",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670356965",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Tătărași Sud",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670356965",
+          "source_url": "https://www.openstreetmap.org/way/670356965",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670357626",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.6280329,
+              47.1501784
+            ],
+            [
+              27.6302841,
+              47.1499652
+            ],
+            [
+              27.6335194,
+              47.1506579
+            ],
+            [
+              27.6362154,
+              47.1500874
+            ],
+            [
+              27.6419869,
+              47.1508073
+            ],
+            [
+              27.6428125,
+              47.1509048
+            ],
+            [
+              27.6471594,
+              47.1514184
+            ],
+            [
+              27.6364207,
+              47.1573559
+            ],
+            [
+              27.6333522,
+              47.1603032
+            ],
+            [
+              27.6316141,
+              47.1637172
+            ],
+            [
+              27.6264239,
+              47.1628636
+            ],
+            [
+              27.6224663,
+              47.1626476
+            ],
+            [
+              27.6208244,
+              47.1625317
+            ],
+            [
+              27.6196106,
+              47.1623879
+            ],
+            [
+              27.6192839,
+              47.162358
+            ],
+            [
+              27.621999,
+              47.1595676
+            ],
+            [
+              27.6221665,
+              47.1587675
+            ],
+            [
+              27.6244971,
+              47.1562372
+            ],
+            [
+              27.6254161,
+              47.1558348
+            ],
+            [
+              27.6259585,
+              47.1553752
+            ],
+            [
+              27.6284846,
+              47.154426
+            ],
+            [
+              27.6281111,
+              47.1539093
+            ],
+            [
+              27.6281107,
+              47.1533986
+            ],
+            [
+              27.6277168,
+              47.1526307
+            ],
+            [
+              27.6282959,
+              47.1505316
+            ],
+            [
+              27.6280329,
+              47.1501784
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670357626",
+        "name": "Aviației",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670357626",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670357626",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Aviației",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670357626",
+          "source_url": "https://www.openstreetmap.org/way/670357626",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670357973",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.6043313,
+              47.1541256
+            ],
+            [
+              27.6033599,
+              47.1522672
+            ],
+            [
+              27.6024648,
+              47.1483139
+            ],
+            [
+              27.6027552,
+              47.1480817
+            ],
+            [
+              27.6044593,
+              47.1477768
+            ],
+            [
+              27.6090631,
+              47.147203
+            ],
+            [
+              27.6155839,
+              47.1461788
+            ],
+            [
+              27.6130907,
+              47.1438341
+            ],
+            [
+              27.6125139,
+              47.1432916
+            ],
+            [
+              27.609065,
+              47.1403915
+            ],
+            [
+              27.6074732,
+              47.1387415
+            ],
+            [
+              27.6080038,
+              47.1379552
+            ],
+            [
+              27.6104484,
+              47.1364212
+            ],
+            [
+              27.6118063,
+              47.1359951
+            ],
+            [
+              27.613597,
+              47.1357788
+            ],
+            [
+              27.6158507,
+              47.1336845
+            ],
+            [
+              27.6202606,
+              47.1345737
+            ],
+            [
+              27.6238059,
+              47.1393193
+            ],
+            [
+              27.6328432,
+              47.1396608
+            ],
+            [
+              27.6426504,
+              47.1399796
+            ],
+            [
+              27.6455624,
+              47.1393649
+            ],
+            [
+              27.6494116,
+              47.1395356
+            ],
+            [
+              27.6528753,
+              47.1398313
+            ],
+            [
+              27.6589845,
+              47.139843
+            ],
+            [
+              27.66077,
+              47.1401813
+            ],
+            [
+              27.6631111,
+              47.1410685
+            ],
+            [
+              27.662769,
+              47.1439843
+            ],
+            [
+              27.6601928,
+              47.1447206
+            ],
+            [
+              27.6595371,
+              47.1430492
+            ],
+            [
+              27.6565942,
+              47.1442287
+            ],
+            [
+              27.6564953,
+              47.1453276
+            ],
+            [
+              27.655621,
+              47.14521
+            ],
+            [
+              27.6533476,
+              47.1457635
+            ],
+            [
+              27.6526732,
+              47.1461273
+            ],
+            [
+              27.6515237,
+              47.1470846
+            ],
+            [
+              27.6501123,
+              47.1485246
+            ],
+            [
+              27.6493495,
+              47.1490135
+            ],
+            [
+              27.646951,
+              47.1489533
+            ],
+            [
+              27.6458229,
+              47.149092
+            ],
+            [
+              27.6443799,
+              47.149849
+            ],
+            [
+              27.6438386,
+              47.1501489
+            ],
+            [
+              27.6428125,
+              47.1509048
+            ],
+            [
+              27.6362154,
+              47.1500874
+            ],
+            [
+              27.6335194,
+              47.1506579
+            ],
+            [
+              27.6302841,
+              47.1499652
+            ],
+            [
+              27.6280329,
+              47.1501784
+            ],
+            [
+              27.6107279,
+              47.153038
+            ],
+            [
+              27.6043313,
+              47.1541256
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670357973",
+        "name": "Zona Industrială",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670357973",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670357973",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Zona Industrială",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670357973",
+          "source_url": "https://www.openstreetmap.org/way/670357973",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-670358216",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.6043313,
+              47.1541256
+            ],
+            [
+              27.6032184,
+              47.1542752
+            ],
+            [
+              27.6021241,
+              47.1542938
+            ],
+            [
+              27.5955033,
+              47.1528808
+            ],
+            [
+              27.5948396,
+              47.1527392
+            ],
+            [
+              27.5910415,
+              47.1518914
+            ],
+            [
+              27.5903456,
+              47.1507182
+            ],
+            [
+              27.5902763,
+              47.1506037
+            ],
+            [
+              27.5901137,
+              47.1503337
+            ],
+            [
+              27.5904036,
+              47.1501365
+            ],
+            [
+              27.5894758,
+              47.1495943
+            ],
+            [
+              27.5920323,
+              47.1474527
+            ],
+            [
+              27.5920621,
+              47.1474303
+            ],
+            [
+              27.592253,
+              47.147382
+            ],
+            [
+              27.596349,
+              47.1439738
+            ],
+            [
+              27.5989301,
+              47.1456342
+            ],
+            [
+              27.5994357,
+              47.1459177
+            ],
+            [
+              27.6008981,
+              47.1457715
+            ],
+            [
+              27.6037609,
+              47.1456855
+            ],
+            [
+              27.6044593,
+              47.1477768
+            ],
+            [
+              27.6027552,
+              47.1480817
+            ],
+            [
+              27.6024648,
+              47.1483139
+            ],
+            [
+              27.6033599,
+              47.1522672
+            ],
+            [
+              27.6043313,
+              47.1541256
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-670358216",
+        "name": "Țesătura",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-670358216",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/670358216",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "is_in:city": "Iași",
+          "landuse": "residential",
+          "name": "Țesătura",
+          "place": "suburb"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-670358216",
+          "source_url": "https://www.openstreetmap.org/way/670358216",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-w-1559137274",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.5578816,
+              47.1951552
+            ],
+            [
+              27.5594347,
+              47.1934414
+            ],
+            [
+              27.5605928,
+              47.1922415
+            ],
+            [
+              27.5601582,
+              47.1920029
+            ],
+            [
+              27.5589051,
+              47.1915411
+            ],
+            [
+              27.5591608,
+              47.191176
+            ],
+            [
+              27.5583871,
+              47.1908755
+            ],
+            [
+              27.5558369,
+              47.1898417
+            ],
+            [
+              27.5543284,
+              47.1894557
+            ],
+            [
+              27.5542494,
+              47.1895158
+            ],
+            [
+              27.5542082,
+              47.1899527
+            ],
+            [
+              27.5544596,
+              47.1901129
+            ],
+            [
+              27.5544985,
+              47.1903264
+            ],
+            [
+              27.5543889,
+              47.1912422
+            ],
+            [
+              27.5542225,
+              47.1919572
+            ],
+            [
+              27.5550348,
+              47.1920397
+            ],
+            [
+              27.5549247,
+              47.1924604
+            ],
+            [
+              27.5545179,
+              47.1937813
+            ],
+            [
+              27.5543238,
+              47.1943806
+            ],
+            [
+              27.5541926,
+              47.1943414
+            ],
+            [
+              27.5541204,
+              47.1945835
+            ],
+            [
+              27.5540749,
+              47.1946356
+            ],
+            [
+              27.5543101,
+              47.1946949
+            ],
+            [
+              27.5537882,
+              47.1953854
+            ],
+            [
+              27.5531667,
+              47.1957606
+            ],
+            [
+              27.5526993,
+              47.1957181
+            ],
+            [
+              27.5525111,
+              47.1961768
+            ],
+            [
+              27.5528292,
+              47.1964609
+            ],
+            [
+              27.5526468,
+              47.1965644
+            ],
+            [
+              27.552345,
+              47.1963104
+            ],
+            [
+              27.552039,
+              47.1964569
+            ],
+            [
+              27.5517454,
+              47.1965706
+            ],
+            [
+              27.5517871,
+              47.19662
+            ],
+            [
+              27.5514839,
+              47.1967353
+            ],
+            [
+              27.5512586,
+              47.1964789
+            ],
+            [
+              27.5504594,
+              47.196768
+            ],
+            [
+              27.5499735,
+              47.1969567
+            ],
+            [
+              27.5462798,
+              47.1975387
+            ],
+            [
+              27.5460706,
+              47.1968812
+            ],
+            [
+              27.5441747,
+              47.1972055
+            ],
+            [
+              27.5439524,
+              47.1974942
+            ],
+            [
+              27.5428867,
+              47.1967879
+            ],
+            [
+              27.5433705,
+              47.1957529
+            ],
+            [
+              27.5425337,
+              47.1952776
+            ],
+            [
+              27.542458,
+              47.1954517
+            ],
+            [
+              27.5418248,
+              47.1961258
+            ],
+            [
+              27.5409482,
+              47.1957898
+            ],
+            [
+              27.5402345,
+              47.1955196
+            ],
+            [
+              27.5396624,
+              47.1953071
+            ],
+            [
+              27.5393478,
+              47.195201
+            ],
+            [
+              27.5386193,
+              47.1950312
+            ],
+            [
+              27.5379492,
+              47.1948139
+            ],
+            [
+              27.5374552,
+              47.195208
+            ],
+            [
+              27.5379902,
+              47.195471
+            ],
+            [
+              27.5371365,
+              47.196082
+            ],
+            [
+              27.5381154,
+              47.1966234
+            ],
+            [
+              27.5391854,
+              47.1957649
+            ],
+            [
+              27.540335,
+              47.1964532
+            ],
+            [
+              27.5404458,
+              47.1965272
+            ],
+            [
+              27.5410066,
+              47.1969018
+            ],
+            [
+              27.5421335,
+              47.1971571
+            ],
+            [
+              27.5433969,
+              47.1979614
+            ],
+            [
+              27.5435449,
+              47.1984409
+            ],
+            [
+              27.5432034,
+              47.1985492
+            ],
+            [
+              27.5426571,
+              47.1988972
+            ],
+            [
+              27.5419356,
+              47.1994217
+            ],
+            [
+              27.540798,
+              47.2003171
+            ],
+            [
+              27.5405897,
+              47.2003932
+            ],
+            [
+              27.5397727,
+              47.2004029
+            ],
+            [
+              27.5407038,
+              47.1994845
+            ],
+            [
+              27.540987,
+              47.1989198
+            ],
+            [
+              27.5393205,
+              47.198205
+            ],
+            [
+              27.539136,
+              47.1981056
+            ],
+            [
+              27.537395,
+              47.1971681
+            ],
+            [
+              27.5369659,
+              47.1974428
+            ],
+            [
+              27.5390537,
+              47.1986405
+            ],
+            [
+              27.5375094,
+              47.1997693
+            ],
+            [
+              27.5388357,
+              47.2006453
+            ],
+            [
+              27.5407727,
+              47.2005591
+            ],
+            [
+              27.5411778,
+              47.2004311
+            ],
+            [
+              27.5413173,
+              47.2001648
+            ],
+            [
+              27.5420959,
+              47.199586
+            ],
+            [
+              27.5424582,
+              47.1998389
+            ],
+            [
+              27.5432889,
+              47.2005419
+            ],
+            [
+              27.5416519,
+              47.2013
+            ],
+            [
+              27.5418504,
+              47.2014835
+            ],
+            [
+              27.5422038,
+              47.2015679
+            ],
+            [
+              27.5431231,
+              47.2015208
+            ],
+            [
+              27.5432807,
+              47.2008349
+            ],
+            [
+              27.5452317,
+              47.1998492
+            ],
+            [
+              27.5458269,
+              47.1996947
+            ],
+            [
+              27.5462713,
+              47.1995095
+            ],
+            [
+              27.5473208,
+              47.1995891
+            ],
+            [
+              27.5477093,
+              47.1995568
+            ],
+            [
+              27.5489843,
+              47.1993848
+            ],
+            [
+              27.5495348,
+              47.1993775
+            ],
+            [
+              27.5509238,
+              47.199308
+            ],
+            [
+              27.5510508,
+              47.1993128
+            ],
+            [
+              27.5510548,
+              47.1993541
+            ],
+            [
+              27.5511572,
+              47.1993545
+            ],
+            [
+              27.5519104,
+              47.1994036
+            ],
+            [
+              27.5522883,
+              47.1994918
+            ],
+            [
+              27.5525841,
+              47.1993468
+            ],
+            [
+              27.5528881,
+              47.1989567
+            ],
+            [
+              27.5538985,
+              47.198496
+            ],
+            [
+              27.5547475,
+              47.1979449
+            ],
+            [
+              27.5557101,
+              47.1975936
+            ],
+            [
+              27.5561075,
+              47.1971288
+            ],
+            [
+              27.5561234,
+              47.1964271
+            ],
+            [
+              27.5567493,
+              47.1956341
+            ],
+            [
+              27.5578816,
+              47.1951552
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-w-1559137274",
+        "name": "Agronomie",
+        "alternative_names": [],
+        "place_level": "quarter",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-w-1559137274",
+        "source_object_type": "way",
+        "source_url": "https://www.openstreetmap.org/way/1559137274",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "landuse": "residential",
+          "name": "Agronomie",
+          "place": "quarter"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-w-1559137274",
+          "source_url": "https://www.openstreetmap.org/way/1559137274",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-r-17773567",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [
+              27.6074732,
+              47.1387415
+            ],
+            [
+              27.6080038,
+              47.1379552
+            ],
+            [
+              27.6104484,
+              47.1364212
+            ],
+            [
+              27.6118063,
+              47.1359951
+            ],
+            [
+              27.6120861,
+              47.1356062
+            ],
+            [
+              27.6104076,
+              47.1346044
+            ],
+            [
+              27.6090873,
+              47.1354741
+            ],
+            [
+              27.6063249,
+              47.1373358
+            ],
+            [
+              27.6062607,
+              47.137336
+            ],
+            [
+              27.6042112,
+              47.138686
+            ],
+            [
+              27.5966065,
+              47.1385152
+            ],
+            [
+              27.5964624,
+              47.1389621
+            ],
+            [
+              27.5971287,
+              47.1395053
+            ],
+            [
+              27.59683,
+              47.1397069
+            ],
+            [
+              27.5963902,
+              47.1400447
+            ],
+            [
+              27.597114,
+              47.1405296
+            ],
+            [
+              27.5985806,
+              47.1425435
+            ],
+            [
+              27.5974648,
+              47.1432587
+            ],
+            [
+              27.596349,
+              47.1439738
+            ],
+            [
+              27.5994357,
+              47.1459177
+            ],
+            [
+              27.6039748,
+              47.1455967
+            ],
+            [
+              27.6044593,
+              47.1477768
+            ],
+            [
+              27.6090631,
+              47.147203
+            ],
+            [
+              27.6155839,
+              47.1461788
+            ],
+            [
+              27.6125139,
+              47.1432916
+            ],
+            [
+              27.609065,
+              47.1403915
+            ],
+            [
+              27.6074732,
+              47.1387415
+            ]
+          ]
+        ]
+      },
+      "properties": {
+        "neighborhood_id": "osm-r-17773567",
+        "name": "Bularga",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-r-17773567",
+        "source_object_type": "relation",
+        "source_url": "https://www.openstreetmap.org/relation/17773567",
+        "geometry_origin": "osm_mapped_place_polygon",
+        "boundary_status": "source_mapped",
+        "review_status": "unreviewed",
+        "authority_status": "not_verified_as_municipal_delineation",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "An OpenStreetMap place polygon, not an authoritative municipal or legal neighborhood boundary.",
+        "osm_tags": {
+          "area": "yes",
+          "is_in:city": "Iași",
+          "name": "Bularga",
+          "place": "suburb",
+          "type": "multipolygon"
+        },
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-r-17773567",
+          "source_url": "https://www.openstreetmap.org/relation/17773567",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-n-2468944287",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.6050552,
+          47.1465066
+        ]
+      },
+      "properties": {
+        "place_point_id": "osm-n-2468944287",
+        "name": "Baza 3",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-n-2468944287",
+        "source_object_type": "node",
+        "source_url": "https://www.openstreetmap.org/node/2468944287",
+        "geometry_origin": "osm_named_place_point",
+        "boundary_status": "point_only",
+        "review_status": "unreviewed",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "This OSM object is a named place point; no matching polygon name was returned in the bounded query. No area is inferred.",
+        "osm_tags": {
+          "name": "Baza 3",
+          "place": "suburb"
+        },
+        "neighborhood_id": "osm-n-2468944287",
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-n-2468944287",
+          "source_url": "https://www.openstreetmap.org/node/2468944287",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-n-2468944288",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.6222515,
+          47.1242658
+        ]
+      },
+      "properties": {
+        "place_point_id": "osm-n-2468944288",
+        "name": "Bucium",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-n-2468944288",
+        "source_object_type": "node",
+        "source_url": "https://www.openstreetmap.org/node/2468944288",
+        "geometry_origin": "osm_named_place_point",
+        "boundary_status": "point_only",
+        "review_status": "unreviewed",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "This OSM object is a named place point; no matching polygon name was returned in the bounded query. No area is inferred.",
+        "osm_tags": {
+          "name": "Bucium",
+          "place": "suburb"
+        },
+        "neighborhood_id": "osm-n-2468944288",
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-n-2468944288",
+          "source_url": "https://www.openstreetmap.org/node/2468944288",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-n-2468944295",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5899819,
+          47.1372648
+        ]
+      },
+      "properties": {
+        "place_point_id": "osm-n-2468944295",
+        "name": "Frumoasa",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-n-2468944295",
+        "source_object_type": "node",
+        "source_url": "https://www.openstreetmap.org/node/2468944295",
+        "geometry_origin": "osm_named_place_point",
+        "boundary_status": "point_only",
+        "review_status": "unreviewed",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "This OSM object is a named place point; no matching polygon name was returned in the bounded query. No area is inferred.",
+        "osm_tags": {
+          "name": "Frumoasa",
+          "place": "suburb"
+        },
+        "neighborhood_id": "osm-n-2468944295",
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-n-2468944295",
+          "source_url": "https://www.openstreetmap.org/node/2468944295",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-n-2468944302",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.6113534,
+          47.1610399
+        ]
+      },
+      "properties": {
+        "place_point_id": "osm-n-2468944302",
+        "name": "Tătărași",
+        "alternative_names": [],
+        "place_level": "suburb",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-n-2468944302",
+        "source_object_type": "node",
+        "source_url": "https://www.openstreetmap.org/node/2468944302",
+        "geometry_origin": "osm_named_place_point",
+        "boundary_status": "point_only",
+        "review_status": "unreviewed",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "This OSM object is a named place point; no matching polygon name was returned in the bounded query. No area is inferred.",
+        "osm_tags": {
+          "name": "Tătărași",
+          "place": "suburb"
+        },
+        "neighborhood_id": "osm-n-2468944302",
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-n-2468944302",
+          "source_url": "https://www.openstreetmap.org/node/2468944302",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-n-5964858917",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5865091,
+          47.1505621
+        ]
+      },
+      "properties": {
+        "place_point_id": "osm-n-5964858917",
+        "name": "Podu Roș",
+        "alternative_names": [],
+        "place_level": "neighbourhood",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-n-5964858917",
+        "source_object_type": "node",
+        "source_url": "https://www.openstreetmap.org/node/5964858917",
+        "geometry_origin": "osm_named_place_point",
+        "boundary_status": "point_only",
+        "review_status": "unreviewed",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "This OSM object is a named place point; no matching polygon name was returned in the bounded query. No area is inferred.",
+        "osm_tags": {
+          "name": "Podu Roș",
+          "place": "neighbourhood"
+        },
+        "neighborhood_id": "osm-n-5964858917",
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-n-5964858917",
+          "source_url": "https://www.openstreetmap.org/node/5964858917",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-n-5969949733",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5815419,
+          47.1376147
+        ]
+      },
+      "properties": {
+        "place_point_id": "osm-n-5969949733",
+        "name": "Clopotari",
+        "alternative_names": [],
+        "place_level": "neighbourhood",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-n-5969949733",
+        "source_object_type": "node",
+        "source_url": "https://www.openstreetmap.org/node/5969949733",
+        "geometry_origin": "osm_named_place_point",
+        "boundary_status": "point_only",
+        "review_status": "unreviewed",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "This OSM object is a named place point; no matching polygon name was returned in the bounded query. No area is inferred.",
+        "osm_tags": {
+          "name": "Clopotari",
+          "place": "neighbourhood"
+        },
+        "neighborhood_id": "osm-n-5969949733",
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-n-5969949733",
+          "source_url": "https://www.openstreetmap.org/node/5969949733",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "osm-n-5969963800",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          27.5687655,
+          47.1284682
+        ]
+      },
+      "properties": {
+        "place_point_id": "osm-n-5969963800",
+        "name": "C.U.G.",
+        "alternative_names": [],
+        "place_level": "neighbourhood",
+        "source": "OpenStreetMap",
+        "source_object_id": "osm-n-5969963800",
+        "source_object_type": "node",
+        "source_url": "https://www.openstreetmap.org/node/5969963800",
+        "geometry_origin": "osm_named_place_point",
+        "boundary_status": "point_only",
+        "review_status": "unreviewed",
+        "retrieved_at": "2026-10-17T16:07:22Z",
+        "source_snapshot_at": "2026-10-17T16:06:06Z",
+        "uncertainty_notes": "This OSM object is a named place point; no matching polygon name was returned in the bounded query. No area is inferred.",
+        "osm_tags": {
+          "name": "C.U.G.",
+          "place": "neighbourhood"
+        },
+        "neighborhood_id": "osm-n-5969963800",
+        "updated_at": "2026-10-17T16:07:22Z",
+        "license": "ODbL-1.0",
+        "provenance": {
+          "source": "OpenStreetMap via Overpass API",
+          "source_object_id": "osm-n-5969963800",
+          "source_url": "https://www.openstreetmap.org/node/5969963800",
+          "query_tags": [
+            "place=suburb",
+            "place=quarter",
+            "place=neighbourhood",
+            "boundary=place"
+          ],
+          "query_bounds_wgs84": [
+            27.4765545,
+            47.0848238,
+            27.692127,
+            47.2279047
+          ],
+          "source_snapshot_at": "2026-10-17T16:06:06Z",
+          "retrieved_at": "2026-10-17T16:07:22Z",
+          "license": "ODbL-1.0"
+        }
+      }
+    }
+  ]
+}

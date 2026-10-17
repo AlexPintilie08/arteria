@@ -1,26 +1,84 @@
-# Backend
+# ARTERIA backend
 
-## Responsibilities
+FastAPI API v0.3: analyze → propose → evaluate, with SQLite persistence, validated
+interventions, synthetic provenance and frontend-compatible response shapes.
+No cloud API key or SUMO installation is needed for the demo.
 
-The initial runnable API exposes `GET /health` with environment-backed local CORS settings. Planned responsibilities remain: validate HTTP/JSON requests and responses; orchestrate urban analysis; prepare bounded spatial context for a cloud LLM; return structured intervention recommendations; coordinate scenario evaluation; and communicate with the independent spatial/simulation component. A local Qwen model is an optional fallback, not the primary path.
+## macOS startup
 
-## Planned technology
+From the repository root:
 
-Python, FastAPI, Pydantic, and a cloud LLM API. Provider-specific code should sit behind a narrow interface so recommendation validation and API contracts do not depend on one model vendor.
+```sh
+python3 -m uv sync --locked
+python3 -m uv run --locked uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+```
 
-## Inputs and outputs
+Open http://127.0.0.1:8000/docs. The authoritative app is `backend.main:app`.
+The legacy `python -m backend.server` command now launches the same FastAPI app,
+instead of a separate server with conflicting behavior.
 
-- **Inputs:** geographic identifiers, analysis options, user-selected problems, supported intervention definitions, baseline/scenario identifiers, and available data metadata.
-- **Outputs:** validated analysis findings, provenance and uncertainty, constrained proposal alternatives, and evaluation results returned by the spatial/simulation layer.
+```sh
+python3 -m uv run --locked pytest -q
+python3 -m uv run --locked python scripts/health_smoke.py
+python3 -m uv run --locked python -m backend.demo_client
+```
 
-## Integration interfaces
+The final command runs a complete flow against the running API and prints all
+request/response pairs. Use `--base-url http://127.0.0.1:8011` for another port.
 
-The implemented `GET /health` confirms local API liveness. The proposed `POST /analyze`, `POST /propose`, and `POST /evaluate` interfaces remain documented in `docs/API_CONTRACT.md` and are intentionally not stubbed. The backend will call `sim` through an internal Python interface or a separately defined service boundary; choose the boundary when deployment and runtime needs are known.
+CORS defaults include localhost and 127.0.0.1 on ports **3000** and **5173**.
+An existing `ARTERIA_CORS_ORIGINS` environment/.env value overrides those defaults;
+include port 3000 if using Next.js.
 
-## Implementation objectives
+SQLite lives in ignored `backend/.data/arteria.sqlite3`. Override with
+`ARTERIA_DB_PATH=/absolute/path/arteria.sqlite3`. IDs and results survive reloads
+and worker restarts. Transactions preserve the first result for repeated requests;
+records are immutable and each record category is capped at 1000. At capacity,
+archive the database or explicitly configure a fresh path. No public destructive
+reset endpoint is exposed. Local SQLite is not distributed/cloud persistence;
+there is no authentication or per-user isolation, so run locally for this demo.
 
-Validate all external input, keep provider secrets server-side, constrain LLM context to relevant spatial evidence, validate generated proposals against an explicit intervention catalog and geographic constraints, and report unavailable or uncertain evidence. Evaluation results must originate from deterministic analysis or a real simulation run/replay record, never from LLM prose.
+## Scope and integration
 
-## Technical risks
+See [current frontend contract](../docs/DEMO_API.md),
+[captured flow](../docs/demo-flow.json), and [handoff](FRONTEND_HANDOFF.md).
+Supported demo contexts: `iasi-demo-intersection`, `podu-ros`, `copou`, `centru`,
+`tatarasi`, `alexandru`, plus their `preview-` aliases. These are UI bookmarks,
+not certified neighborhood boundaries or real traffic studies. All use the same
+synthetic two-phase intersection assumptions unless explicit inputs are supplied.
 
-LLM outputs may be invalid, unsupported, or overconfident; treat them as untrusted structured suggestions. Spatial context can be large and sensitive to data quality. Provider latency, rate limits, and outages need bounded timeouts and clear errors. Units, coordinate reference systems, provenance, and uncertainty must survive every boundary.
+Optional polygons on the synthetic signal-timing endpoints are checked for valid
+geometry, coordinate bounds, a 1 m²–5 km² area limit and containment of the
+selected bookmark. This does not verify that a polygon is an official neighborhood
+boundary. Historical `data_as_of` requests are rejected.
+
+Signal timing is the sole intervention. Both phases require at least 10 seconds
+green, with a fixed cycle and 10 seconds lost time. Default recommendations move
+25%, 50%, or 100% toward demand-proportional allocation. Already balanced inputs
+may produce no-ops. `parameters.ns_green_seconds` on `/propose` requests an exact
+user-selected timing, validated against that baseline; copy the returned
+intervention into `/evaluate`. Timing changes require no land take, so any valid
+positive `max_affected_area` constraint is satisfied in this synthetic catalog.
+These are demo feasibility checks, not a real-world safety approval.
+
+Delay formula: `red² / (2 * cycle) + 60 * max(0, demand / capacity - 1)` seconds/vehicle;
+`capacity = 1800 * green / cycle` vehicles/hour. Mean delay is demand-weighted.
+Engine/source version is `demo-2`; calculations are uncalibrated synthetic estimates.
+Evaluations preserve baseline demand, cycle, lost time and original evidence.
+Positive and negative deltas are returned; improvement is not guaranteed.
+
+## Simulation boundary
+
+`backend/simulation_adapter.py` owns deterministic synthetic signal-timing
+evaluation. The separate [SIM v3 spatial API](SPATIAL_API.md) loads the in-tree
+`sim/` package and performs pedestrian graph analysis and stored graph comparisons.
+It supports a clearly labeled fixture or the server-validated OSM neighborhood
+catalog. OSM feature layers that were not queried stay unknown. Graph candidates
+do not establish physical feasibility, and this API does not run SUMO or traffic
+simulation. Explicit SUMO live/offline/replay requests on the signal-timing API
+return `503 sumo_unavailable` without fallback, even if SUMO is installed.
+
+No LLM, city telemetry, certified boundaries, real-world construction feasibility,
+authentication, SUMO jobs/SSE, or cloud storage is implemented. API_ENDPOINTS.md
+contains aspirational examples; its numeric traffic figures and provider names
+are not observations or enabled integrations.

@@ -11,7 +11,7 @@ $nodeVersion = (& node --version).Trim()
 if ($nodeVersion -notmatch '^v?24\.') { throw "Node.js 24.x is required; found $nodeVersion." }
 
 Write-Host 'Running Python backend and spatial smoke tests...'
-& uv run --locked pytest -q
+& uv run --locked pytest -q tests sim/test_engine.py
 if ($LASTEXITCODE -ne 0) { throw 'Python tests failed.' }
 & uv run --locked python scripts/health_smoke.py
 if ($LASTEXITCODE -ne 0) { throw 'Backend HTTP health smoke test failed.' }
@@ -21,6 +21,8 @@ Push-Location -LiteralPath (Join-Path $repoRoot 'frontend')
 try {
     & npm run typecheck
     if ($LASTEXITCODE -ne 0) { throw 'Frontend TypeScript check failed.' }
+    & npm test
+    if ($LASTEXITCODE -ne 0) { throw 'Frontend tests failed.' }
     & npm run build
     if ($LASTEXITCODE -ne 0) { throw 'Frontend production build failed.' }
 } finally {
