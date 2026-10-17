@@ -20,6 +20,8 @@ These instructions apply to work owned by `sim/`. Repository-level instructions 
 Import supported APIs from `sim`: existing acquisition/analysis/scenario functions plus `load_neighborhood_catalog`, `get_neighborhoods`, `get_neighborhood`, `search_neighborhoods`, `neighborhoods_geojson`, `validate_neighborhood_boundary`, `neighborhood_area_input`, `discover_intervention_candidates`, `sample_route_pairs`, `evaluate_multi_route_impact`, and `evaluate_candidates`. Package-root types include `StudyArea`, `OSMData`, `AreaValidationError`, `OSMDataError`, `InterventionError`, and `NeighborhoodCatalogError`. `RouteError` is available from `sim.analysis`, not the package root. Exact signatures and output fields are in [ARCHITECTURE.md](ARCHITECTURE.md) and [README.md](README.md).
 
 ## Geographic and evidence conventions
+New package-root APIs include `get_intervention_catalog`, `build_proposal_context`, `prepare_candidate_options`, `validate_proposal`, `validate_proposal_set`, `load_cached_driving_snapshot`, `prepare_sumo_network`, and `run_real_area_simulation`; `SumoPreparationError` is a package-root type. Proposal validation is not physical feasibility validation. SUMO demand is synthetic; the SUMO runner requires local `netconvert` and `sumo` binaries and never downloads OSM.
+
 
 - Bbox values are `[west, south, east, north]`; GeoJSON uses `[longitude, latitude]` in EPSG:4326. Keep calculations in `StudyArea.working_crs` and serialize output back to WGS84.
 - Preserve OSM IDs, retrieval metadata, coverage, uncertainty, warnings, and units.

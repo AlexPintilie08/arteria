@@ -4,7 +4,7 @@
 
 ## Component overview
 
-SIM is a Python library for bounded analysis of mapped geographic data. It validates an area, acquires and caches OpenStreetMap (OSM) networks/features, normalizes graphs into metric lengths, calculates connectivity and node-based walking/cycling access, derives deterministic screening issues, and serializes JSON-ready results with GeoJSON layers. The v2 engine loads sourced neighborhood geometry, discovers hypothetical pedestrian links, and evaluates independent alternatives over a shared deterministic route sample. A separate optional utility discovers SUMO and can run a tiny synthetic TraCI smoke scenario.
+SIM is a Python library for bounded analysis of mapped geographic data. It validates an area, acquires and caches OpenStreetMap (OSM) networks/features, normalizes graphs into metric lengths, calculates connectivity and node-based walking/cycling access, derives deterministic screening issues, and serializes JSON-ready results with GeoJSON layers. The v2 engine loads sourced neighborhood geometry, discovers hypothetical pedestrian links, and evaluates independent alternatives over a shared deterministic route sample. Proposal context/validation APIs prepare evidence-backed graph options. An optional SUMO utility converts a bounded existing driving graph into plain XML and synthetic routes, and executes only when local binaries are available.
 
 | Responsibility | Existing behavior |
 |---|---|
@@ -17,7 +17,7 @@ SIM is a Python library for bounded analysis of mapped geographic data. It valid
 | Candidate discovery | Search bounded metric spatial neighbors for disconnected components, directed reachability gaps, and excessive detours; screen mapped obstacles and return only supported pedestrian-link edits. |
 | Alternative evaluation | Evaluate independent candidates over one shared deterministic graph-node pair sample and rank them with an explicit lexicographic rule. |
 | Geographic output | JSON-ready dictionaries, EPSG:4326 GeoJSON layers, source metadata, availability, and warnings. |
-| SUMO support | Portable binary discovery and optional one-step synthetic SUMO/TraCI smoke check, separate from analysis. |
+| SUMO support | Portable binary discovery, bounded OSM drive-graph conversion inputs, deterministic synthetic routes, and optional headless execution; separate from pedestrian graph analysis. |
 
 SIM does not render the frontend map, expose backend HTTP routes, invoke cloud AI, observe real traffic, estimate congestion, or verify intervention safety, ownership, legal approval, accessibility compliance, or construction feasibility. The backend currently implements only its liveness route and does not import SIM. Its draft contract is [../docs/API_CONTRACT.md](../docs/API_CONTRACT.md). An optional browser preview may exist under ignored `sim/.cache/local_demo/`; it is not tracked or a production engine feature.
 
@@ -42,14 +42,20 @@ sim/
 ├── iasi-neighborhoods.geojson
 ├── neighborhoods.py
 ├── scenario.py
+├── proposal_catalog.py
+├── proposal_context.py
+├── proposal_validation.py
+├── proposals.py
+├── proposal_demo.py
 ├── smoke_test.py
+├── sumo_engine.py
 ├── sumo_support.py
 └── test_engine.py
 ~~~
 
 ## Module relationships
 
-Solid arrows are imports present in source. The backend is only a potential in-process consumer. SUMO helpers are independent of analysis and scenario modules.
+Solid arrows are imports present in source. The backend is only a potential in-process consumer. The SUMO engine consumes a caller-supplied OSM driving graph and does not modify pedestrian analysis or scenario graphs.
 
 ~~~mermaid
 flowchart TD
@@ -75,7 +81,9 @@ flowchart TD
     GEO --> STACK
     ANALYSIS --> STACK
     SCENARIO --> STACK
-    SUMO["sumo_support.py CLI"] --> SUMO_BIN["SUMO · netconvert · TraCI"]
+    SUMO_ENGINE["sumo_engine.py"] --> SUMO_SUPPORT["sumo_support.py discovery"]
+    SUMO_SUPPORT --> SUMO_BIN["SUMO · netconvert"]
+    SUMO_ENGINE --> DRIVE["OSM driving graph + synthetic demand"]
 ~~~
 
 - `sim.__init__` re-exports the package API.
@@ -124,13 +132,23 @@ Mapped obstacle layers are projected and indexed once per discovery call, before
 
 Pair outcomes are `improved`, `unchanged`, `regressed`, `newly_reachable`, `newly_unreachable`, and `unreachable_in_both`. Distance/time savings are aggregated only when both routes are reachable; reachability changes are reported separately. Improvement percent is null. The shared sample alone drives ranking: newly reachable pairs, improved pairs, distance savings among comparable pairs, mapped-obstacle intersections, unknown obstacle layers, shorter hypothetical links, then stable candidate ID. A separate candidate-specific diagnostic sample draws nearby nodes from each endpoint's component, preserves each direction, excludes overlap with the shared sample, and is not used to rank or describe representative trips. Returned candidates remain conditional and the pipeline does not make construction recommendations.
 
+### Proposal evidence, capability, and validation
+
+proposal_catalog exposes a copied JSON catalog with only the two graph edits that scenario.evaluate_scenario can execute. proposal_context.build_proposal_context combines one matching OSMData, analyze_snapshot result, and evaluate_candidates result. It uses a stable geometry digest rather than embedding the full network, retains source provenance and uncertainty, includes bounded issue/candidate evidence and route samples, and serializes with non-finite values rejected. Deterministic truncation keeps the packet under the configured byte ceiling or raises if irreducible metadata itself exceeds that ceiling.
+
+proposals.prepare_candidate_options selects only returned ranked candidates that have a supported intervention and a completed graph impact. Presentation categories remain unclassified; link length is not a cost or engineering-complexity proxy. proposal_validation treats incoming mappings as untrusted, checks candidate identity and exact intervention equivalence, geographic containment and supported units, then classifies schema, graph support, graph evaluation, and physical feasibility separately. It rejects unsupported cost, citation, run-ID, observed-metric, feasibility, and duplicate claims. These functions make no cloud calls and do not turn model prose into SIM evidence.
+
+proposal_demo runs this complete path with a synthetic fixture or existing local cache and never requests OSM data.
+
 ### Reproducible demonstration
 
 Run `python -m sim.demo` from the repository root. It loads an existing local cached walking snapshot when available and otherwise uses a tiny synthetic offline graph. It never requests OSM data. Use `--source cache` to require local cached OSM or `--source fixture` for the deterministic synthetic example. Outputs go to ignored `sim/.cache/sim-engine-demo/results.json` and `results.geojson` by default. New graph and feature sidecars record normalized source-area GeoJSON and SHA-256, area identifiers, CRS, and query parameters. Historical sidecars remain untouched; a key mismatch without a matching geometry hash is reported as unverified.
 
 ### SUMO position
 
-`sim.sumo_support` does not consume OSM graphs. The optional smoke path writes temporary synthetic node/edge/route XML, calls `netconvert`, starts SUMO via TraCI, advances one step, then removes temporary files. It checks a small artificial network only. Real-area OSM-to-SUMO conversion, demand modeling, calibration, and traffic-impact evaluation are not implemented.
+`sim.sumo_engine` consumes an existing directed drive graph and projects its coordinates into the validated metric working CRS. `prepare_sumo_network` writes bounded SUMO plain-XML node/edge inputs, a deterministic seeded synthetic origin-destination route set, an ID map, and WGS84 network GeoJSON. It uses explicit fallback speed/lane assumptions and records missing/ambiguous counts. `run_real_area_simulation` invokes `netconvert` and headless `sumo` only when discovered, caps graph size, vehicle count, duration, and wall-clock time, and reports trip completion, waiting, movement checks, provenance, and route GeoJSON only after actual execution. Missing binaries produce an explicit unavailable result and no traffic metrics.
+
+The local Iași cache path reads only existing files and reports area equivalence. The currently available legacy driving sidecar has no matching source-geometry hash, so it is unsuitable as verified area evidence. Generated demand is synthetic, uncalibrated, and not an observed traffic count; turn restrictions, lane allocation when ambiguous, signals, and physical feasibility remain unverified. `sim.sumo_support` retains the separate one-step synthetic TraCI smoke test.
 
 ## Data and result formats
 
@@ -300,6 +318,10 @@ This inventory covers the tracked files in `sim/`. There are no tracked nested s
 - **Public functions:** `run() -> dict[str, str | int | float]` imports/reports GeoPandas, NetworkX, OSMnx, and Shapely versions and asserts shortest path `a -> b -> c` is 200 m. `main() -> None` prints the result.
 - **Errors/dependencies/callers/side effects:** assertion failure raises `AssertionError`; missing dependencies fail import. Called directly with `python -m sim.smoke_test` and by `tests/test_spatial_smoke.py`. No network, file, OSM cache, or SUMO side effects.
 - **Assumptions/limits:** checks imports and basic NetworkX path behavior only; it does not validate OSM acquisition or the full analysis engine.
+
+### SUMO engine
+
+`sumo_engine.py` converts caller-provided directed OSM drive graphs into projected node/edge XML and reproducible synthetic route inputs, retains an ID map and EPSG:4326 GeoJSON, and optionally runs a bounded headless simulation. Its cache loader is read-only. It does not download OSM, calibrate demand, create physical interventions, or claim measured traffic.
 
 ### `sumo_support.py`
 

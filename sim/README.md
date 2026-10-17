@@ -10,11 +10,16 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for module relationships and result contr
 from sim import (
     analyze_area,
     acquire_osm_data,
+    build_proposal_context,
     evaluate_candidates,
     evaluate_multi_route_impact,
     evaluate_pedestrian_connection,
+    get_intervention_catalog,
     neighborhood_area_input,
+    prepare_candidate_options,
     search_neighborhoods,
+    validate_proposal,
+    validate_proposal_set,
     validate_neighborhood_boundary,
 )
 
@@ -125,6 +130,22 @@ Building findings distinguish material interior crossings, endpoints inside a bu
 
 `evaluate_candidates` analyzes the baseline, screens the bounded opportunity pool, excludes evaluated discovery pairs from a common deterministic comparison sample, and evaluates each eligible alternative from the same immutable baseline. The shared sample alone drives the lexicographic ranking: newly reachable pairs, improved pairs, comparable route savings, obstacle findings, unknown layers, link length, and stable ID. Up to 12 eligible candidates are evaluated by default and up to 3 are returned. A separate bounded diagnostic sample uses nearby nodes in each candidate's endpoint components to show local reachability or detour effects; both route directions are retained, and these candidate-specific probes never affect shared-sample ranking. Returned candidates remain conditional, and the API makes no construction recommendation. When no candidate passes material-conflict screening, it returns an honest empty result with bounded rejected-candidate diagnostics.
 
+## Proposal evidence and candidate options
+
+The intervention catalog is versioned and machine-readable. Only add_pedestrian_connection and set_connection_enabled are supported graph edits; neither has SUMO evaluation. Traffic signals, lanes, underpasses, roundabouts, construction cost, and physical feasibility remain unsupported.
+
+build_proposal_context(snapshot, analysis, candidate_evaluation) creates a deterministic packet for a future backend-owned model. It includes a SHA-256 reference to the study geometry, source/timestamp metadata, bounded issue and indicator evidence, network metrics, candidate geometry and screening, shared and targeted route samples, before/after graph outcomes, source availability, uncertainty, ranking rules, unsupported capabilities, and explicit limitations. It omits full network graphs and caps serialized JSON at 64 KiB by default. Deterministic truncation and the serialized byte count are returned.
+
+prepare_candidate_options(analysis, candidate_evaluation) returns only evaluated add_pedestrian_connection candidates, in stable rank order. It does not force three options or assign the frontend's Minimală/Moderată/Transformatoare labels because SIM has no engineering-backed mapping for those categories. Graph impact is labeled calculated and sampled, not observed; construction cost remains unsupported.
+
+validate_proposal(proposal, data=snapshot, candidate_evaluation=evaluation) and validate_proposal_set(...) treat model output as untrusted. They check the supported type, finite EPSG:4326 endpoints, study-area containment, known candidate ID, exact match to the evaluated intervention, units, citations, simulation run IDs, observed metric claims, costs, and feasibility claims. Results distinguish schema validity, graph support, graph evaluation, and physical feasibility; JSON validity alone never produces a validated status. Repeated actions are rejected as duplicates.
+
+Run an offline demonstration without an API key or network request:
+
+    .\.venv\Scripts\python.exe -m sim.proposal_demo --source fixture --output sim/.cache/proposal-demo/results.json
+
+The optional cache mode reads existing files only. It carries legacy source-area warnings when its cache key and saved geometry do not verify the selected area. Prefer the deterministic fixture for a source-independent example.
+
 ## Reproducible demonstration
 
 Run from the repository root:
@@ -157,4 +178,10 @@ A real-graph hypothetical connection between OSM nodes `641092475` and `12079937
 
 ## SUMO
 
-The existing portable discovery and TraCI smoke support in `sumo_support.py` is preserved. The engine exports a driving graph suitable for later conversion, but does not yet convert a real OSM graph into a SUMO network or claim calibrated traffic simulation. Any future synthetic vehicle demand must be labeled as synthetic and kept separate from graph-only accessibility results.
+`sim.sumo_engine` can prepare a bounded existing directed drive graph as metric-coordinate SUMO plain XML, generate deterministic synthetic origin-destination routes, preserve source IDs, and export WGS84 network GeoJSON. Missing speeds use the documented 13.9 m/s fallback; generic lane counts on two-way roads use one lane per direction when directional allocation is not established. Conversion and headless simulation are attempted only when local `netconvert` and `sumo` binaries are discovered. The runner is bounded to 15,000 nodes, 50,000 edges, 200 vehicles, 600 simulated seconds, and a 180-second wall-clock timeout. It reports completed/incomplete trips, waiting time, and positive movement only from actual SUMO tripinfo output. Outputs include source attribution, demand seed, a source-ID map, and WGS84 GeoJSON. This is synthetic, uncalibrated traffic demand and does not measure Iași traffic.
+
+Run the cached Iași demonstration without network access:
+
+    .\.venv\Scripts\python.exe -m sim.sumo_engine --output-dir sim/.cache/iasi-sumo-demo
+
+This reads the newest local cached drive graph and writes SUMO input files. If `netconvert` or `sumo` is missing, the result records the unavailable stage and contains no simulated traffic measurements. The current legacy cache cannot verify its source geometry against the selected area, so the demonstration is technical only. The separate portable discovery and one-step synthetic TraCI smoke check remains available with `python -m sim.sumo_support --smoke`.

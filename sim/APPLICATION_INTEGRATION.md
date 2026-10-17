@@ -2,7 +2,7 @@
 
 **Status:** architecture alignment only. This document describes the current application and a future connection contract; it does not add an HTTP adapter or claim that frontend/backend/SIM integration exists.
 
-**Remote application reviewed:** `origin/master` at [`bfdc43a8f58aa2c272b57673b2ee82bd89007f07`](https://github.com/AlexPintilie08/arteria/commit/bfdc43a8f58aa2c272b57673b2ee82bd89007f07), fetched 2026-10-17. The current working branch is `feat/sim-engine`. The remote source links below are pinned to that inspected commit.
+**Remote application reviewed:** `origin/master` at [`bfdc43a8f58aa2c272b57673b2ee82bd89007f07`](https://github.com/AlexPintilie08/arteria/commit/bfdc43a8f58aa2c272b57673b2ee82bd89007f07), fetched 2026-10-17. A full fetch also found the separate `origin/feat/backend-api` branch at [`6f59b221bc0ff4f06b6256d5eeeea3097c0b19b4`](https://github.com/AlexPintilie08/arteria/commit/6f59b221bc0ff4f06b6256d5eeeea3097c0b19b4). The current working branch is `feat/sim-engine`; neither remote branch was changed or merged. Links in the source-reference list below remain pinned to `origin/master`.
 
 ## 1. Current application in one view
 
@@ -15,6 +15,10 @@ The repository contains a Next.js web frontend, a React Native mobile shell, a s
 | SIM | Independent Python library for bounded OSM acquisition, graph analysis, neighborhood boundary validation, pedestrian-link screening, and graph-only route evaluation | Public Python APIs are available. There is no HTTP server, persistence layer, frontend dependency, LLM provider, SUMO job runner, or current backend adapter in SIM. |
 
 The checked-in `backend/API_ENDPOINTS.md`, `docs/API_CONTRACT.md`, `api-specs/*.md`, and TypeScript interfaces are design contracts/examples. They do not make an endpoint or computation real. The [simulation-engine contract](https://github.com/AlexPintilie08/arteria/blob/bfdc43a8f58aa2c272b57673b2ee82bd89007f07/api-specs/simulation-engine-contract.md) proposes analytical and asynchronous SUMO routes, but those routes are not implemented by the current HTTP server.
+
+### Separately inspected backend integration branch
+
+`origin/feat/backend-api` adds 75 files or updates, including a bounded `/api/v1/spatial/studies` workflow, SQLite storage, a subprocess adapter/worker, typed frontend contracts and a dedicated spatial panel, setup scripts, and backend/frontend CI. Its `backend/prepare_sim.py` exports the locally available SIM commit `752c92da9184effc9b87704e0868320f569454ea` into an ignored snapshot; the branch does not import the current checkout's `sim/` tree. The workflow supports an offline fixture or bounded OSM acquisition, stores native analysis/candidate results, and compares only exact saved pedestrian-link candidates. Its response explicitly says `sumo_executed:false`; it does not consume the new proposal evidence/validation APIs or run SUMO. Branch documentation reports 60 passing tests, but that remote branch was inspected read-only and was not checked out or re-run here. The SIM v3 changes in this working branch leave `analyze_snapshot` and `evaluate_candidates` unchanged, but the backend integration has not been verified against this newer SIM revision.
 
 ## 2. Three-component responsibility boundary
 
@@ -159,6 +163,18 @@ SIM checks coordinate validity, in-area placement, walking-node snapping, and co
 | Signal retiming, CTP priority, lane width, traffic demand, turbo-roundabout, underpass/tunnel/bridge | Unsupported by current SIM evaluation | The UI/backend fixtures or specifications do not confer a capability. Requires a future validated model and, where traffic behavior is claimed, calibrated SUMO or another justified model. |
 | Cost, buildability, ownership, approval, safety, accessibility compliance | Unsupported | Requires external data/review; graph topology cannot establish these facts. |
 
+### SIM v3 proposal preparation and validation
+
+The SIM package now exports get_intervention_catalog, build_proposal_context, prepare_candidate_options, validate_proposal, and validate_proposal_set. The catalog version is arteria-sim-interventions-v1. A proposal context is a bounded, deterministic evidence packet with study-area geometry hash, source metadata, analysis issues/metrics/uncertainty, ranked candidate geometry and obstacle screening, shared and targeted Before/After route samples, ranking methodology, and explicit capability limitations. It does not contain a full graph or call a cloud model.
+
+Candidate options come only from evaluate_candidates results and only the current add_pedestrian_connection action is generated. The option has a stable candidate ID, SIM endpoint action (start/end in EPSG:4326), candidate GeoJSON geometry, real graph-sample aggregate, source/screening caveats, and unknown physical feasibility. SIM does not force minimal/moderate/transformative categories or infer costs from link length.
+
+validate_proposal treats proposed JSON as untrusted. It requires a candidate from the supplied evaluated set, exact intervention/action match, finite in-area coordinates, and supported units; it rejects unsupported types, unknown candidates, fabricated citations/run IDs, unsupported observed metrics, cost claims, physical-feasibility claims, and untrusted validated/accepted status fields. It reports schema_status, support_status, evaluation_status, and physical_feasibility separately. Even a candidate-backed evaluated graph scenario says nothing about physical buildability.
+
+The latest inspected origin/master TypeScript draft (frontend/shared/core/contracts.ts, at bfdc43a8f58aa2c272b57673b2ee82bd89007f07) is not wire-compatible with the SIM option. Its Alternative requires a level, prose summary/rationale, interventions with geometry and parameters, provider/model timestamps, expected impacts, assumptions, and a validation block. SIM instead returns a candidate ID, start/end action, graph evaluation/sample, and no LLM metadata or planning class. The frontend Intervention requires geometry and has no supported discriminated shape for set_connection_enabled; its Geometry union also omits MultiPolygon for areas. The backend must define a versioned adapter/union and must not claim SIM generated provider metadata, frontend planning levels, traffic metrics, cost, or physical feasibility. Its existing hardcoded /propose response and illustrative traffic improvements remain non-SIM fixture data.
+
+The `origin/master` contract/spec changes from the SIM branch's common base are draft TypeScript/API and SUMO/Webster/HCM examples; no matching proposal endpoint or evaluator exists there. The separately inspected `origin/feat/backend-api` branch supplies a distinct graph-study API, but pins the older SIM commit above and does not consume the SIM v3 proposal packet or execute SUMO. Its API does not make the TypeScript signal-timing Alternative compatible with SIM options. These integrations remain separate until an explicit branch integration and versioned adapter are completed.
+
 ## 8. Graph evaluation and immutable baseline contract
 
 The backend should store or retain the exact `OSMData` baseline snapshot and its source metadata under a stable backend `baseline_id`. A request's `baseline_id` must resolve to that same validated area, OSM snapshot, and analysis—not trigger an unnoticed reacquisition. SIM's `evaluate_scenario`, `evaluate_multi_route_impact`, and `evaluate_candidates` evaluate graph edits on copies; alternatives do not accumulate edits into the baseline.
@@ -200,7 +216,9 @@ An adapter must not label a constant-speed walk-time estimate as observed. It mu
 
 ## 10. SUMO workflow: intended contract versus implemented support
 
-The current SIM `sumo_support.py` can discover local SUMO executables and optionally run a one-step synthetic TraCI smoke network. It does not consume SIM's OSM graph, convert a real Iași network, create traffic demand, calibrate the network, execute a bounded real-area run, persist a run, or return traffic measurements/GeoJSON. Synthetic smoke output must never be presented as real Iași simulation.
+SIM v3 adds `sumo_engine.py`: it consumes an existing directed driving graph, transforms coordinates to the selected metric CRS, writes bounded SUMO plain-XML inputs and a source-ID map, and generates deterministic synthetic OD routes without network access. It exports network GeoJSON in EPSG:4326. `run_real_area_simulation` calls local `netconvert` and `sumo` only when available, applies graph/vehicle/duration/wall-clock limits, and parses tripinfo only after a successful process exit. Completed/incomplete trip counts, waiting time, route length, and movement checks are derived from actual simulator output; route GeoJSON is emitted only for completed vehicles.
+
+Local verification prepared a 40-node/78-directed-edge cached Iași drive graph and 20 seeded synthetic routes. `netconvert` and `sumo` are absent on this machine, so no SUMO network was built and no vehicle moved in a simulator. The legacy cached graph lacks a matching source-geometry hash, so its area equivalence is unverified. The module returns unavailable at `network_conversion` without fabricated traffic metrics. The existing `sumo_support.py` one-step synthetic TraCI smoke remains separate and is not evidence of real-area execution.
 
 The remote `api-specs/simulation-engine-contract.md` proposes `POST /api/v1/simulation/sumo/run`, an SSE stream, and an analytical-evaluation endpoint. None is registered in `backend/server.py`; do not wire the frontend to these paths as if they existed.
 
@@ -297,3 +315,10 @@ Do not perform a full-stack branch merge as part of these steps unless separatel
 - [Backend handlers and data selection](https://github.com/AlexPintilie08/arteria/blob/bfdc43a8f58aa2c272b57673b2ee82bd89007f07/backend/server.py)
 - [Backend API examples/specification](https://github.com/AlexPintilie08/arteria/blob/bfdc43a8f58aa2c272b57673b2ee82bd89007f07/backend/API_ENDPOINTS.md)
 - [Proposed SUMO contract (not implemented)](https://github.com/AlexPintilie08/arteria/blob/bfdc43a8f58aa2c272b57673b2ee82bd89007f07/api-specs/simulation-engine-contract.md)
+
+## Read-only references at inspected `origin/feat/backend-api`
+
+- [Spatial API contract and limits](https://github.com/AlexPintilie08/arteria/blob/6f59b221bc0ff4f06b6256d5eeeea3097c0b19b4/backend/SPATIAL_API.md)
+- [Spatial engine response validation](https://github.com/AlexPintilie08/arteria/blob/6f59b221bc0ff4f06b6256d5eeeea3097c0b19b4/backend/engine_contract.py)
+- [Pinned SIM snapshot preparation](https://github.com/AlexPintilie08/arteria/blob/6f59b221bc0ff4f06b6256d5eeeea3097c0b19b4/backend/prepare_sim.py)
+- [Frontend handoff for the optional spatial API](https://github.com/AlexPintilie08/arteria/blob/6f59b221bc0ff4f06b6256d5eeeea3097c0b19b4/backend/FRONTEND_HANDOFF.md)

@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import json
 import math
+import subprocess
 import tempfile
+import xml.etree.ElementTree as ET
 from collections.abc import Iterator
 from datetime import datetime, timezone
 from pathlib import Path
@@ -31,6 +33,13 @@ from sim.neighborhoods import (
     search_neighborhoods,
     validate_neighborhood_boundary,
 )
+from sim.proposal_catalog import get_intervention_catalog
+from sim.proposal_context import build_proposal_context
+from sim.proposal_validation import validate_proposal, validate_proposal_set
+from sim.proposals import prepare_candidate_options
+from sim import sumo_engine as sumo_engine_module
+from sim.sumo_engine import SumoPreparationError, prepare_sumo_network, run_real_area_simulation
+from sim.sumo_support import SumoInstallation
 
 
 def _fixture_data(*, disconnected: bool = True, with_school: bool = True) -> OSMData:
@@ -1102,3 +1111,285 @@ def test_candidate_pipeline_uses_one_shared_non_discovery_sample_and_stable_rank
     assert all(candidate["targeted_diagnostic_impact"]["sample"]["kind"] == "targeted_diagnostic_routes" for candidate in ranked)
     assert all(candidate["targeted_diagnostic_impact"]["sample"]["evaluated_pair_count"] <= 32 for candidate in ranked)
     assert all(candidate["ranking_explanation"].find("excluded from ranking") >= 0 for candidate in ranked)
+
+
+def _proposal_fixture() -> tuple[OSMData, dict, dict]:
+    data = _fixture_data(disconnected=True)
+    analysis = analyze_snapshot(data)
+    evaluation = evaluate_candidates(data, analysis=analysis, sample_count=8, seed="proposal-tests")
+    return data, analysis, evaluation
+
+
+def test_intervention_catalog_only_marks_implemented_graph_edits_as_supported() -> None:
+    catalog = get_intervention_catalog()
+    assert catalog["version"].endswith("v1")
+    supported = {item["type_id"] for item in catalog["supported_interventions"]}
+    assert supported == {"add_pedestrian_connection", "set_connection_enabled"}
+    assert all(item["graph_evaluation_available"] for item in catalog["supported_interventions"])
+    assert all(not item["sumo_evaluation_available"] for item in catalog["supported_interventions"])
+    assert all(item["implementation_status"] == "unsupported" for item in catalog["unsupported_examples"])
+    catalog["supported_interventions"].clear()
+    assert get_intervention_catalog()["supported_interventions"]
+
+
+def test_proposal_context_is_deterministic_provenanced_geographic_and_bounded() -> None:
+    data, analysis, evaluation = _proposal_fixture()
+    before_nodes = data.graphs["walk"].number_of_nodes()
+    packet = build_proposal_context(data, analysis, evaluation)
+    repeated = build_proposal_context(data, analysis, evaluation)
+
+    assert packet == repeated
+    assert packet["study_area"]["area_id"] == analysis["area"]["area_id"]
+    assert packet["study_area"]["geometry_reference"]["sha256"]
+    assert packet["geographic_source"]["source"] == data.metadata["source"]
+    assert {item["id"] for item in packet["analysis"]["issues"]} == {item["id"] for item in analysis["issues"]}
+    candidate_geometry = json.loads(json.dumps(evaluation["ranked_candidates"][0]["geometry"], allow_nan=False))
+    assert packet["candidate_evaluation"]["candidates"][0]["geometry"] == candidate_geometry
+    assert packet["candidate_evaluation"]["candidates"][0]["shared_sample_impact"]["aggregate"] == evaluation["ranked_candidates"][0]["impact"]["aggregate"]
+    assert packet["candidate_evaluation"]["candidates"][0]["targeted_diagnostic_impact"]["sample"]["kind"] == "targeted_diagnostic_routes"
+    assert packet["capabilities"]["unsupported_simulation_capabilities"]
+    assert "graph" not in packet
+    assert len(json.dumps(packet, ensure_ascii=False, allow_nan=False).encode("utf-8")) <= packet["truncation"]["packet_byte_limit"]
+    assert data.graphs["walk"].number_of_nodes() == before_nodes
+
+
+def test_proposal_context_limits_large_evidence_without_losing_size_bound() -> None:
+    data, analysis, evaluation = _proposal_fixture()
+    packet = build_proposal_context(
+        data,
+        analysis,
+        evaluation,
+        max_packet_bytes=8_192,
+        max_issues=0,
+        max_indicators=0,
+        max_candidates=0,
+        max_rejected_candidates=0,
+        max_route_samples=0,
+        max_evidence_items=0,
+    )
+    serialized = json.dumps(packet, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    assert len(serialized.encode("utf-8")) <= 8_192
+    assert packet["truncation"]["serialized_bytes"] == len(serialized.encode("utf-8"))
+    assert packet["analysis"]["issues"] == []
+    assert packet["candidate_evaluation"]["candidates"] == []
+
+
+def test_candidate_options_are_ranked_unclassified_and_validate_against_real_evaluations() -> None:
+    data, analysis, evaluation = _proposal_fixture()
+    options = prepare_candidate_options(analysis, evaluation)
+    assert options
+    assert [item["rank"] for item in options] == sorted(item["rank"] for item in options)
+    assert all(item["planning_category"] is None for item in options)
+    assert all(item["planning_category_status"] == "unclassified" for item in options)
+    assert all(item["evaluation_status"] == "candidate_evaluated_on_graph" for item in options)
+    assert all(item["modeled_impact"]["observed"] is False for item in options)
+    assert all(item["construction_cost"]["status"] == "unsupported" for item in options)
+    assert all(item["source_area_verification"] == "synthetic_fixture" for item in options)
+
+    validation = validate_proposal_set(options, data=data, candidate_evaluation=evaluation)
+    assert validation["summary"]["accepted_count"] == len(options)
+    assert validation["summary"]["rejected_count"] == 0
+    assert all(item["schema_status"] == "schema_valid_concept" for item in validation["results"])
+    assert all(item["support_status"] == "supported_executable_intervention" for item in validation["results"])
+    assert all(item["evaluation_status"] == "evaluated_model_scenario" for item in validation["results"])
+    assert all(item["physical_feasibility"] == "unknown" for item in validation["results"])
+    assert all(item["source_area_verification"] == "synthetic_fixture" for item in validation["results"])
+    assert all(item["status"] != "validated" for item in validation["results"])
+
+
+def test_proposal_validation_rejects_unsupported_types_missing_geometry_and_outside_coordinates() -> None:
+    data, _, evaluation = _proposal_fixture()
+    option = prepare_candidate_options(analyze_snapshot(data), evaluation)[0]
+
+    unsupported = {**option, "intervention": {"type": "traffic_signal_retiming", "geometry": {"type": "Point", "coordinates": [27.58, 47.16]}}}
+    missing_geometry = {**option, "intervention": {"type": "add_pedestrian_connection", "start": option["intervention"]["start"]}}
+    outside = {**option, "intervention": {**option["intervention"], "start": [27.9, 47.8]}}
+
+    assert "unsupported_intervention_type" in {finding["code"] for finding in validate_proposal(unsupported, data=data, candidate_evaluation=evaluation)["findings"]}
+    assert "missing_parameters" in {finding["code"] for finding in validate_proposal(missing_geometry, data=data, candidate_evaluation=evaluation)["findings"]}
+    assert "geometry_outside_study_area" in {finding["code"] for finding in validate_proposal(outside, data=data, candidate_evaluation=evaluation)["findings"]}
+
+
+def test_proposal_validation_rejects_invalid_units_unmatched_candidates_and_candidate_edits() -> None:
+    data, _, evaluation = _proposal_fixture()
+    option = prepare_candidate_options(analyze_snapshot(data), evaluation)[0]
+    invalid_unit = {**option, "claims": {"distance": {"value": 40, "unit": "feet"}}}
+    invented = {**option, "candidate_id": "candidate_fabricated"}
+    changed_link = {**option, "intervention": {**option["intervention"], "end": [27.5801, 47.1601]}}
+
+    unit_codes = {finding["code"] for finding in validate_proposal(invalid_unit, data=data, candidate_evaluation=evaluation)["findings"]}
+    invented_codes = {finding["code"] for finding in validate_proposal(invented, data=data, candidate_evaluation=evaluation)["findings"]}
+    mismatch_codes = {finding["code"] for finding in validate_proposal(changed_link, data=data, candidate_evaluation=evaluation)["findings"]}
+    assert "unsupported_units" in unit_codes
+    assert "candidate_not_found" in invented_codes
+    assert "candidate_intervention_mismatch" in mismatch_codes
+
+
+def test_proposal_validation_rejects_unsupported_claims_and_deduplicates_actions() -> None:
+    data, _, evaluation = _proposal_fixture()
+    options = prepare_candidate_options(analyze_snapshot(data), evaluation)
+    option = options[0]
+    unsupported_claims = {
+        **option,
+        "claims": {
+            "construction_cost": 500_000,
+            "source_citations": ["invented urban mobility study 2025"],
+            "simulation_run_id": "sumo_run_fabricated",
+            "observed_metrics": [{"id": "traffic_flow", "value": 900, "unit": "vehicle/hour"}],
+            "physical_feasibility": "feasible",
+        },
+    }
+    result = validate_proposal(unsupported_claims, data=data, candidate_evaluation=evaluation)
+    codes = {finding["code"] for finding in result["findings"]}
+    assert {"unsupported_cost_claim", "fabricated_or_unverified_source_citation", "invented_simulation_run_id", "unsupported_observed_metrics", "unsupported_physical_feasibility_claim"} <= codes
+    assert result["status"] == "rejected"
+
+    observed_status = {**option, "claims": {"traffic": {"status": "observed"}}}
+    observed_codes = {finding["code"] for finding in validate_proposal(observed_status, data=data, candidate_evaluation=evaluation)["findings"]}
+    assert "unsupported_observed_metrics" in observed_codes
+
+    duplicated = validate_proposal_set([option, option], data=data, candidate_evaluation=evaluation)
+    assert duplicated["summary"]["duplicate_count"] == 1
+    assert duplicated["summary"]["accepted_count"] == 1
+    assert duplicated["summary"]["rejected_count"] == 1
+    assert "duplicate_intervention" in {finding["code"] for finding in duplicated["results"][1]["findings"]}
+
+
+def test_rejected_candidate_cannot_become_a_candidate_backed_option() -> None:
+    data, analysis, evaluation = _proposal_fixture()
+    if evaluation["rejected_candidates"]:
+        rejected = evaluation["rejected_candidates"][0]
+        forged = {"candidate_id": rejected["candidate_id"], "intervention": rejected.get("intervention", {})}
+    else:
+        forged = {"candidate_id": "screened_out_candidate", "intervention": {"type": "add_pedestrian_connection", "start": [27.58, 47.16], "end": [27.581, 47.161]}}
+    assert all(item["candidate_id"] != forged["candidate_id"] for item in prepare_candidate_options(analysis, evaluation))
+    codes = {finding["code"] for finding in validate_proposal(forged, data=data, candidate_evaluation=evaluation)["findings"]}
+    assert "candidate_not_found" in codes
+
+
+def _sumo_fixture_data() -> OSMData:
+    data = _fixture_data(disconnected=True)
+    drive = data.graphs["walk"].copy()
+    drive.graph["name"] = "directed-drive-test-fixture"
+    drive.edges[1, 2, 0]["maxspeed"] = "36 km/h"
+    drive.edges[1, 2, 0]["lanes"] = "2"
+    data.graphs["drive"] = drive
+    return data
+
+
+def test_sumo_plain_xml_conversion_preserves_directed_osm_edges_metric_coords_and_reproducible_demand(tmp_path: Path) -> None:
+    data = _sumo_fixture_data()
+    graph_edges_before = list(data.graphs["drive"].edges(keys=True, data=True))
+    installation = SumoInstallation(sumo=None, netconvert=None, home=None)
+    first = prepare_sumo_network(data, tmp_path / "sumo-a", vehicle_count=6, seed=19, installation=installation)
+    second = prepare_sumo_network(data, tmp_path / "sumo-b", vehicle_count=6, seed=19, installation=installation)
+
+    first_nodes = ET.parse(tmp_path / "sumo-a" / first["files"]["nodes"]).getroot().findall("node")
+    first_edges = ET.parse(tmp_path / "sumo-a" / first["files"]["edges"]).getroot().findall("edge")
+    first_routes_path = tmp_path / "sumo-a" / first["files"]["routes"]
+    second_routes_path = tmp_path / "sumo-b" / second["files"]["routes"]
+    routes_root = ET.parse(first_routes_path).getroot()
+    geojson = json.loads((tmp_path / "sumo-a" / first["files"]["network_geojson"]).read_text(encoding="utf-8"))
+
+    assert first["conversion_status"] == "unavailable"
+    assert first["status"] == "prepared"
+    assert first["network"]["working_crs"].startswith("EPSG:")
+    assert len(first_nodes) == data.graphs["drive"].number_of_nodes()
+    assert len(first_edges) == data.graphs["drive"].number_of_edges()
+    assert all(float(node.attrib["x"]) > 100_000 and float(node.attrib["y"]) > 1_000_000 for node in first_nodes)
+    assert all(edge.attrib["from"] != edge.attrib["to"] for edge in first_edges)
+    assert all(len(route.attrib["edges"].split()) >= 1 for route in routes_root.findall("route"))
+    assert len(routes_root.findall("vehicle")) == 6
+    assert first["demand"]["synthetic"] is True
+    assert first["demand"]["departure_pattern"].startswith("deterministic even spacing within the first 70%")
+    assert all(0 <= item["depart_seconds"] < first["demand"]["duration_seconds"] * 0.7 for item in first["demand"]["routes"])
+    assert first["demand"]["routes"] == second["demand"]["routes"]
+    assert first_routes_path.read_bytes() == second_routes_path.read_bytes()
+    assert geojson["metadata"]["crs"] == "EPSG:4326"
+    assert all("source_osm_way_ids" in feature["properties"] for feature in geojson["features"])
+    id_map = json.loads((tmp_path / "sumo-a" / first["files"]["id_map"]).read_text(encoding="utf-8"))
+    assert len(id_map["nodes"]) == len(first_nodes)
+    assert all(edge["source_osm_node_ids"] for edge in id_map["edges"])
+    assert first["network"]["defaulted_speed_edge_count"] > 0
+    assert first["network"]["defaulted_or_ambiguous_lane_edge_count"] > 0
+    assert first["network"]["derived_edge_length_count"] == 0
+    assert any(feature["properties"]["speed_mps"] == pytest.approx(10.0) for feature in geojson["features"])
+    assert list(data.graphs["drive"].edges(keys=True, data=True)) == graph_edges_before
+    json.dumps(first, ensure_ascii=False, allow_nan=False)
+
+
+def test_sumo_conversion_rejects_unbounded_and_missing_driving_graphs(tmp_path: Path) -> None:
+    data = _sumo_fixture_data()
+    with pytest.raises(SumoPreparationError, match="exceeds configured bounds"):
+        prepare_sumo_network(data, tmp_path / "too-large", max_nodes=2, installation=SumoInstallation(None, None, None))
+    with pytest.raises(ValueError, match="cannot exceed hard limits"):
+        prepare_sumo_network(
+            data,
+            tmp_path / "over-hard-limit",
+            max_nodes=sumo_engine_module.DEFAULT_MAX_NODES + 1,
+            installation=SumoInstallation(None, None, None),
+        )
+    walk_only = _fixture_data(disconnected=True)
+    with pytest.raises(SumoPreparationError, match="driving graph is required"):
+        prepare_sumo_network(walk_only, tmp_path / "no-drive", installation=SumoInstallation(None, None, None))
+
+
+def test_sumo_real_area_runner_reports_missing_tools_without_claiming_execution(tmp_path: Path) -> None:
+    result = run_real_area_simulation(
+        _sumo_fixture_data(),
+        tmp_path / "sumo-unavailable",
+        vehicle_count=3,
+        installation=SumoInstallation(sumo=None, netconvert=None, home=None),
+    )
+    assert result["status"] == "unavailable"
+    assert result["failure_stage"] == "network_conversion"
+    assert result["measurements"] is None
+    assert "netconvert executable was not found" in result["reason"]
+    assert result["network_preparation"]["demand"]["synthetic"] is True
+    assert (tmp_path / "sumo-unavailable" / "iasi.simulation.json").is_file()
+
+
+def test_sumo_netconvert_timeout_is_reported_without_claiming_a_network(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    data = _sumo_fixture_data()
+
+    def timed_out(*args: object, **kwargs: object) -> None:
+        raise subprocess.TimeoutExpired("netconvert", timeout=60)
+
+    monkeypatch.setattr(sumo_engine_module.subprocess, "run", timed_out)
+    result = prepare_sumo_network(
+        data,
+        tmp_path / "sumo-timeout",
+        installation=SumoInstallation(sumo=None, netconvert=tmp_path / "netconvert.exe", home=None),
+    )
+    assert result["status"] == "timeout"
+    assert result["conversion_status"] == "timeout"
+    assert result["files"]["network"] is None
+    assert "60-second" in result["conversion_detail"]
+
+
+def test_sumo_trip_accounting_separates_completed_unfinished_and_unreported_vehicles(tmp_path: Path) -> None:
+    data = _sumo_fixture_data()
+    tripinfo = tmp_path / "tripinfo.xml"
+    tripinfo.write_text(
+        '<tripinfos>'
+        '<tripinfo id="complete" depart="0" arrival="10" duration="10" routeLength="200" waitingTime="2" />'
+        '<tripinfo id="unfinished" depart="20" arrival="-1" duration="5" routeLength="50" waitingTime="1" />'
+        '<tripinfo id="uninserted" depart="-1" arrival="-1" duration="0" routeLength="0" waitingTime="0" />'
+        '</tripinfos>',
+        encoding="utf-8",
+    )
+    records, _, _ = sumo_engine_module._edge_records(data, data.graphs["drive"], 1, 13.9)
+    demand = [
+        {"vehicle_id": vehicle_id, "sumo_edges": [records[0]["sumo_edge_id"]]}
+        for vehicle_id in ("complete", "unfinished", "uninserted", "unreported")
+    ]
+
+    features, metrics = sumo_engine_module._trip_features(tripinfo, demand, records)
+
+    assert metrics["completed_trip_count"] == 1
+    assert metrics["incomplete_trip_count"] == 3
+    assert metrics["unfinished_tripinfo_count"] == 2
+    assert metrics["not_departed_tripinfo_count"] == 1
+    assert metrics["unreported_trip_count"] == 1
+    assert metrics["vehicle_movement_verified_count"] == 2
+    assert len(features) == 1
