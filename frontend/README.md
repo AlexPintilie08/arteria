@@ -1,12 +1,45 @@
-# Frontend
+# ARTERIA frontend
+
+## Baza implementată
+
+Două aplicații separate: `web` pentru prezentare și produsul în browser, `mobile` pentru Android. `shared` conține doar codul reutilizat de ambele. O singură instalare npm și un singur lockfile în acest director.
+
+```text
+frontend/
+  web/          React + Next.js: prezentare la /, produs la /app
+  mobile/       aplicație Android React Native + Expo
+  shared/       contracte API, client HTTP, tokenuri și teste
+```
+
+Vezi și instrucțiunile separate pentru [site](web/README.md) și [Android](mobile/README.md).
+
+Din `frontend`, cu Node 22.12+ sau Node 24:
+
+```powershell
+npm ci
+npm run dev
+```
+
+Prezentare: `http://localhost:3000`. Produs web: `http://localhost:3000/app`. Pentru Expo: `npm run mobile`; pentru emulator/dispozitiv Android disponibil: `npm run android`. Comenzile se rulează din `frontend`.
+
+```powershell
+npm run check
+npm run export:android --workspace @arteria/mobile
+```
+
+- [Prompt complet pentru AI](../docs/frontend/AI_INTERFACE_PROMPT.md) — gata de copiat pentru implementarea întregii interfețe.
+- [Brief vizual premium](../docs/frontend/DESIGN_BRIEF.md) — direcție, tokenuri, referințe și criterii de calitate.
+- [Structură și integrare](../docs/frontend/IMPLEMENTATION.md) — setup, API, hartă, Android și limitări.
+
+Aceasta este o structură inițială cu ecrane de bază. Harta web necesită un stil configurat în `.env`; harta Android este un placeholder explicit. Preview-ul nu inventează rezultate. Propunerile și comparațiile sunt puncte de extindere, fără integrare backend. Vezi [STATUS](STATUS.md).
 
 ## Responsibilities
 
 Present the map-focused urban planning experience: neighborhood selection, spatial indicators and heatmaps, AI proposal review, intervention controls, Before/After comparison, and SUMO simulation visualization or replay.
 
-## Planned technology
+## Technology
 
-React, TypeScript, Vite, MapLibre GL JS, and WebGL. Tailwind CSS is optional and should be used only if it supports the visual system. The intended direction is premium, dark, elegant, fluid, and map-focused rather than a generic AI dashboard.
+Web: React, TypeScript, Next.js, MapLibre GL JS, WebGL and CSS tokens. Android: Expo and React Native with native-stack navigation. The direction is premium, dark, restrained and map-focused. See the design brief for concrete decisions.
 
 ## Inputs and outputs
 

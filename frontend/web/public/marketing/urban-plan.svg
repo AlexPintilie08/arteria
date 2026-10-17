@@ -1,0 +1,90 @@
+<svg fill="none" viewBox="0 0 1200 680" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="riverWater" x1="0" x2="1200" y1="0" y2="300">
+<stop offset="0%" stop-color="#C7E2ED"></stop>
+<stop offset="50%" stop-color="#D9ECF3"></stop>
+<stop offset="100%" stop-color="#BFDCE8"></stop>
+</linearGradient>
+<linearGradient gradientUnits="userSpaceOnUse" id="tealIntervention" x1="380" x2="880" y1="520" y2="280">
+<stop offset="0%" stop-color="#028090"></stop>
+<stop offset="100%" stop-color="#00A896"></stop>
+</linearGradient>
+</defs>
+<!-- Background Grid Blocks / Urban Parcel Fabric -->
+<rect fill="#F8FAFC" height="680" width="1200" x="0" y="0"></rect>
+<!-- Natural Water Body / Curved Canal Corridor -->
+<path d="M -20 180 C 260 190 420 110 740 130 C 950 145 1100 90 1220 70 L 1220 220 C 1080 250 940 280 730 250 C 440 210 260 310 -20 290 Z" fill="url(#riverWater)" opacity="0.85"></path>
+<path d="M 50 230 C 320 250 480 160 740 185 C 930 200 1080 155 1200 135" opacity="0.5" stroke="#FFFFFF" stroke-dasharray="6 8" stroke-width="2"></path>
+<!-- Green Open Spaces / Riverfront Parks -->
+<path d="M 120 250 C 240 255 310 210 420 190 C 380 270 280 320 150 310 Z" fill="#E2EFE9"></path>
+<path d="M 760 120 C 880 135 980 90 1060 80 C 1090 120 1020 170 890 160 Z" fill="#E2EFE9"></path>
+<circle cx="210" cy="280" fill="#A8D5BA" opacity="0.7" r="14"></circle>
+<circle cx="260" cy="270" fill="#93C8A6" opacity="0.6" r="18"></circle>
+<circle cx="340" cy="230" fill="#A8D5BA" opacity="0.8" r="12"></circle>
+<circle cx="860" cy="130" fill="#A8D5BA" opacity="0.7" r="16"></circle>
+<circle cx="920" cy="145" fill="#93C8A6" opacity="0.6" r="20"></circle>
+<!-- Urban Blocks & Buildings - Northwest Quarter -->
+<g fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5">
+<rect height="70" rx="3" width="130" x="60" y="30"></rect>
+<rect height="65" rx="3" width="90" x="220" y="35"></rect>
+<rect height="75" rx="3" width="150" x="340" y="25"></rect>
+<rect height="60" rx="3" width="140" x="520" y="30"></rect>
+<rect height="40" rx="3" width="110" x="70" y="125"></rect>
+<rect height="40" rx="3" width="80" x="205" y="125"></rect>
+</g>
+<!-- Urban Blocks & Buildings - Northeast Quarter -->
+<g fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1.5">
+<rect height="60" rx="3" width="160" x="780" y="20"></rect>
+<rect height="65" rx="3" width="170" x="970" y="15"></rect>
+<rect height="80" rx="3" width="80" x="1100" y="150"></rect>
+</g>
+<!-- Southern Urban District Parcels -->
+<g fill="#E5E7EB" stroke="#D1D5DB" stroke-width="1.5">
+<rect height="110" rx="3" width="160" x="80" y="360"></rect>
+<rect height="110" rx="3" width="130" x="270" y="360"></rect>
+<rect height="130" rx="3" width="160" x="80" y="500"></rect>
+<rect height="130" rx="3" width="130" x="270" y="500"></rect>
+<rect height="110" rx="3" width="180" x="720" y="360"></rect>
+<rect height="110" rx="3" width="200" x="930" y="360"></rect>
+<rect height="130" rx="3" width="180" x="720" y="500"></rect>
+<rect height="130" rx="3" width="200" x="930" y="500"></rect>
+</g>
+<!-- Primary Street Network Grid (Clean Architectural Avenues) -->
+<!-- East-West Arterial South -->
+<path d="M 0 480 L 1200 480" stroke="#E2E8F0" stroke-width="36"></path>
+<path d="M 0 480 L 1200 480" stroke="#FFFFFF" stroke-width="26"></path>
+<line stroke="#CBD5E1" stroke-dasharray="8 8" stroke-width="2" x1="0" x2="1200" y1="480" y2="480"></line>
+<!-- Secondary East-West River Bank Boulevards -->
+<path d="M 0 330 C 260 340 400 280 600 310 C 840 340 1020 280 1200 290" stroke="#E2E8F0" stroke-width="28"></path>
+<path d="M 0 330 C 260 340 400 280 600 310 C 840 340 1020 280 1200 290" stroke="#FFFFFF" stroke-width="20"></path>
+<!-- North-South Arterial Bridge & Corridor across River -->
+<path d="M 520 0 L 520 680" stroke="#E2E8F0" stroke-width="52"></path>
+<path d="M 520 0 L 520 680" stroke="#FFFFFF" stroke-width="40"></path>
+<!-- Central Roundabout Intersection Hub -->
+<circle cx="520" cy="480" fill="#F8FAFC" r="76" stroke="#E2E8F0" stroke-width="24"></circle>
+<circle cx="520" cy="480" fill="none" r="76" stroke="#FFFFFF" stroke-width="16"></circle>
+<!-- Landscaped Roundabout Center Island -->
+<circle cx="520" cy="480" fill="#E2EFE9" r="46" stroke="#CBD5E1" stroke-width="2"></circle>
+<circle cx="520" cy="480" fill="#A8D5BA" opacity="0.6" r="28"></circle>
+<!-- Existing Tram Transit Tracks (Dual Line with subtle dashes) -->
+<line stroke="#94A3B8" stroke-dasharray="4 4" stroke-width="2" x1="512" x2="512" y1="0" y2="680"></line>
+<line stroke="#94A3B8" stroke-dasharray="4 4" stroke-width="2" x1="528" x2="528" y1="0" y2="680"></line>
+<!-- Pedestrian Crossings (Clean white zebras) -->
+<line stroke="#94A3B8" stroke-dasharray="4 3" stroke-width="4" x1="504" x2="536" y1="380" y2="380"></line>
+<line stroke="#94A3B8" stroke-dasharray="4 3" stroke-width="4" x1="504" x2="536" y1="580" y2="580"></line>
+<line stroke="#94A3B8" stroke-dasharray="3 3" stroke-width="4" x1="410" x2="410" y1="472" y2="488"></line>
+<line stroke="#94A3B8" stroke-dasharray="3 3" stroke-width="4" x1="630" x2="630" y1="472" y2="488"></line>
+<!-- HIGHLIGHTED INTERVENTION: Proposed Channeled Bypass & Protected Corridor -->
+<!-- Channeled right-turn bypass bypassing the roundabout -->
+<path d="M 548 640 C 555 580 575 540 640 488 C 700 440 760 415 880 395" stroke="url(#tealIntervention)" stroke-linecap="round" stroke-width="14"></path>
+<path d="M 548 640 C 555 580 575 540 640 488 C 700 440 760 415 880 395" opacity="0.9" stroke="#FFFFFF" stroke-dasharray="6 6" stroke-width="2"></path>
+<!-- Directional Flow Arrows in Teal -->
+<polygon fill="#00A896" points="885,395 868,387 872,399"></polygon>
+<polygon fill="#028090" points="636,492 622,482 627,495"></polygon>
+<!-- Protected Bus/Tram Island / Curbside Realignment -->
+<rect fill="#028090" height="90" rx="4" width="10" x="536" y="270"></rect>
+<text fill="#028090" font-family="Space Grotesk" font-size="12" font-weight="600" letter-spacing="0.5" x="555" y="320">Protected Transit Platform</text>
+<!-- Subtle Node Indicator -->
+<circle cx="640" cy="488" fill="#00A896" r="7" stroke="#FFFFFF" stroke-width="2.5"></circle>
+<text fill="#1B4965" font-family="Space Grotesk" font-size="13" font-weight="600" x="660" y="493">Dedicated Right-Turn Channel</text>
+</svg>

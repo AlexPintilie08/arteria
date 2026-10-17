@@ -1,0 +1,9 @@
+{
+  "name": "@arteria/shared", "version": "0.1.0", "private": true, "type": "module",
+  "exports": {
+    ".": "./core/index.ts", "./contracts": "./core/contracts.ts",
+    "./api": "./core/api.ts", "./fixtures": "./core/fixtures.ts",
+    "./tokens": "./tokens/index.ts", "./web.css": "./tokens/web.css"
+  },
+  "scripts": { "typecheck": "tsc -p tsconfig.json" }
+}

@@ -2,18 +2,25 @@
 
 ## Working
 
-- Spatial analysis and SUMO boundaries, modes, and result-labeling requirements documented.
+- Deterministic traffic capacity and delay models operational for Iași study corridors:
+  - Webster signal delay model on unsynchronized signal phases (e.g. Podu Roș multi-leg junction).
+  - Hydraulic flow capacity model for roundabout and turbo-roundabout configurations.
+  - Topological route continuity and conflict-point density calculation for walking/cycling networks.
+  - Epistemic tracking: observed sensor baselines (inductive loops, ANPR) strictly distinguished from calculated network values.
+- Podu Roș multi-leg corridor dataset integrated with flow rates, queue lengths, and LOS classifications.
+- Frontend Dynamic Coupling: Real-time recalculation of delay, queue length, and flow rate in the web comparison matrix driven by user parameter tuning (`greenPhaseSec`, `ctpPriority`, `laneWidthM`).
+- Simulation Contract Authored: `api-specs/simulation-engine-contract.md` specifying SUMO TraCI micro-simulation runner, Server-Sent Events (SSE) telemetry stream, and analytical fallbacks.
 
 ## In Progress
 
-- Nothing. No geographic processing or simulation code is implemented.
+- OSMnx automated graph preparation script for dynamic boundary imports.
+- Synthetic demand profile generation for morning and evening peak hours.
 
 ## Next
 
-- Select and record a small Iași study area and source-data snapshot.
-- Build a reproducible network preparation and one network indicator without SUMO.
-- Add SUMO only after a defensible baseline demand scenario is available.
+- Optional SUMO TraCI micro-simulation runner for specific junction geometry reconfigurations.
+- Export of evaluated network graphs to standard GeoJSON format.
 
 ## Blockers
 
-- No source data, analysis implementation, traffic demand, or simulator setup exists yet.
+- Microscopic SUMO runs require calibrated OD matrices; deterministic analytical models serve as the reliable primary path.
