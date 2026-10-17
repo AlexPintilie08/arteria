@@ -8,16 +8,16 @@ Updated: 2026-10-17
 - Independent cached OSMnx acquisition for requested walking, cycling, and driving modes. Successful modes survive partial network or POI-query failures; failed modes have explicit availability and warnings; complete requested-network failure raises `OSMDataError`.
 - Graph normalization, connected components, weighted routes, route detour ratios, mode-appropriate walking/cycling access estimates, stable evidence-backed connectivity/access/detour issues, and heatmap-ready GeoJSON.
 - Isolated pedestrian-connection scenarios with endpoint snapping, finite-parameter and length validation, Before/After route calculations, reachability changes, baseline immutability, and consistent walking-speed assumptions.
-- Offline simulation regression suite: 31 passed. Combined existing repository and simulation tests: 36 passed. Default `pytest -q` collected only 5 tests from `tests/`, confirming that it omits the simulation suite.
+- Offline simulation regression suite: 31 passed. The standard project check now explicitly runs `tests` and `sim/test_engine.py`; the combined suite contains 36 tests (5 existing project tests and 31 simulation tests).
 
 ## Verification and CI coverage
 
-- Local verification used `.venv/Scripts/python.exe` (Python 3.12) with no dependency installation. `.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-stabilization tests sim/test_engine.py`: 36 passed; `.venv/Scripts/python.exe -m pytest -q`: 5 passed and did not collect `sim/test_engine.py`.
+- Local verification used `.venv/Scripts/python.exe` (Python 3.12) with no dependency installation. `.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-stabilization tests sim/test_engine.py`: 36 passed. The current Windows environment does not have `uv`; the standard `check.ps1` and `check.sh` scripts were syntax-checked, and the backend HTTP health smoke passed.
 - `.venv/Scripts/python.exe -m sim.smoke_test`: passed with NetworkX 3.7, OSMnx 2.1.1, GeoPandas 1.2.0, Shapely 2.2.0; deterministic route distance 200.0 m. `.venv/Scripts/python.exe scripts/health_smoke.py`: backend HTTP health passed.
-- `.venv/Scripts/python.exe -m sim.sumo_support --smoke`: optional smoke skipped because SUMO and `netconvert` executables are not installed; `traci` and `sumolib` 1.28.0 are present. Command exited successfully with the documented skip.
-- The prior PR checks passed on Windows, macOS ARM64, and macOS Intel, but they do not collect `sim/test_engine.py`. `pyproject.toml` selects only `tests/`, while `scripts/check.ps1` and `scripts/check.sh` invoke pytest without explicit paths.
-- Proposed smallest shared fix: change both check scripts to run `pytest -q tests sim/test_engine.py`. No shared pytest configuration, scripts, or CI workflow files were modified because this milestone is limited to `sim/`.
-- New-commit CI must be checked after publication; green CI does not establish simulation regression coverage until the shared test-selection gap is addressed.
+- Local `.venv/Scripts/python.exe -m sim.sumo_support --smoke` skipped because SUMO and `netconvert` are not installed locally; `traci` and `sumolib` 1.28.0 are present. GitHub Actions installed SUMO 1.28.0 on both supported runners and the synthetic TraCI smoke advanced to 1 s successfully. This validates the small synthetic smoke only, not real-area network conversion or calibrated traffic simulation.
+- GitHub Actions run [39044641288](https://github.com/AlexPintilie08/arteria/actions/runs/39044641288), for CI commit `55b26a0a17245a77ee8f95c429083b2c9300f801`, passed on `windows-latest` and `macos-15`. Logs reported Windows `RUNNER_ARCH=X64` and macOS `RUNNER_ARCH=ARM64`, `uname -m=arm64`; both jobs passed all 36 tests, backend health, frontend TypeScript checking and production build, and SUMO smoke. The macOS result is ARM64 runner coverage and does not establish direct Apple M5 hardware validation.
+- CI now targets Windows x64 and macOS Apple Silicon only. The workflow asserts each runner's architecture, and both standard check scripts explicitly run `uv run --locked pytest -q tests sim/test_engine.py`; the existing five project tests and all 31 simulation regression tests are included. `pyproject.toml` remains unchanged.
+- GitHub annotated possible longer queue times for macOS ARM64 runners due to capacity. No functional integration warnings remained in the verified run.
 
 ## Verified real Iași snapshot
 
