@@ -473,6 +473,34 @@ def test_failed_poi_query_is_warned_and_keeps_layer_unknown(monkeypatch: pytest.
     assert any("fixture POI timeout" in warning for warning in analyzed["warnings"])
 
 
+def test_graph_only_acquisition_skips_feature_query_and_keeps_layers_unknown(
+    monkeypatch: pytest.MonkeyPatch, local_cache_dir: Path,
+) -> None:
+    requested = _install_osm_mocks(monkeypatch)
+
+    def fail_if_feature_query(*args: object, **kwargs: object) -> gpd.GeoDataFrame:
+        raise AssertionError("Graph-only acquisition must not request OSM feature layers")
+
+    monkeypatch.setattr(geo_module.ox, "features_from_polygon", fail_if_feature_query)
+    result = acquire_osm_data(
+        [27.579, 47.159, 27.582, 47.162],
+        modes=("walk",), cache_dir=local_cache_dir, use_cache=False, include_features=False,
+    )
+
+    assert requested == ["walk"]
+    assert result.metadata["feature_query_requested"] is False
+    assert result.layer_availability["walk_network"]["status"] == "available"
+    assert all(result.layer_availability[layer]["status"] == "unknown" for layer in result.layers)
+    assert any("feature layers were not requested" in warning for warning in result.warnings)
+    analyzed = analyze_snapshot(result)
+    school_access = next(
+        item for item in analyzed["indicators"]
+        if item["id"] == "walk_access_schools_within_15_min"
+    )
+    assert school_access["value"] is None
+    assert school_access["status"] == "unknown"
+
+
 def test_drive_only_analysis_does_not_invent_pedestrian_accessibility() -> None:
     data = _fixture_data()
     drive_only = _snapshot_with_graphs(data, {"drive": data.graphs["walk"]})

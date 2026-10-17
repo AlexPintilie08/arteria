@@ -98,8 +98,9 @@ def test_tuning_changes_exact_parameter_and_outcome():
 
 def test_storage_survives_new_process():
     a, _, _ = flow()
-    code = "from backend.main import analyses; import sys; print(analyses.get(sys.argv[1]).model_dump_json())"
-    child = subprocess.run([sys.executable, "-c", code, a["analysis_id"]], capture_output=True, text=True, check=True, env=os.environ.copy())
+    code = "import sys; sys.stdout.reconfigure(encoding='utf-8'); from backend.main import analyses; print(analyses.get(sys.argv[1]).model_dump_json())"
+    child = subprocess.run([sys.executable, "-c", code, a["analysis_id"]], capture_output=True, text=True, encoding="utf-8", env=os.environ.copy())
+    assert child.returncode == 0, f"Storage subprocess exited {child.returncode}: {child.stderr[-4000:]}"
     assert json.loads(child.stdout) == a
 
 

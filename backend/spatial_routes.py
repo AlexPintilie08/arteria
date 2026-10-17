@@ -29,6 +29,9 @@ def create_study(body: SpatialRequest):
     study = Study(study_id="study_" + uuid4().hex, baseline_id="graph_" + uuid4().hex,
         created_at=datetime.now(timezone.utc), source=body.source, engine_revision=revision,
         analysis=result["analysis"], alternatives=result["alternatives"],
+        proposal_options=result.get("proposal_options", []),
+        proposal_validation=result.get("proposal_validation", {}),
+        evidence_packet=result.get("evidence_packet", {}),
         warnings=WARNINGS + (["Synthetic fixture, not an observation of Iași infrastructure."] if body.source == "fixture" else ["OpenStreetMap snapshot; coverage and feasibility limitations apply. Preserve ODbL attribution."]))
     return studies.put(study.study_id, study)
 
@@ -55,6 +58,12 @@ def evaluate(study_id: str, body: Selection):
         raise HTTPException(404, "Unknown candidate in this study")
     if body.intervention != candidate["intervention"]:
         raise HTTPException(409, "Intervention must match the returned candidate exactly")
+    validation_results = study.proposal_validation.get("results", [])
+    validation = next((item for item in validation_results
+                       if isinstance(item, dict) and item.get("candidate_id") == body.candidate_id), None)
+    if validation is None or validation.get("status") != "candidate_backed_evaluated":
+        raise HTTPException(409, "SIM proposal validation did not approve this evaluated candidate")
     return SpatialEvaluation(study_id=study_id, baseline_id=study.baseline_id,
         candidate_id=body.candidate_id, source=study.source, evaluated_at=study.created_at,
-        intervention=candidate["intervention"], impact=candidate["impact"], warnings=study.warnings)
+        intervention=candidate["intervention"], impact=candidate["impact"],
+        proposal_validation=validation, warnings=study.warnings)

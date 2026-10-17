@@ -325,6 +325,7 @@ def acquire_osm_data(
     use_cache: bool = True,
     force_refresh: bool = False,
     overpass_url: str | None = None,
+    include_features: bool = True,
     max_area_km2: float = DEFAULT_MAX_AREA_KM2,
     max_extent_km: float = DEFAULT_MAX_EXTENT_KM,
 ) -> OSMData:
@@ -333,7 +334,8 @@ def acquire_osm_data(
     OSMnx's standard Overpass rate limiting remains enabled. Both OSMnx HTTP
     responses and normalized GraphML/GeoJSON snapshots are cached under sim/.cache
     by default. Failed modes are reported when another requested graph succeeds;
-    an all-mode failure raises OSMDataError. POI-query failures remain warnings.
+    an all-mode failure raises OSMDataError. Graph-only consumers can skip feature
+    queries; those layers remain unknown unless a local feature snapshot exists.
     """
     if isinstance(modes, str):
         raise ValueError(f"modes must be a non-empty iterable of mode names from {SUPPORTED_MODES}, not a string.")
@@ -346,6 +348,8 @@ def acquire_osm_data(
     if any(not isinstance(mode, str) or mode not in SUPPORTED_MODES for mode in mode_values):
         unsupported = [mode for mode in mode_values if not isinstance(mode, str) or mode not in SUPPORTED_MODES]
         raise ValueError(f"Unsupported OSM network mode(s): {unsupported!r}. Supported modes are {SUPPORTED_MODES}.")
+    if not isinstance(include_features, bool):
+        raise ValueError("include_features must be a boolean.")
     requested_modes = tuple(dict.fromkeys(mode_values))
     normalized = normalize_area(area, max_area_km2=max_area_km2, max_extent_km=max_extent_km)
     base = Path(cache_dir) if cache_dir else Path(__file__).resolve().parent / ".cache" / "osm"
@@ -463,7 +467,7 @@ def acquire_osm_data(
                     features = gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
             else:
                 features = gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
-            if feature_retrieved is None:
+            if feature_retrieved is None and include_features:
                 try:
                     raw_features = ox.features_from_polygon(normalized.polygon, tags=FEATURE_TAGS)
                     features = _feature_frame(raw_features)
@@ -482,6 +486,8 @@ def acquire_osm_data(
                         )
                 except Exception as error:
                     warnings.append(f"OpenStreetMap feature request failed: {type(error).__name__}: {error}")
+            elif feature_retrieved is None:
+                warnings.append("OpenStreetMap feature layers were not requested for this graph-only study; their availability remains unknown.")
         finally:
             settings.cache_folder = previous["cache_folder"]
             settings.use_cache = previous["use_cache"]
@@ -514,6 +520,7 @@ def acquire_osm_data(
         "source": "OpenStreetMap",
         "source_version": "live OSM snapshot",
         "requested_network_modes": list(requested_modes),
+        "feature_query_requested": include_features,
         "retrieved_at": max(retrieved_values) if retrieved_values else None,
         "extent_wgs84": normalized.extent,
         "area_key": key,

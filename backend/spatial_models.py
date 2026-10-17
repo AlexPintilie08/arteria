@@ -2,22 +2,22 @@
 from datetime import datetime
 from typing import Literal
 from pydantic import Field, JsonValue, model_validator
-from backend.models import Area, Model
+from backend.models import Model
 
 
 class SpatialRequest(Model):
     source: Literal["fixture", "osm"] = "fixture"
-    area: Area | None = None
+    neighborhood_id: str | None = Field(default=None, min_length=1, max_length=200)
     sample_count: int = Field(default=16, ge=1, le=64, strict=True)
     max_candidates: int = Field(default=3, ge=1, le=3, strict=True)
     seed: str = Field(default="arteria-spatial-v1", min_length=1, max_length=100)
 
     @model_validator(mode="after")
     def source_area(self):
-        if self.source == "fixture" and self.area is not None:
-            raise ValueError("Fixture has its own synthetic area; do not attach real area metadata")
-        if self.source == "osm" and (self.area is None or self.area.boundary is None):
-            raise ValueError("OSM analysis requires an explicit bounded polygon")
+        if self.source == "fixture" and self.neighborhood_id is not None:
+            raise ValueError("Fixture has its own synthetic area; do not attach a sourced neighborhood")
+        if self.source == "osm" and self.neighborhood_id is None:
+            raise ValueError("OSM analysis requires a SIM neighborhood catalog ID")
         return self
 
 
@@ -30,6 +30,9 @@ class Study(Model):
     calculation: Literal["pedestrian_graph"] = "pedestrian_graph"
     analysis: dict[str, JsonValue]
     alternatives: dict[str, JsonValue]
+    proposal_options: list[dict[str, JsonValue]] = Field(default_factory=list)
+    proposal_validation: dict[str, JsonValue] = Field(default_factory=dict)
+    evidence_packet: dict[str, JsonValue] = Field(default_factory=dict)
     warnings: list[str]
 
 
@@ -56,4 +59,5 @@ class SpatialEvaluation(Model):
     sumo_executed: Literal[False] = False
     intervention: dict[str, JsonValue]
     impact: dict[str, JsonValue]
+    proposal_validation: dict[str, JsonValue]
     warnings: list[str]

@@ -219,7 +219,9 @@ def list_areas(city_id: str = "iasi-ro", include_bounds: bool = True):
 
 
 # Optional graph engine is isolated from the traffic-demo models and lifecycle.
-from backend.spatial_adapter import SpatialUnavailable, SpatialTimeout, SpatialFailure
+from backend.spatial_adapter import (
+    SpatialAreaRejected, SpatialNeighborhoodNotFound, SpatialUnavailable, SpatialTimeout, SpatialFailure,
+)
 from backend.spatial_routes import router as spatial_router
 
 
@@ -236,6 +238,16 @@ async def spatial_timeout(request: Request, exc: SpatialTimeout):
 @app.exception_handler(SpatialFailure)
 async def spatial_failure(request: Request, exc: SpatialFailure):
     return error(502, "spatial_failure", str(exc))
+
+
+@app.exception_handler(SpatialAreaRejected)
+async def spatial_area_rejected(request: Request, exc: SpatialAreaRejected):
+    return error(422, "study_area_rejected", str(exc))
+
+
+@app.exception_handler(SpatialNeighborhoodNotFound)
+async def spatial_neighborhood_not_found(request: Request, exc: SpatialNeighborhoodNotFound):
+    return error(404, "unknown_neighborhood", str(exc))
 
 
 app.include_router(spatial_router)

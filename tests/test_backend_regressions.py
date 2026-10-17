@@ -30,6 +30,12 @@ def engine_result():
                                    "distance_delta_m": 10.0}],
                        "provenance": {"source": "synthetic-test"}, "warnings": []},
         }]},
+        "proposal_options": [{"candidate_id": "c1", "summary": "Candidate-backed test proposal"}],
+        "proposal_validation": {"status": "all_candidate_backed_evaluated",
+                                "summary": {"submitted_count": 1, "accepted_count": 1, "rejected_count": 0, "duplicate_count": 0},
+                                "results": [{"candidate_id": "c1", "status": "candidate_backed_evaluated",
+                                             "physical_feasibility": "unknown", "findings": []}]},
+        "evidence_packet": {"schema_version": "arteria.proposal-context.v1"},
     }
 
 
@@ -75,6 +81,7 @@ def test_valid_engine_extensions_and_negative_impacts_survive(monkeypatch, tmp_p
     study = r.json()
     assert study["analysis"] == payload["analysis"]
     assert study["alternatives"] == payload["alternatives"]
+    assert study["proposal_validation"]["results"][0]["status"] == "candidate_backed_evaluated"
     c = payload["alternatives"]["ranked_candidates"][0]
     e = client.post(f"/api/v1/spatial/studies/{study['study_id']}/evaluate", json={"baseline_id": study["baseline_id"], "candidate_id": c["candidate_id"], "intervention": c["intervention"]})
     assert e.status_code == 200

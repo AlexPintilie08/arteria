@@ -5,7 +5,9 @@ import subprocess
 import pytest
 from fastapi.testclient import TestClient
 from backend.main import app
-from backend.spatial_adapter import SpatialAdapter, SpatialFailure, SpatialTimeout, SpatialUnavailable
+from backend.spatial_adapter import (
+    SpatialAdapter, SpatialAreaRejected, SpatialFailure, SpatialNeighborhoodNotFound, SpatialTimeout, SpatialUnavailable,
+)
 from backend.spatial_models import SpatialRequest
 
 client = TestClient(app)
@@ -18,7 +20,9 @@ def fake_engine(monkeypatch, tmp_path):
               "alternatives": {"ranked_candidates": [{
                   "candidate_id": "c1", "intervention": {"type": "add_pedestrian_connection", "start": [27.58, 47.16], "end": [27.581, 47.16]},
                   "impact": {"aggregate": {"regressed_count": 1, "improved_count": 2},
-                             "routes": [{"outcome": "regressed", "distance_delta_m": 10}]}}]}}
+                             "routes": [{"outcome": "regressed", "distance_delta_m": 10}]}}]},
+              "proposal_options": [{"candidate_id": "c1"}],
+              "proposal_validation": {"results": [{"candidate_id": "c1", "status": "candidate_backed_evaluated"}]}}
     monkeypatch.setattr("backend.spatial_routes.engine.run", lambda body: (deepcopy(result), "test-revision"))
     return result
 
@@ -39,6 +43,7 @@ def test_spatial_selection_retains_original_impact_and_source(fake_engine):
     assert e.json()["evaluated_at"] == s["created_at"]
     assert e.json()["sumo_executed"] is False
     assert e.json()["source"] == "fixture"
+    assert e.json()["proposal_validation"]["status"] == "candidate_backed_evaluated"
     assert client.post(base + "/evaluate", json={**body, "baseline_id": "wrong"}).status_code == 409
     assert client.post(base + "/evaluate", json={**body, "candidate_id": "wrong"}).status_code == 404
     body["intervention"]["end"] = [27.59, 47.17]
@@ -50,6 +55,18 @@ def test_empty_candidates_are_honest(fake_engine):
     fake_engine["alternatives"]["ranked_candidates"] = []
     s = client.post("/api/v1/spatial/studies", json={}).json()
     assert s["alternatives"]["ranked_candidates"] == []
+
+
+def test_candidate_must_pass_sim_validation_before_comparison(fake_engine):
+    fake_engine["proposal_validation"]["results"][0]["status"] = "rejected"
+    s = client.post("/api/v1/spatial/studies", json={}).json()
+    candidate = s["alternatives"]["ranked_candidates"][0]
+    response = client.post(f"/api/v1/spatial/studies/{s['study_id']}/evaluate", json={
+        "baseline_id": s["baseline_id"], "candidate_id": candidate["candidate_id"],
+        "intervention": candidate["intervention"],
+    })
+    assert response.status_code == 409
+    assert "validation" in response.json()["error"]["message"].lower()
 
 
 @pytest.mark.parametrize("body", [
@@ -79,6 +96,19 @@ def test_engine_errors_do_not_fall_back(monkeypatch, failure, status, code):
     assert "analysis" not in r.json()
 
 
+@pytest.mark.parametrize("failure,status,code", [
+    (SpatialAreaRejected, 422, "study_area_rejected"),
+    (SpatialNeighborhoodNotFound, 404, "unknown_neighborhood"),
+])
+def test_sourced_area_errors_are_explicit(monkeypatch, failure, status, code):
+    def fail(_):
+        raise failure("Rejected without downloading OSM")
+    monkeypatch.setattr("backend.spatial_routes.engine.run", fail)
+    response = client.post("/api/v1/spatial/studies", json={"source": "osm", "neighborhood_id": "point-only"})
+    assert response.status_code == status
+    assert response.json()["error"]["code"] == code
+
+
 def test_missing_engine_reports_unavailable(monkeypatch, tmp_path):
     monkeypatch.setenv("ARTERIA_SIM_ROOT", str(tmp_path))
     r = client.post('/api/v1/spatial/studies', json={})
@@ -98,17 +128,21 @@ def test_subprocess_timeout_is_bounded_and_releases_slot(monkeypatch, tmp_path):
 
 
 def test_real_sim_engine_offline_flow(monkeypatch, tmp_path):
-    """Run the colleague's algorithms, never an imitation, when configured."""
-    try:
-        SpatialAdapter().configuration()
-    except SpatialUnavailable:
-        pytest.skip("Optional sim snapshot missing; run python -m backend.prepare_sim")
+    """Run integrated SIM v3 fixture algorithms without network access."""
+    from backend.spatial_adapter import ROOT
+    root, revision = SpatialAdapter().configuration()
+    assert root == ROOT
+    assert revision
     monkeypatch.setenv("ARTERIA_DB_PATH", str(tmp_path / "real-engine.sqlite3"))
     response = client.post('/api/v1/spatial/studies', json={"source": "fixture"})
     assert response.status_code == 201, response.text
     s = response.json()
     assert s["analysis"]["provenance"]["source"] == "synthetic offline fixture"
     assert s["alternatives"]["ranked_candidates"]
+    assert s["proposal_options"]
+    assert s["proposal_validation"]["summary"]["accepted_count"] == len(s["proposal_options"])
+    assert s["evidence_packet"]["schema_version"] == "arteria.proposal-context.v1"
+    assert len({candidate["candidate_id"] for candidate in s["alternatives"]["ranked_candidates"]}) == len(s["alternatives"]["ranked_candidates"])
     for candidate in s["alternatives"]["ranked_candidates"]:
         e = client.post(f"/api/v1/spatial/studies/{s['study_id']}/evaluate", json={
             "baseline_id": s["baseline_id"], "candidate_id": candidate["candidate_id"],
@@ -116,3 +150,21 @@ def test_real_sim_engine_offline_flow(monkeypatch, tmp_path):
         assert e.status_code == 200
         assert e.json()["impact"] == candidate["impact"]
         assert e.json()["sumo_executed"] is False
+        assert e.json()["proposal_validation"]["status"] == "candidate_backed_evaluated"
+    assert client.get(f"/api/v1/spatial/studies/{s['study_id']}").json() == s
+
+
+def test_osm_point_and_over_limit_catalog_areas_are_rejected_offline(monkeypatch, tmp_path):
+    import sim
+
+    monkeypatch.setenv("ARTERIA_DB_PATH", str(tmp_path / "area-limits.sqlite3"))
+    point = next(record for record in sim.get_neighborhoods() if record["geometry_type"] == "Point")
+    point_response = client.post("/api/v1/spatial/studies", json={"source": "osm", "neighborhood_id": point["id"]})
+    assert point_response.status_code == 422, point_response.text
+    assert point_response.json()["error"]["code"] == "study_area_rejected"
+
+    oversized = next(record for record in sim.get_neighborhoods()
+                     if sim.validate_neighborhood_boundary(record)["status"] == "requires_controlled_analysis")
+    area_response = client.post("/api/v1/spatial/studies", json={"source": "osm", "neighborhood_id": oversized["id"]})
+    assert area_response.status_code == 422, area_response.text
+    assert area_response.json()["error"]["code"] == "study_area_rejected"

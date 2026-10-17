@@ -118,8 +118,27 @@ export interface SpatialCandidate {
 }
 export interface SpatialStudy {
   study_id: string; baseline_id: string; source: 'fixture' | 'osm'; engine_revision: string;
+  analysis: Record<string, unknown>;
   alternatives: { ranked_candidates: SpatialCandidate[]; warnings: string[] };
+  proposal_options: SpatialProposalOption[];
+  proposal_validation: SpatialProposalValidation;
+  evidence_packet: Record<string, unknown>;
   warnings: string[];
+}
+export interface SpatialProposalOption {
+  candidate_id: string;
+  rank: number;
+  summary: string;
+  intervention: Record<string, unknown>;
+  evaluation_status: string;
+  planning_category_status: string;
+  modeled_impact: { aggregate: Record<string, number | null>; observed: false };
+  screening: { status?: string; physical_feasibility: 'unknown'; missing_evidence: string[]; warnings: string[] };
+}
+export interface SpatialProposalValidation {
+  status: string;
+  summary: { submitted_count: number; accepted_count: number; rejected_count: number; duplicate_count: number };
+  results: { candidate_id: string | null; status: string; physical_feasibility: 'unknown'; findings: { code: string; message: string }[] }[];
 }
 export interface SpatialSelection {
   baseline_id: string; candidate_id: string; intervention: Record<string, unknown>;
@@ -131,5 +150,6 @@ export interface SpatialEvaluation {
     aggregate: Record<string, number | null>;
     routes: { origin_node_id: string; destination_node_id: string; outcome: string; distance_delta_m: number | null }[];
   };
+  proposal_validation: { status: string; candidate_id: string | null; physical_feasibility: 'unknown'; findings: { code: string; message: string }[] };
   warnings: string[];
 }

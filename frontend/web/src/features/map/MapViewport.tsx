@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Map, NavigationControl, setWorkerUrl, type StyleSpecification, Marker } from 'maplibre-gl';
 import { neighborhoodGeometries, demoIssuesByNeighborhood, type DemoStudyIssue } from '@arteria/shared/fixtures';
+import { featureBounds, placeCenter, type SourcedPlace } from '../neighborhoods/sim-geography';
 
 setWorkerUrl(new URL('maplibre-gl/dist/maplibre-gl-worker.mjs', import.meta.url).toString());
 
@@ -41,6 +42,9 @@ interface MapViewportProps {
   selectedIssueId: string | null;
   onSelectIssue?: (issue: DemoStudyIssue) => void;
   scenarioApplied?: boolean;
+  sourcedPlace?: SourcedPlace | null;
+  fillSourcedArea?: boolean;
+  sourcedAnalysisStatus?: 'preview-only' | 'available' | 'completed';
 }
 
 export default function MapViewport({
@@ -49,16 +53,24 @@ export default function MapViewport({
   selectedIssueId,
   onSelectIssue,
   scenarioApplied = false,
+  sourcedPlace = null,
+  fillSourcedArea = false,
+  sourcedAnalysisStatus = 'preview-only',
 }: MapViewportProps) {
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<Map | null>(null);
   const markersRef = useRef<Marker[]>([]);
+  const sourcedMarkerRef = useRef<Marker | null>(null);
+  const onSelectIssueRef = useRef(onSelectIssue);
   const initialCenter = useRef(center);
   const [error, setError] = useState('');
   const [mapLoaded, setMapLoaded] = useState(false);
+  onSelectIssueRef.current = onSelectIssue;
 
   useEffect(() => {
     if (!container.current) return;
+    setMapLoaded(false);
+    setError('');
     try {
       const instance = new Map({
         container: container.current,
@@ -71,7 +83,7 @@ export default function MapViewport({
       map.current = instance;
       instance.addControl(new NavigationControl({ showCompass: true }), 'bottom-right');
 
-      instance.on('load', () => {
+      instance.once('style.load', () => {
         setMapLoaded(true);
       });
 
@@ -95,8 +107,9 @@ export default function MapViewport({
 
   // Update center when neighborhood changes
   useEffect(() => {
+    if (sourcedPlace) return;
     map.current?.flyTo({ center, zoom: 14.2, duration: 1200 });
-  }, [center]);
+  }, [center, sourcedPlace]);
 
   // Update vectors & pins when neighborhood or selection changes
   useEffect(() => {
@@ -146,6 +159,11 @@ export default function MapViewport({
       });
     }
 
+    const demoVisibility = sourcedPlace ? 'none' : 'visible';
+    for (const layerId of ['area-fill', 'area-line', 'corridors-line']) {
+      if (instance.getLayer(layerId)) instance.setLayoutProperty(layerId, 'visibility', demoVisibility);
+    }
+
     // Corridors source & layer
     const corridorFeatures: GeoJSON.Feature<GeoJSON.LineString>[] = geoData.corridors.map(c => ({
       type: 'Feature',
@@ -185,7 +203,7 @@ export default function MapViewport({
     markersRef.current.forEach(m => m.remove());
     markersRef.current = [];
 
-    const issues = demoIssuesByNeighborhood[neighborhoodId] || [];
+    const issues = sourcedPlace ? [] : demoIssuesByNeighborhood[neighborhoodId] || [];
     issues.forEach(issue => {
       const el = document.createElement('button');
       el.type = 'button';
@@ -203,12 +221,12 @@ export default function MapViewport({
       `;
       el.onclick = (e) => {
         e.preventDefault();
-        onSelectIssue?.(issue);
+        onSelectIssueRef.current?.(issue);
       };
       el.onkeydown = (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          onSelectIssue?.(issue);
+          onSelectIssueRef.current?.(issue);
         }
       };
 
@@ -218,10 +236,80 @@ export default function MapViewport({
 
       markersRef.current.push(marker);
     });
-  }, [neighborhoodId, selectedIssueId, scenarioApplied, mapLoaded, onSelectIssue]);
+  }, [neighborhoodId, selectedIssueId, scenarioApplied, mapLoaded, sourcedPlace]);
+
+  useEffect(() => {
+    const instance = map.current;
+    if (!instance || !mapLoaded) return;
+    const polygonFeature = sourcedPlace && sourcedPlace.geometryType !== 'Point' ? sourcedPlace.feature : null;
+    const sourcedData: GeoJSON.FeatureCollection = {
+      type: 'FeatureCollection',
+      features: polygonFeature ? [polygonFeature as GeoJSON.Feature] : [],
+    };
+    const source = instance.getSource('sim-place') as GeoJSONSourceWithData | undefined;
+    if (source) {
+      source.setData(sourcedData);
+    } else {
+      instance.addSource('sim-place', { type: 'geojson', data: sourcedData });
+      instance.addLayer({
+        id: 'sim-place-fill',
+        type: 'fill',
+        source: 'sim-place',
+        layout: { visibility: 'none' },
+        paint: { 'fill-color': '#74d7b2', 'fill-opacity': 0.18 },
+      });
+      instance.addLayer({
+        id: 'sim-place-outline',
+        type: 'line',
+        source: 'sim-place',
+        paint: { 'line-color': '#74d7b2', 'line-width': 3, 'line-dasharray': [2, 1] },
+      });
+    }
+    if (instance.getLayer('sim-place-fill')) {
+      instance.setLayoutProperty('sim-place-fill', 'visibility', fillSourcedArea && polygonFeature ? 'visible' : 'none');
+    }
+    if (instance.getLayer('sim-place-outline')) {
+      instance.setLayoutProperty('sim-place-outline', 'visibility', polygonFeature ? 'visible' : 'none');
+    }
+  }, [sourcedPlace, fillSourcedArea, mapLoaded]);
+
+  useEffect(() => {
+    const instance = map.current;
+    if (!instance || !mapLoaded) return;
+    sourcedMarkerRef.current?.remove();
+    sourcedMarkerRef.current = null;
+    if (!sourcedPlace) return;
+
+    if (sourcedPlace.geometryType === 'Point') {
+      const coordinates = placeCenter(sourcedPlace);
+      if (!coordinates) return;
+      const el = document.createElement('div');
+      el.className = 'sim-map-point';
+      el.setAttribute('role', 'img');
+      el.setAttribute('aria-label', `${sourcedPlace.name}, reper OSM punctual fără contur`);
+      sourcedMarkerRef.current = new Marker({ element: el, anchor: 'center' }).setLngLat(coordinates).addTo(instance);
+      instance.flyTo({ center: coordinates, zoom: 15.8, duration: 850 });
+      return;
+    }
+
+    const bounds = featureBounds(sourcedPlace.feature);
+    if (bounds) {
+      instance.fitBounds(bounds, { padding: { top: 110, right: 80, bottom: 90, left: 80 }, maxZoom: 16.5, duration: 850 });
+    }
+  }, [sourcedPlace?.id, mapLoaded]);
+
+  useEffect(() => () => {
+    sourcedMarkerRef.current?.remove();
+    sourcedMarkerRef.current = null;
+  }, []);
 
   return (
-    <section className="map-viewport" aria-label="Hartă Iași">
+    <section
+      className="map-viewport"
+      aria-label="Hartă Iași"
+      data-map-selection-id={sourcedPlace?.id ?? neighborhoodId}
+      data-map-geometry-type={sourcedPlace?.geometryType ?? 'demo'}
+    >
       <div ref={container} className="map-canvas" />
       <div
         style={{
@@ -242,18 +330,34 @@ export default function MapViewport({
           pointerEvents: 'none',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '14px', height: '10px', borderRadius: '2px', background: 'rgba(139, 201, 237, 0.2)', border: '1px dashed #8bc9ed' }}></span>
-          Graniță estimată cartier
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '14px', height: '3px', borderRadius: '2px', background: '#efc47c' }}></span>
-          Coridoare majore mobilitate
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#8bc9ed', boxShadow: '0 0 6px #8bc9ed' }}></span>
-          Punct problemă detectată
-        </div>
+        {sourcedPlace ? (
+          <div className="sim-map-legend">
+            <strong>{sourcedPlace.name}</strong>
+            {sourcedPlace.geometryType === 'Point'
+              ? 'Reper OpenStreetMap punctual · fără limită desenată'
+              : 'Extindere de loc mapată OSM · nu este limită oficială'}
+            <span>{sourcedAnalysisStatus === 'completed'
+              ? 'Studiu pietonal SIM încărcat'
+              : sourcedAnalysisStatus === 'available'
+                ? 'Analiza pietonală SIM este disponibilă la cerere'
+                : 'Previzualizare geografică · analiză neconectată'}</span>
+          </div>
+        ) : (
+          <>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '14px', height: '10px', borderRadius: '2px', background: 'rgba(139, 201, 237, 0.2)', border: '1px dashed #8bc9ed' }}></span>
+              Graniță estimată cartier
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '14px', height: '3px', borderRadius: '2px', background: '#efc47c' }}></span>
+              Coridoare majore mobilitate
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#8bc9ed', boxShadow: '0 0 6px #8bc9ed' }}></span>
+              Punct problemă detectată
+            </div>
+          </>
+        )}
         {scenarioApplied && (
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#a4d8bc', boxShadow: '0 0 6px #a4d8bc' }}></span>
@@ -263,9 +367,11 @@ export default function MapViewport({
       </div>
       {error && <p className="map-error" role="status">{error}</p>}
       <div className="map-coordinate">
-        {center[1].toFixed(3)}° N / {center[0].toFixed(3)}° E
-        <span>EPSG:4326 · OpenStreetMap ODbL</span>
+        {(sourcedPlace ? placeCenter(sourcedPlace) ?? center : center)[1].toFixed(3)}° N / {(sourcedPlace ? placeCenter(sourcedPlace) ?? center : center)[0].toFixed(3)}° E
+        <span>EPSG:4326 · © OpenStreetMap contributors · ODbL-1.0</span>
       </div>
     </section>
   );
 }
+
+type GeoJSONSourceWithData = { setData(data: GeoJSON.FeatureCollection): void };

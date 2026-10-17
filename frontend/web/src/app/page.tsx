@@ -186,7 +186,7 @@ export default function HomePage() {
               <div>
                 <h3 className={styles.noteTitle}>Prototip activ de planificare</h3>
                 <p className={styles.noteText}>
-                  ARTERIA este în dezvoltare, având Iașul ca prim oraș pilot. Aplicația oferă o interfață inițială; analiza de backend, propunerile AI și simulările reale nu sunt conectate. Toate diagramele și comparațiile de pe această pagină sunt ilustrative. Nu este implicată o integrare municipală sau o performanță măsurată.
+                  ARTERIA este în dezvoltare, cu Iașul ca prim oraș pilot. Spațiul de lucru conectează SIM v3 pentru analiza pietonală a grafurilor OpenStreetMap și compararea unor legături ipotetice. Propunerile AI în cloud, măsurătorile reale de trafic și simularea SUMO pentru zone reale nu sunt disponibile. Diagramele și comparațiile de pe această pagină sunt ilustrative; nu este implicată o integrare municipală sau o performanță măsurată.
                 </p>
               </div>
             </aside>

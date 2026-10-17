@@ -86,7 +86,7 @@ export function ConnectedWorkspace() {
 
   return <div className={styles.root}>
     <a className="skip-link" href="#workspace">Sari la spațiul de lucru</a>
-    <header className={styles.header}><a href="/">ARTERIA <small>by ARION</small></a><span className={styles.badge}>Mod demonstrativ · Date sintetice</span></header>
+    <header className={styles.header}><a href="/">ARTERIA <small>by ARION</small></a><span className={styles.badge}>Semaforizare demo · graf pietonal SIM v3</span></header>
     <nav className={styles.nav} aria-label="Navigație principală">{(Object.keys(labels) as Section[]).map(key =>
       <button key={key} aria-current={section === key ? 'page' : undefined} onClick={() => setSection(key)}>{labels[key]}</button>)}</nav>
     <main id="workspace" className={styles.main}>

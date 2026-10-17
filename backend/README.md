@@ -47,11 +47,10 @@ Supported demo contexts: `iasi-demo-intersection`, `podu-ros`, `copou`, `centru`
 not certified neighborhood boundaries or real traffic studies. All use the same
 synthetic two-phase intersection assumptions unless explicit inputs are supplied.
 
-Optional polygons are checked for valid geometry, coordinate bounds, a 1 m²–5 km²
-area limit and containment of the selected bookmark. This does not verify that a
-polygon is an official neighborhood boundary. Modes, layers and accessibility
-thresholds are validated but geographic results are unavailable and explicitly
-reported as unknown. Historical `data_as_of` requests are rejected.
+Optional polygons on the synthetic signal-timing endpoints are checked for valid
+geometry, coordinate bounds, a 1 m²–5 km² area limit and containment of the
+selected bookmark. This does not verify that a polygon is an official neighborhood
+boundary. Historical `data_as_of` requests are rejected.
 
 Signal timing is the sole intervention. Both phases require at least 10 seconds
 green, with a fixed cycle and 10 seconds lost time. Default recommendations move
@@ -70,23 +69,16 @@ Positive and negative deltas are returned; improvement is not guaranteed.
 
 ## Simulation boundary
 
-`backend/simulation_adapter.py` owns deterministic evaluation. The local `sim/`
-checkout has only smoke/discovery support, which cannot evaluate an intervention.
-Explicit SUMO live/offline/replay requests return `503 sumo_unavailable` without
-fallback, even if SUMO is installed.
-
-The inspected remote `origin/feat/sim-engine` has `acquire_osm_data`,
-`analyze_snapshot`, `evaluate_scenario`, and `evaluate_candidates`. Those functions
-support geographic/pedestrian graph analysis, not traffic-signal or SUMO evaluation.
-That branch has not been merged. The optional [spatial API](SPATIAL_API.md) now runs
-a pinned, ignored export in a subprocess, preserving complete graph analyses and
-precomputed candidate comparisons in SQLite. It supports fixture or explicit OSM
-input without fallback. For arbitrary future interventions, retain an immutable
-OSM snapshot under a baseline ID, map its provenance/uncertainty to the HTTP schema,
-and add a separately validated pedestrian intervention catalog. Do not send timing
-parameters to a pedestrian-link engine or describe graph results as vehicle simulation.
+`backend/simulation_adapter.py` owns deterministic synthetic signal-timing
+evaluation. The separate [SIM v3 spatial API](SPATIAL_API.md) loads the in-tree
+`sim/` package and performs pedestrian graph analysis and stored graph comparisons.
+It supports a clearly labeled fixture or the server-validated OSM neighborhood
+catalog. OSM feature layers that were not queried stay unknown. Graph candidates
+do not establish physical feasibility, and this API does not run SUMO or traffic
+simulation. Explicit SUMO live/offline/replay requests on the signal-timing API
+return `503 sumo_unavailable` without fallback, even if SUMO is installed.
 
 No LLM, city telemetry, certified boundaries, real-world construction feasibility,
 authentication, SUMO jobs/SSE, or cloud storage is implemented. API_ENDPOINTS.md
-contains aspirational examples; their numeric traffic figures and provider names
+contains aspirational examples; its numeric traffic figures and provider names
 are not observations or enabled integrations.

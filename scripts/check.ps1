@@ -21,6 +21,8 @@ Push-Location -LiteralPath (Join-Path $repoRoot 'frontend')
 try {
     & npm run typecheck
     if ($LASTEXITCODE -ne 0) { throw 'Frontend TypeScript check failed.' }
+    & npm test
+    if ($LASTEXITCODE -ne 0) { throw 'Frontend tests failed.' }
     & npm run build
     if ($LASTEXITCODE -ne 0) { throw 'Frontend production build failed.' }
 } finally {

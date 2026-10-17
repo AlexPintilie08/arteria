@@ -24,6 +24,7 @@ uv run --locked python scripts/health_smoke.py
 
 printf 'Running frontend TypeScript and production build checks...\n'
 npm --prefix frontend run typecheck
+npm --prefix frontend test
 npm --prefix frontend run build
 
 printf 'Checking optional SUMO installation and running its real smoke test when available...\n'
