@@ -2,7 +2,7 @@
 
 This package acquires bounded OpenStreetMap snapshots, builds walking/cycling/driving networks, calculates reproducible network indicators, detects evidence-backed access/connectivity issues, exports GeoJSON, and evaluates hypothetical pedestrian-network changes. The backend can import the Python functions directly; no FastAPI or LLM dependency is required.
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for module relationships and result contracts, [STATUS.md](STATUS.md) for verification and limitations, and [AGENTS.md](AGENTS.md) for component-specific agent instructions.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for module relationships and result contracts, [APPLICATION_INTEGRATION.md](APPLICATION_INTEGRATION.md) for the frontend/backend handoff, [STATUS.md](STATUS.md) for verification and limitations, and [AGENTS.md](AGENTS.md) for component-specific agent instructions.
 
 ## Public Python API
 

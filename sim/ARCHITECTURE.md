@@ -1,6 +1,6 @@
 # SIM Architecture
 
-**Scope:** the version-controlled Python simulation component in this directory. See [README.md](README.md) for usage, [STATUS.md](STATUS.md) for recorded verification and outstanding work, and [AGENTS.md](AGENTS.md) for contributor instructions.
+**Scope:** the version-controlled Python simulation component in this directory. See [README.md](README.md) for usage, [APPLICATION_INTEGRATION.md](APPLICATION_INTEGRATION.md) for the cross-component handoff, [STATUS.md](STATUS.md) for recorded verification and outstanding work, and [AGENTS.md](AGENTS.md) for contributor instructions.
 
 ## Component overview
 

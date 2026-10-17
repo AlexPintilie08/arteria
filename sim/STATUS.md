@@ -2,7 +2,7 @@
 
 Updated: 2026-10-17
 
-See [ARCHITECTURE.md](ARCHITECTURE.md) for implementation and integration details, [README.md](README.md) for usage, and [AGENTS.md](AGENTS.md) for component instructions.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for SIM internals, [APPLICATION_INTEGRATION.md](APPLICATION_INTEGRATION.md) for the frontend/backend handoff, [README.md](README.md) for usage, and [AGENTS.md](AGENTS.md) for component instructions.
 
 ## Working
 
