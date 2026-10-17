@@ -2,7 +2,7 @@
 
 ## Responsibilities
 
-Provide the HTTP/JSON API; validate requests and responses; orchestrate urban analysis; prepare bounded spatial context for a cloud LLM; return structured intervention recommendations; coordinate scenario evaluation; and communicate with the independent spatial/simulation component. A local Qwen model is an optional fallback, not the primary path.
+The initial runnable API exposes `GET /health` with environment-backed local CORS settings. Planned responsibilities remain: validate HTTP/JSON requests and responses; orchestrate urban analysis; prepare bounded spatial context for a cloud LLM; return structured intervention recommendations; coordinate scenario evaluation; and communicate with the independent spatial/simulation component. A local Qwen model is an optional fallback, not the primary path.
 
 ## Planned technology
 
@@ -15,7 +15,7 @@ Python, FastAPI, Pydantic, and a cloud LLM API. Provider-specific code should si
 
 ## Integration interfaces
 
-Expose the proposed `POST /analyze`, `POST /propose`, and `POST /evaluate` interfaces described in `docs/API_CONTRACT.md`. The backend calls `sim` through an internal Python interface or a separately defined service boundary; this choice should follow the first deployment and runtime needs.
+The implemented `GET /health` confirms local API liveness. The proposed `POST /analyze`, `POST /propose`, and `POST /evaluate` interfaces remain documented in `docs/API_CONTRACT.md` and are intentionally not stubbed. The backend will call `sim` through an internal Python interface or a separately defined service boundary; choose the boundary when deployment and runtime needs are known.
 
 ## Implementation objectives
 

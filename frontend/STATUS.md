@@ -17,10 +17,11 @@
   - Fixed analyze button gate in `Workspace.tsx` to allow seamless live API connections without forcing demo mode.
   - 7 comprehensive API contract documents authored in `api-specs/` (`auth`, `areas`, `analysis`, `proposals`, `evaluation`, `simulation-engine`, `scenario-persistence`).
 - Pure React & TypeScript styling using system tokens (`@arteria/shared/tokens`) without external ad-hoc CSS modules.
-- MapLibre GL JS integration with interactive vector corridors and animated pulsing markers for Iași junctions.
+- MapLibre GL JS integration with interactive vector corridors and animated pulsing markers for Iași junctions (using OpenFreeMap public dark style with resilient offline fallbacks).
 - Real-time telemetry display for Iași corridors (Podu Roș 2180 veh/h, queue 340m, delay 74.2s, LOS E/F).
 - Native-stack Android mobile scaffold with deep links (`arteria://`).
-- Verified HTTP API client communicating with `backend/server.py` on port 8000.
+- Verified HTTP API client communicating with `backend/server.py` on port 8000 and FastAPI `/health`.
+- Cross-platform CI verification (Windows Node.js 24.22.0, macOS 15 ARM64, and macOS 15 Intel).
 
 ## Verification
 
@@ -34,6 +35,7 @@
 
 - Connect native MapLibre adapter in the Expo Android workspace.
 - Expand custom user-drawn polygon upload support.
+- Wire live SUMO Server-Sent Events (SSE) stream into the telemetry deck when running microscopic simulations.
 
 ## Blockers
 

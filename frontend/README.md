@@ -33,6 +33,12 @@ npm run export:android --workspace @arteria/mobile
 
 Aceasta este o structură inițială cu ecrane de bază. Harta web necesită un stil configurat în `.env`; harta Android este un placeholder explicit. Preview-ul nu inventează rezultate. Propunerile și comparațiile sunt puncte de extindere, fără integrare backend. Vezi [STATUS](STATUS.md).
 
+## Current foundation
+
+The app starts with a React/TypeScript shell, a MapLibre 2.5D map centered on Iași, a backend liveness indicator, and a clear fallback if the public map style cannot load. The style is `https://tiles.openfreemap.org/styles/dark`; OpenFreeMap identifies its project license as MIT, allows commercial use, and requires map attribution, which MapLibre displays automatically. The service is provided as-is without an SLA. Urban layers, neighborhood selection, and analysis are not implemented.
+
+Install with `npm ci` from this directory, then run `npm run dev`. Root `scripts/setup.*` and `scripts/dev.*` commands coordinate the full project.
+
 ## Responsibilities
 
 Present the map-focused urban planning experience: neighborhood selection, spatial indicators and heatmaps, AI proposal review, intervention controls, Before/After comparison, and SUMO simulation visualization or replay.

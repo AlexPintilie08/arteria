@@ -2,6 +2,10 @@
 
 ## Working
 
+- Deterministic NetworkX graph smoke and OSMnx, GeoPandas, and Shapely import checks pass on Windows and macOS 15 ARM64/Intel CI.
+- SUMO 1.28.0, TraCI, and sumolib are pinned where binary wheels are published.
+- Windows and macOS 15 ARM64 SUMO 1.28.0 passed a real synthetic network and TraCI simulation-step smoke test via `sim/sumo_support.py`.
+- macOS 15 Intel CI correctly reported no installed SUMO binary; setup and core checks still passed.
 - Deterministic traffic capacity and delay models operational for Iași study corridors:
   - Webster signal delay model on unsynchronized signal phases (e.g. Podu Roș multi-leg junction).
   - Hydraulic flow capacity model for roundabout and turbo-roundabout configurations.
@@ -23,4 +27,4 @@
 
 ## Blockers
 
-- Microscopic SUMO runs require calibrated OD matrices; deterministic analytical models serve as the reliable primary path.
+- Microscopic SUMO runs require calibrated OD matrices; deterministic analytical models serve as the reliable primary path. Intel and older macOS SUMO users need the official installer fallback.

@@ -39,3 +39,9 @@ data/processed/
 *.sqlite
 *.gpkg
 *.parquet
+
+# Local uv runtime and generated caches
+.uv-python/
+.uv-cache/
+.ruff_cache/
+.coverage

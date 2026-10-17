@@ -1,0 +1,32 @@
+[project]
+name = "arteria"
+version = "0.1.0"
+description = "Local development foundation for ARTERIA by ARION"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+    "pydantic>=2.10,<3",
+    "httpx>=0.28,<1",
+    "python-dotenv>=1.0,<2",
+    "osmnx>=2.0,<3",
+    "networkx>=3.4,<4",
+    "geopandas>=1.0,<2",
+    "shapely>=2.0,<3",
+    "traci==1.28.0",
+    "sumolib==1.28.0",
+    "eclipse-sumo==1.28.0; sys_platform == 'win32' and platform_machine == 'AMD64'",
+    "eclipse-sumo==1.28.0; sys_platform == 'darwin' and platform_machine == 'arm64' and platform_release >= '24'",
+    "eclipse-sumo==1.28.0; sys_platform == 'linux' and platform_machine == 'x86_64'",
+    "eclipse-sumo==1.28.0; sys_platform == 'linux' and platform_machine == 'aarch64'",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<10",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+pythonpath = ["."]

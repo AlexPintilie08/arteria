@@ -23,15 +23,40 @@ Observed data, calculated results, estimates, and unknown information must remai
 - **Backend:** Python, FastAPI, Pydantic, and a cloud LLM API. Local Qwen may be an optional fallback.
 - **Simulation and spatial analysis:** Python, OSMnx, NetworkX, GeoPandas, Shapely, Eclipse SUMO, and TraCI/libsumo.
 
-The frontend now has an initial web and Expo React Native scaffold under `frontend/`, with shared API types and design tokens. Backend and simulation choices remain planned; their functionality is not implemented yet.
+The repository includes a runnable development foundation across frontend, backend, and simulation with cross-platform bootstrap scripts and comprehensive UI/UX capabilities.
 
 ## System architecture
 
-The product has exactly three application components: `frontend/`, `backend/`, and `sim/`. The frontend presents the map and scenarios. The backend exposes the HTTP/JSON contract, prepares spatial context, coordinates recommendations and evaluations, and validates requests and responses. The `sim` component acquires and prepares geographic data, computes network indicators, applies virtual changes, and runs traffic simulation when appropriate. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/API_CONTRACT.md](docs/API_CONTRACT.md).
+The product has exactly three application components: `frontend/`, `backend/`, and `sim/`. The frontend presents the map and scenarios. The backend exposes the HTTP/JSON contract, prepares spatial context, coordinates recommendations and evaluations, and validates requests and responses. The `sim` component acquires and prepares geographic data, computes network indicators, applies virtual changes, and runs traffic simulation when appropriate. See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), [docs/API_CONTRACT.md](docs/API_CONTRACT.md), and [api-specs/](api-specs/).
 
 ## Current status
 
-**Frontend scaffold initialized.** Web and Android have initial navigation and UI shells, a typed API client, honest empty/demo states, a design brief, and an AI implementation prompt. There are no implemented backend endpoints, data pipelines, or simulations. See [frontend setup](frontend/README.md), each component's `STATUS.md`, and the [roadmap](docs/ROADMAP.md).
+The repository has a runnable development foundation: a Next.js/React/MapLibre shell with an OpenFreeMap public style and resilient offline fallback, a FastAPI `GET /health` endpoint, an operational standard library backend server (`backend/server.py`), and deterministic NetworkX/geospatial import checks. Local Windows setup and Windows, macOS 15 ARM64, and macOS 15 Intel CI jobs passed. SUMO 1.28.0 passed a real smoke test on Windows and macOS ARM64; no SUMO binary is installed on Intel macOS, where the optional fallback is reported. SUMO is optional and not required to start either service. See each component's `STATUS.md` and the [roadmap](docs/ROADMAP.md).
+
+## Quick start
+
+Prerequisites: Node.js 24 LTS and `uv`. Setup acquires a project-local, uv-managed Python 3.12 runtime, installs locked dependencies, and runs validation. No AI key or SUMO installation is needed for basic app startup.
+
+| Platform | Setup once | Start both services | Checks |
+| --- | --- | --- | --- |
+| Windows 10/11 x64, PowerShell | `./scripts/setup.ps1` | `./scripts/dev.ps1` | `./scripts/check.ps1` |
+| macOS, Terminal | `bash scripts/setup.sh` | `bash scripts/dev.sh` | `bash scripts/check.sh` |
+
+Web interface is available at <http://localhost:3000> (presentation at `/`, workspace at `/app`). The API health response is at <http://127.0.0.1:8000/health>. The npm and Python lockfiles are committed; installed dependencies, `.venv`, and the uv-managed Python runtime stay local and ignored.
+
+### Frontend direct commands
+
+From `frontend/`:
+```bash
+npm ci
+npm run dev        # Launches Next.js web app on http://localhost:3000
+npm run check      # Full typecheck across workspaces + tests + build
+npm run mobile     # Starts Expo React Native for Android
+```
+
+### Optional SUMO
+
+The project pins the `eclipse-sumo` 1.28.0 package on Windows x64, Linux x64/ARM64, and macOS 15+ ARM64. That release does not publish a wheel for Intel Macs or older macOS versions. On those configurations, install SUMO using the [official platform instructions](https://sumo.dlr.de/docs/Installing/). SUMO discovery checks `PATH` and an optional `SUMO_HOME` value; it does not assume an installation directory. The check command runs a temporary one-step SUMO/TraCI scenario when a complete installation is found and reports unavailable or failed SUMO separately from the core app checks.
 
 ## Developer onboarding and collaboration
 

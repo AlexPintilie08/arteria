@@ -2,6 +2,18 @@
 
 This document defines a draft JSON contract for the backend. It is not an implemented API. All coordinates use GeoJSON ordering `[longitude, latitude]`; spatial calculations must also identify the working CRS. Timestamps use ISO 8601 UTC. Each numeric measurement includes a unit and provenance. `observed`, `calculated`, `estimated`, and `unknown` describe epistemic status and must not be collapsed into one another.
 
+## Implemented bootstrap endpoint: `GET /health`
+
+The local foundation implements a liveness endpoint only. It requires no AI key or external data service.
+
+### Response
+
+```json
+{"status": "ok", "service": "arteria-backend"}
+```
+
+The planned `/analyze`, `/propose`, and `/evaluate` endpoints below are not implemented yet.
+
 ## Shared conventions
 
 ### Geographic identifier
