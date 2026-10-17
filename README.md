@@ -31,7 +31,7 @@ The product has exactly three application components: `frontend/`, `backend/`, a
 
 ## Current status
 
-The repository has a runnable development foundation: a React/MapLibre shell with an OpenFreeMap public style and fallback, a FastAPI `GET /health` endpoint, and deterministic NetworkX/geospatial import checks. The full Windows bootstrap and a real SUMO/TraCI smoke test passed locally. Windows and macOS CI results are pending. SUMO is optional and not required to start either service. The planned `/analyze`, `/propose`, and `/evaluate` APIs, live urban data pipelines, and real city scenarios are not implemented. See each component's `STATUS.md` and the [roadmap](docs/ROADMAP.md).
+The repository has a runnable development foundation: a React/MapLibre shell with an OpenFreeMap public style and fallback, a FastAPI `GET /health` endpoint, and deterministic NetworkX/geospatial import checks. Local Windows setup and the Windows, macOS 15 ARM64, and macOS 15 Intel CI jobs passed. SUMO 1.28.0 passed a real smoke test on Windows and macOS ARM64; no SUMO binary is installed on Intel macOS, where the optional fallback is reported. SUMO is optional and not required to start either service. The planned `/analyze`, `/propose`, and `/evaluate` APIs, live urban data pipelines, and real city scenarios are not implemented. See each component's `STATUS.md` and the [roadmap](docs/ROADMAP.md).
 
 ## Quick start
 

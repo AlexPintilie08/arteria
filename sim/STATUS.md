@@ -2,13 +2,14 @@
 
 ## Working
 
-- Deterministic NetworkX graph smoke and OSMnx, GeoPandas, and Shapely import checks pass on Windows.
+- Deterministic NetworkX graph smoke and OSMnx, GeoPandas, and Shapely import checks pass on Windows and macOS 15 ARM64/Intel CI.
 - SUMO 1.28.0, TraCI, and sumolib are pinned where binary wheels are published.
-- Windows SUMO 1.28.0 passed a real synthetic network and TraCI simulation-step smoke test.
+- Windows and macOS 15 ARM64 SUMO 1.28.0 passed a real synthetic network and TraCI simulation-step smoke test.
+- macOS 15 Intel CI correctly reported no installed SUMO binary; setup and core checks still passed.
 
 ## In Progress
 
-- macOS Apple Silicon and Intel dependency/CI verification is pending.
+- No active changes.
 
 ## Next
 
@@ -18,4 +19,4 @@
 
 ## Blockers
 
-- No OSM acquisition or urban analysis exists. SUMO remains optional; unsupported macOS targets need the official installer fallback.
+- No bootstrap blockers. OSM acquisition and urban analysis remain future work. Intel and older macOS SUMO users need the official installer fallback.

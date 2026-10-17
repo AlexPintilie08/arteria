@@ -3,12 +3,13 @@
 ## Working
 
 - FastAPI application exposes `GET /health` and environment-backed local CORS.
-- Windows Python test suite and real local HTTP health smoke pass.
+- Five Python tests and a real local HTTP health smoke pass on Windows.
+- Windows, macOS 15 ARM64, and macOS 15 Intel CI setup and backend checks pass with Python 3.12.15.
 - Node/uv-based setup and startup scripts coordinate the frontend and backend.
 
 ## In Progress
 
-- macOS GitHub Actions verification is pending.
+- No active changes.
 
 ## Next
 
@@ -17,4 +18,4 @@
 
 ## Blockers
 
-- No `/analyze`, `/propose`, or `/evaluate` implementation or data pipeline exists. These planned endpoints intentionally return not found.
+- No bootstrap blockers. `/analyze`, `/propose`, and `/evaluate` plus the data pipeline remain future work; the planned routes are intentionally not faked.
