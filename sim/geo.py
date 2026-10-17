@@ -193,6 +193,24 @@ def _area_key(area: StudyArea) -> str:
     return hashlib.sha256(payload).hexdigest()[:20]
 
 
+def _source_area_geometry_hash(area: StudyArea) -> str:
+    """Hash the canonical WGS84 boundary independently of query configuration."""
+    return hashlib.sha256(area.polygon.normalize().wkb).hexdigest()
+
+
+def _source_area_metadata(area: StudyArea) -> dict[str, Any]:
+    """Describe the exact requested geometry for newly written cache sidecars."""
+    return {
+        "city_id": area.city_id,
+        "area_id": area.area_id,
+        "boundary_source": area.boundary_source,
+        "source_area_geometry": mapping(area.polygon.normalize()),
+        "source_area_geometry_sha256": _source_area_geometry_hash(area),
+        "source_area_crs": "EPSG:4326",
+        "working_crs": area.working_crs,
+    }
+
+
 def _timestamp() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
@@ -418,7 +436,13 @@ def acquire_osm_data(
                         ox.save_graphml(graph, filepath=temporary)
                         temporary.replace(graph_path)
                         graph_metadata.write_text(
-                            json.dumps({"mode": mode, "area_key": key, "retrieved_at": timestamp}, indent=2),
+                            json.dumps({
+                                "mode": mode,
+                                "area_key": key,
+                                "retrieved_at": timestamp,
+                                **_source_area_metadata(normalized),
+                                "query": {"network_type": mode, "simplify": True, "retain_all": True, "truncate_by_edge": True},
+                            }, indent=2, ensure_ascii=False, allow_nan=False),
                             encoding="utf-8",
                         )
                     except Exception as error:
@@ -447,7 +471,13 @@ def acquire_osm_data(
                     if use_cache:
                         _cache_frame(features_path, features)
                         _network_metadata_path(features_path).write_text(
-                            json.dumps({"area_key": key, "retrieved_at": feature_retrieved, "feature_count": len(features)}, indent=2),
+                            json.dumps({
+                                "area_key": key,
+                                "retrieved_at": feature_retrieved,
+                                "feature_count": len(features),
+                                **_source_area_metadata(normalized),
+                                "query": {"tags": FEATURE_TAGS},
+                            }, indent=2, ensure_ascii=False, allow_nan=False),
                             encoding="utf-8",
                         )
                 except Exception as error:
@@ -487,6 +517,7 @@ def acquire_osm_data(
         "retrieved_at": max(retrieved_values) if retrieved_values else None,
         "extent_wgs84": normalized.extent,
         "area_key": key,
+        **_source_area_metadata(normalized),
         "working_crs": normalized.working_crs,
         "network_retrieved_at": network_retrieved,
         "features_retrieved_at": feature_retrieved,

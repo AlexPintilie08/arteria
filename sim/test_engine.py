@@ -19,7 +19,7 @@ from sim.analysis import analyze_snapshot, network_metrics, route_between
 from sim import geo as geo_module
 from sim.geo import AreaValidationError, LAYER_TAGS, OSMData, OSMDataError, acquire_osm_data, feature_collection, geojson_geometry, normalize_area
 from sim.scenario import InterventionError, evaluate_pedestrian_connection, evaluate_scenario
-from sim.candidates import discover_intervention_candidates
+from sim.candidates import _feature_intersections, _prepare_feature_index, discover_intervention_candidates
 from sim.impact import evaluate_candidates, evaluate_multi_route_impact, sample_route_pairs
 from sim.neighborhoods import (
     NeighborhoodCatalogError,
@@ -267,6 +267,15 @@ def test_osm_acquisition_uses_project_local_graph_and_feature_cache(monkeypatch:
         assert first.graphs["walk"].number_of_edges() == 2
         assert first.layer_availability["schools"]["feature_count"] == 1
         assert first.metadata["cache"]["application_snapshot_hit"] is False
+        graph_sidecar = next(Path(temporary).glob("*-walk.json"))
+        feature_sidecar = next(Path(temporary).glob("*-features.json"))
+        graph_metadata = json.loads(graph_sidecar.read_text(encoding="utf-8"))
+        feature_metadata = json.loads(feature_sidecar.read_text(encoding="utf-8"))
+        assert graph_metadata["source_area_geometry_sha256"] == first.metadata["source_area_geometry_sha256"]
+        assert graph_metadata["source_area_geometry"]["type"] == "Polygon"
+        assert graph_metadata["query"]["network_type"] == "walk"
+        assert feature_metadata["source_area_geometry_sha256"] == first.metadata["source_area_geometry_sha256"]
+        assert feature_metadata["query"]["tags"]["building"] is True
 
         def fail_if_requested(*args: object, **kwargs: object) -> None:
             raise AssertionError("A valid local snapshot should prevent another OSM request.")
@@ -797,12 +806,116 @@ def test_candidate_discovery_flags_mapped_buildings_and_missing_feasibility_evid
     data.layer_availability["buildings"] = {"status": "available", "feature_count": 1}
 
     report = discover_intervention_candidates(data, max_candidates=1)
-    candidate = report["candidates"][0]
+    assert report["candidates"] == []
+    assert report["screening"]["candidate_pool_count"] > 1
+    assert report["screening"]["candidate_count_rejected_material_conflict"] > 0
+    candidate = report["screened_candidates"][0]
 
     assert candidate["screening"]["mapped_buildings"]["status"] == "mapped_obstacle_intersection"
+    assert candidate["screening"]["mapped_buildings"]["classification"] == "mapped_material_conflict"
+    assert candidate["screening"]["eligibility"] == "blocked"
     assert candidate["screening"]["mapped_buildings"]["feature_ids"] == ["building-1"]
     assert candidate["screening"]["physical_feasibility"] == "unknown"
     assert "land ownership and access rights" in candidate["screening"]["missing_evidence"]
+
+
+def test_building_screening_distinguishes_material_crossing_endpoint_boundary_and_short_overlap() -> None:
+    data = _fixture_data(disconnected=False)
+    line = LineString([(27.580, 47.160), (27.585, 47.160)])
+
+    def screen(geometry: object) -> dict[str, object]:
+        data.layers["buildings"] = gpd.GeoDataFrame({"osm_id": ["b-1"]}, geometry=[geometry], crs="EPSG:4326")
+        data.layer_availability["buildings"] = {"status": "available", "feature_count": 1}
+        return _feature_intersections(_prepare_feature_index(data, "buildings"), line)
+
+    interior = screen(Polygon([(27.582, 47.1599), (27.583, 47.1599), (27.583, 47.1601), (27.582, 47.1601), (27.582, 47.1599)]))
+    assert interior["classification"] == "mapped_material_conflict"
+    assert interior["intersections"][0]["classification"] == "interior_crossing"
+    assert interior["intersections"][0]["interior_overlap_m"] > 0.5
+
+    endpoint = screen(Polygon([(27.5799, 47.1599), (27.5805, 47.1599), (27.5805, 47.1601), (27.5799, 47.1601), (27.5799, 47.1599)]))
+    assert endpoint["intersections"][0]["classification"] == "endpoint_inside"
+
+    metric_line = gpd.GeoSeries([line], crs="EPSG:4326").to_crs(data.area.working_crs).iloc[0]
+    (x1, y1), (x2, y2) = list(metric_line.coords)
+    dx, dy = x2 - x1, y2 - y1
+    length = math.hypot(dx, dy)
+    nx, ny = -dy / length * 5, dx / length * 5
+    metric_boundary = Polygon([(x1, y1), (x2, y2), (x2 + nx, y2 + ny), (x1 + nx, y1 + ny), (x1, y1)])
+    boundary = screen(gpd.GeoSeries([metric_boundary], crs=data.area.working_crs).to_crs("EPSG:4326").iloc[0])
+    assert boundary["status"] == "conditional_review"
+    assert boundary["intersections"][0]["classification"] == "boundary_only_contact"
+
+    short = screen(Polygon([(27.582, 47.1599), (27.582002, 47.1599), (27.582002, 47.1601), (27.582, 47.1601), (27.582, 47.1599)]))
+    assert short["status"] == "conditional_review"
+    assert short["intersections"][0]["classification"] == "short_interior_overlap_requires_review"
+
+
+def test_building_screening_deduplicates_osm_identity_and_reports_multipolygon_and_bad_features() -> None:
+    data = _fixture_data(disconnected=False)
+    polygon = Polygon([(27.582, 47.1599), (27.583, 47.1599), (27.583, 47.1601), (27.582, 47.1601), (27.582, 47.1599)])
+    multipart = MultiPolygon([polygon, Polygon([(27.584, 47.1599), (27.5845, 47.1599), (27.5845, 47.1601), (27.584, 47.1601), (27.584, 47.1599)])])
+    metric_line = gpd.GeoSeries([LineString([(27.580, 47.160), (27.585, 47.160)])], crs="EPSG:4326").to_crs(data.area.working_crs).iloc[0]
+    point_on_line = gpd.GeoSeries([Point(metric_line.interpolate(0.9, normalized=True))], crs=data.area.working_crs).to_crs("EPSG:4326").iloc[0]
+    data.layers["buildings"] = gpd.GeoDataFrame(
+        {"osm_id": ["duplicate", "duplicate", "point"]},
+        geometry=[multipart, multipart, point_on_line],
+        crs="EPSG:4326",
+    )
+    data.layer_availability["buildings"] = {"status": "available", "feature_count": 3}
+
+    result = _feature_intersections(_prepare_feature_index(data, "buildings"), LineString([(27.580, 47.160), (27.585, 47.160)]))
+
+    assert result["status"] == "mapped_obstacle_intersection"
+    assert result["quality"]["duplicate_record_count"] == 1
+    assert result["quality"]["nonpolygon_geometry_count"] == 1
+    assert result["intersection_count"] == 2
+    assert result["classification_counts"]["ambiguous_invalid_feature"] == 1
+    assert result["classification_counts"]["interior_crossing"] == 1
+
+
+def test_unmatched_legacy_cache_cannot_claim_no_building_intersection() -> None:
+    data = _fixture_data(disconnected=False)
+    data.metadata["cache"] = {"area_key_matches": False, "area_equivalence_verified": False}
+    data.layers["buildings"] = gpd.GeoDataFrame({"osm_id": ["b-away"]}, geometry=[Point(27.589, 47.169)], crs="EPSG:4326")
+    data.layer_availability["buildings"] = {"status": "available", "feature_count": 1}
+
+    result = _feature_intersections(_prepare_feature_index(data, "buildings"), LineString([(27.580, 47.160), (27.585, 47.160)]))
+
+    assert result["classification"] == "unknown_source_area_unverified"
+    assert result["status"] == "unknown_source_area_unverified"
+
+
+def test_candidate_pool_screens_before_shortlist_and_can_return_a_clean_alternative() -> None:
+    data = _fixture_data(disconnected=True)
+    graph = data.graphs["walk"]
+    graph.add_node(5, x=27.584, y=47.161)
+    building = Polygon([(27.5833, 47.15999), (27.5837, 47.15999), (27.5837, 47.16001), (27.5833, 47.16001), (27.5833, 47.15999)])
+    data.layers["buildings"] = gpd.GeoDataFrame({"osm_id": ["crossing-building"]}, geometry=[building], crs="EPSG:4326")
+    data.layer_availability["buildings"] = {"status": "available", "feature_count": 1}
+
+    report = discover_intervention_candidates(data, max_candidates=1, candidate_pool_limit=50)
+
+    assert len(report["candidates"]) == 1
+    assert report["screening"]["candidate_count_screened"] > report["screening"]["candidate_count_returned"]
+    assert report["screened_candidates"]
+    assert report["candidates"][0]["screening"]["eligibility"] == "conditional"
+    assert all(candidate["screening"]["eligibility"] == "blocked" for candidate in report["screened_candidates"])
+
+
+def test_candidate_evaluation_returns_honest_empty_result_when_screening_blocks_the_pool() -> None:
+    data = _fixture_data(disconnected=True)
+    area_polygon = Polygon([(27.575, 47.155), (27.590, 47.155), (27.590, 47.170), (27.575, 47.170), (27.575, 47.155)])
+    data.layers["buildings"] = gpd.GeoDataFrame({"osm_id": ["covers-area"]}, geometry=[area_polygon], crs="EPSG:4326")
+    data.layer_availability["buildings"] = {"status": "available", "feature_count": 1}
+
+    result = evaluate_candidates(data, sample_count=8)
+
+    assert result["ranked_candidates"] == []
+    assert result["recommendations"] == []
+    assert result["sample"]["kind"] == "not_created"
+    assert result["candidate_discovery"]["candidate_count_rejected_material_conflict"] > 0
+    assert "No eligible candidate" in result["recommendation_status"]
 
 
 def test_candidate_discovery_returns_an_honest_empty_result_without_walking_graph() -> None:
@@ -840,6 +953,12 @@ def test_impact_engine_classifies_improved_unchanged_and_newly_reachable_routes(
     assert result["aggregate"]["total_distance_savings_m"] == pytest.approx(0)
     assert {route["outcome"] for route in result["routes"]} == {"unchanged", "newly_reachable"}
     json.dumps(result, allow_nan=False)
+
+
+def test_explicit_route_pairs_preserve_both_directions() -> None:
+    pairs = sample_route_pairs(_fixture_data(disconnected=True), route_pairs=[(1, 2), (2, 1), (1, 2)])
+
+    assert pairs == [(1, 2), (2, 1)]
 
 
 def test_impact_engine_measures_improvement_and_caps_route_geometry_only() -> None:
@@ -979,3 +1098,7 @@ def test_candidate_pipeline_uses_one_shared_non_discovery_sample_and_stable_rank
     }
     assert not discovery_pairs.intersection(evaluated_pairs)
     assert "Lexicographic" in first["ranking_rule"]
+    assert first["recommendations"] == []
+    assert all(candidate["targeted_diagnostic_impact"]["sample"]["kind"] == "targeted_diagnostic_routes" for candidate in ranked)
+    assert all(candidate["targeted_diagnostic_impact"]["sample"]["evaluated_pair_count"] <= 32 for candidate in ranked)
+    assert all(candidate["ranking_explanation"].find("excluded from ranking") >= 0 for candidate in ranked)

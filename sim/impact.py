@@ -11,6 +11,7 @@ from collections.abc import Iterable, Mapping
 from typing import Any
 
 import networkx as nx
+from shapely.geometry import Point
 
 from .analysis import _node_sort_key, _nodes_inside_area, project_graph, route_between
 from .geo import OSMData, geojson_geometry
@@ -21,7 +22,7 @@ from .scenario import (
 )
 
 
-IMPACT_METHOD_VERSION = "arteria-multi-route-impact-v1"
+IMPACT_METHOD_VERSION = "arteria-multi-route-impact-v2.1"
 DEFAULT_ROUTE_SAMPLE_COUNT = 32
 MAX_ROUTE_SAMPLE_COUNT = 200
 DEFAULT_ROUTE_GEOMETRY_LIMIT = 20
@@ -75,7 +76,7 @@ def _select_route_pairs(
                 raise ValueError(f"route_pairs[{index}] endpoints must lie inside the selected study polygon.")
             if origin == destination:
                 raise ValueError(f"route_pairs[{index}] endpoints must be different graph nodes.")
-            key = _canonical_pair(origin, destination)
+            key = (_node_sort_key(origin), _node_sort_key(destination))
             if key not in seen:
                 result.append((origin, destination))
                 seen.add(key)
@@ -376,22 +377,30 @@ def evaluate_candidates(
     *,
     analysis: Mapping[str, Any] | None = None,
     max_candidates: int = 3,
+    candidate_pool_limit: int = 100,
+    max_evaluated_candidates: int = 12,
     sample_count: int = DEFAULT_ROUTE_SAMPLE_COUNT,
     seed: str | int = "arteria-v1",
     route_geometry_limit: int = DEFAULT_ROUTE_GEOMETRY_LIMIT,
     max_connection_length_m: float = 1_000.0,
     detour_ratio_threshold: float = 2.0,
 ) -> dict[str, Any]:
-    """Discover, independently evaluate, explain, and rank graph candidates.
+    """Screen a bounded pool, compare eligible links fairly, and add local probes.
 
-    Ranking is lexicographic: more newly reachable sampled pairs, then more
-    improved pairs, then larger aggregate distance savings, then fewer mapped
-    obstacle intersections, fewer unknown obstacle layers, shorter links, and
-    stable candidate ID.
-    This is a graph-screening order, not a project feasibility or cost score.
+    Shared sample impacts are the sole graph comparison used for ranking.
+    Targeted component-neighborhood routes explain local effects and are not
+    treated as representative or added to shared-sample totals.
     """
     from .analysis import analyze_snapshot
-    from .candidates import discover_intervention_candidates
+    from .candidates import MAX_CANDIDATE_POOL_LIMIT, discover_intervention_candidates
+
+    for value, name, upper in (
+        (max_candidates, "max_candidates", 50),
+        (candidate_pool_limit, "candidate_pool_limit", MAX_CANDIDATE_POOL_LIMIT),
+        (max_evaluated_candidates, "max_evaluated_candidates", MAX_CANDIDATE_POOL_LIMIT),
+    ):
+        if isinstance(value, bool) or not isinstance(value, int) or value < 1 or value > upper:
+            raise ValueError(f"{name} must be an integer from 1 through {upper}.")
 
     baseline_analysis = dict(analysis) if analysis is not None else analyze_snapshot(data)
     baseline_summary = {
@@ -407,10 +416,11 @@ def evaluate_candidates(
         data,
         issues=baseline_analysis.get("issues", []),
         max_candidates=max_candidates,
+        candidate_pool_limit=candidate_pool_limit,
         max_connection_length_m=max_connection_length_m,
         detour_ratio_threshold=detour_ratio_threshold,
     )
-    candidates = discovery["candidates"]
+    candidates = discovery.get("eligible_candidates", discovery["candidates"])[:max_evaluated_candidates]
     if not candidates:
         return {
             "schema_version": 1,
@@ -418,9 +428,12 @@ def evaluate_candidates(
             "analysis_id": baseline_analysis.get("analysis_id"),
             "baseline_analysis": baseline_summary,
             "ranking_rule": "No graph-valid candidate was discovered; no recommendation is returned.",
-            "candidate_discovery": discovery,
+            "candidate_discovery": discovery["screening"],
             "sample": {"kind": "not_created", "reason": "There are no candidate alternatives to evaluate."},
             "ranked_candidates": [],
+            "rejected_candidates": discovery.get("screened_candidates", []),
+            "recommendations": [],
+            "recommendation_status": "No eligible candidate was found in the bounded screened pool.",
             "warnings": discovery.get("warnings", []),
         }
 
@@ -451,6 +464,9 @@ def evaluate_candidates(
             "candidate_discovery": discovery["screening"],
             "sample": {"kind": "unavailable", "reason": "No in-area graph-node pair remained outside the discovery pairs."},
             "ranked_candidates": [],
+            "rejected_candidates": discovery.get("screened_candidates", []),
+            "recommendations": [],
+            "recommendation_status": "The common comparison sample could not be created.",
             "warnings": ["Candidate discovery and evaluation routes are kept separate; the discovery pair was not reused to inflate impact."],
         }
     ranked: list[dict[str, Any]] = []
@@ -470,9 +486,30 @@ def evaluate_candidates(
             route_geometry_limit=route_geometry_limit,
         )
         aggregate = impact["aggregate"]
+        targeted_pairs, targeted_counts = _targeted_diagnostic_pairs(
+            baseline_graph,
+            eligible_nodes,
+            candidate,
+            shared_pairs=shared_pairs,
+            max_pairs=32,
+            nodes_per_endpoint=8,
+        )
+        if targeted_pairs:
+            targeted_impact = evaluate_multi_route_impact(
+                data,
+                [candidate["intervention"]],
+                route_pairs=targeted_pairs,
+                route_geometry_limit=route_geometry_limit,
+            )
+            targeted_impact["sample"]["kind"] = "targeted_diagnostic_routes"
+            targeted_impact["sample"]["interpretation"] = "Routes were selected near this candidate's endpoint components to expose local graph effects; they are candidate-specific, not representative, and are excluded from shared-sample ranking."
+        else:
+            targeted_impact = {"sample": {"kind": "not_created", "reason": "No distinct eligible endpoint-neighborhood pairs were available."}, "routes": [], "aggregate": None}
+        targeted_impact["diagnostic_selection"] = targeted_counts
+        candidate["targeted_diagnostic_impact"] = targeted_impact
         obstacle_count = int(candidate["screening"]["mapped_buildings"].get("intersection_count", 0)) + int(candidate["screening"]["mapped_water_or_barriers"].get("intersection_count", 0))
         unknown_obstacle_layers = sum(
-            candidate["screening"][layer]["status"] == "unknown"
+            str(candidate["screening"][layer]["status"]).startswith("unknown")
             for layer in ("mapped_buildings", "mapped_water_or_barriers")
         )
         total_savings = aggregate["total_distance_savings_m"]
@@ -490,8 +527,9 @@ def evaluate_candidates(
             "unknown_obstacle_layer_count": unknown_obstacle_layers,
             "intervention_length_m": candidate["length_m"],
             "tie_breaker_candidate_id": candidate["candidate_id"],
+            "targeted_newly_reachable_pairs_diagnostic_only": (targeted_impact.get("aggregate") or {}).get("newly_reachable_count", 0),
         }
-        candidate["ranking_explanation"] = "Lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID."
+        candidate["ranking_explanation"] = "Shared-sample-only lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID. Targeted diagnostic routes are excluded from ranking."
         ranked.append(candidate)
 
     ranked.sort(key=lambda item: (
@@ -505,6 +543,8 @@ def evaluate_candidates(
     ))
     for rank, candidate in enumerate(ranked, start=1):
         candidate["rank"] = rank
+    evaluated_candidate_count = len(ranked)
+    ranked = ranked[:max_candidates]
     sample_meta = ranked[0]["impact"]["sample"]
     return {
         "schema_version": 1,
@@ -517,10 +557,90 @@ def evaluate_candidates(
         "candidate_discovery": discovery["screening"],
         "sample": sample_meta,
         "ranked_candidates": ranked,
+        "evaluation_summary": {
+            "candidate_count_evaluated": evaluated_candidate_count,
+            "candidate_count_returned": len(ranked),
+            "candidate_count_evaluated_not_returned": max(0, evaluated_candidate_count - len(ranked)),
+            "shared_sample_used_for_ranking": True,
+            "targeted_samples_used_for_ranking": False,
+        },
+        "rejected_candidates": discovery.get("screened_candidates", []),
+        "recommendations": [],
+        "recommendation_status": "All returned candidates are conditional and require field verification; this graph screening does not make a construction recommendation.",
         "warnings": [
             *data.warnings,
             "All alternatives were evaluated independently from the same original baseline graph.",
             "The ranking is a graph-only comparison over sampled graph-node pairs; it is not a construction recommendation, feasibility score, or population impact estimate.",
             "Candidate and route geometry do not establish safety, ownership, legal approval, or buildability.",
         ],
+    }
+
+
+def _targeted_diagnostic_pairs(
+    graph: nx.Graph,
+    eligible_nodes: list[Any],
+    candidate: Mapping[str, Any],
+    *,
+    shared_pairs: Iterable[tuple[Any, Any]],
+    max_pairs: int,
+    nodes_per_endpoint: int,
+) -> tuple[list[tuple[Any, Any]], dict[str, Any]]:
+    by_string = {str(node): node for node in graph.nodes}
+    endpoint_ids = [candidate.get("start", {}).get("node_id"), candidate.get("end", {}).get("node_id")]
+    if any(node_id not in by_string for node_id in endpoint_ids):
+        return [], {"status": "unavailable", "reason": "Candidate endpoint node is absent from the baseline graph."}
+    endpoints = [by_string[node_id] for node_id in endpoint_ids]
+    if graph.is_directed():
+        component_for = {node: index for index, component in enumerate(nx.weakly_connected_components(graph)) for node in component}
+    else:
+        component_for = {node: index for index, component in enumerate(nx.connected_components(graph)) for node in component}
+    eligible = set(eligible_nodes)
+    point_by_node = {}
+    for node in eligible_nodes:
+        try:
+            point_by_node[node] = Point(float(graph.nodes[node]["x"]), float(graph.nodes[node]["y"]))
+        except (KeyError, TypeError, ValueError):
+            continue
+    if any(endpoint not in point_by_node for endpoint in endpoints):
+        return [], {"status": "unavailable", "reason": "Candidate endpoint has no usable projected coordinate."}
+    neighborhoods = []
+    for endpoint in endpoints:
+        candidates = [node for node in eligible if component_for.get(node) == component_for.get(endpoint) and node in point_by_node]
+        candidates.sort(key=lambda node: (point_by_node[node].distance(point_by_node[endpoint]), _node_sort_key(node)))
+        neighborhoods.append(candidates[:nodes_per_endpoint])
+    shared_keys = {_canonical_pair(origin, destination) for origin, destination in shared_pairs}
+    proposed: list[tuple[Any, Any]] = []
+    for origin in neighborhoods[0]:
+        for destination in neighborhoods[1]:
+            if origin == destination:
+                continue
+            proposed.extend(((origin, destination), (destination, origin)))
+    proposed.sort(key=lambda pair: (
+        point_by_node[pair[0]].distance(point_by_node[endpoints[0]]) + point_by_node[pair[1]].distance(point_by_node[endpoints[1]]),
+        _node_sort_key(pair[0]),
+        _node_sort_key(pair[1]),
+    ))
+    unique: list[tuple[Any, Any]] = []
+    seen: set[tuple[tuple[str, str], tuple[str, str]]] = set()
+    shared_overlap_count = 0
+    for pair in proposed:
+        key = (_node_sort_key(pair[0]), _node_sort_key(pair[1]))
+        if _canonical_pair(*pair) in shared_keys:
+            shared_overlap_count += 1
+            continue
+        if key in seen:
+            continue
+        seen.add(key)
+        unique.append(pair)
+        if len(unique) >= max_pairs:
+            break
+    return unique, {
+        "status": "available" if unique else "no_distinct_pairs",
+        "endpoint_component_sizes": [sum(component_for.get(node) == component_for.get(endpoint) for node in graph) for endpoint in endpoints],
+        "neighborhood_node_counts": [len(values) for values in neighborhoods],
+        "proposed_oriented_pair_count": len(proposed),
+        "shared_sample_overlap_removed_count": shared_overlap_count,
+        "evaluated_pair_count": len(unique),
+        "pair_limit": max_pairs,
+        "interpretation": "Candidate-specific local diagnostic; not used for candidate ranking or presented as a representative travel sample.",
     }

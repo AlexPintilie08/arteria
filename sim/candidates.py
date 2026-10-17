@@ -18,8 +18,13 @@ from .geo import OSMData, geojson_geometry
 from .scenario import MAX_CONNECTION_LENGTH_M
 
 
-CANDIDATE_METHOD_VERSION = "arteria-pedestrian-candidates-v1"
+CANDIDATE_METHOD_VERSION = "arteria-pedestrian-candidates-v2.1"
 DEFAULT_CANDIDATE_LIMIT = 3
+DEFAULT_CANDIDATE_POOL_LIMIT = 100
+MAX_CANDIDATE_POOL_LIMIT = 500
+MAX_SCREENED_FEATURE_DETAILS = 30
+MATERIAL_BUILDING_OVERLAP_M = 0.5
+GEOMETRY_CONTACT_TOLERANCE_M = 0.02
 DEFAULT_MAX_SCREENED_PAIRS = 10_000
 DEFAULT_MAX_SOURCE_NODES = 500
 DEFAULT_NEIGHBORS_PER_SOURCE = 20
@@ -77,46 +82,164 @@ def _nearest_screen_sources(nodes: list[Any], max_source_nodes: int) -> list[Any
     return [nodes[index] for index in indices]
 
 
-def _feature_intersections(
-    data: OSMData,
-    line_wgs84: LineString,
-    layer_name: str,
-) -> dict[str, Any]:
+def _source_area_verified(data: OSMData) -> bool:
+    cache = data.metadata.get("cache", {})
+    if isinstance(cache, Mapping) and cache.get("area_equivalence_verified") is not None:
+        return bool(cache.get("area_equivalence_verified"))
+    if isinstance(cache, Mapping) and cache.get("area_key_matches") is False:
+        return False
+    if isinstance(cache, Mapping) and cache.get("area_key_matches") is True:
+        return True
+    source_key = data.metadata.get("area_key")
+    current_key = data.metadata.get("current_area_key")
+    return source_key == current_key if source_key and current_key else True
+
+
+def _prepare_feature_index(data: OSMData, layer_name: str) -> dict[str, Any]:
     frame = data.layers.get(layer_name)
     availability = data.layer_availability.get(layer_name, {}).get("status", "unknown")
-    if frame is None or frame.crs is None or frame.empty and availability not in {"available", "no_features_returned"}:
-        return {"status": "unknown", "feature_count": 0, "feature_ids": [], "reason": "Layer is missing or its coverage is unknown."}
+    verified_area = _source_area_verified(data)
+    if frame is None or frame.crs is None or availability not in {"available", "no_features_returned"}:
+        return {"layer_name": layer_name, "frame": frame, "status": "unknown", "feature_count": 0 if frame is None else int(len(frame)), "reason": "Layer is missing or its coverage is unknown.", "verified_area": verified_area, "geometries": [], "records": [], "tree": None, "quality": {}}
     if frame.empty:
-        return {"status": "no_intersection_observed", "feature_count": 0, "feature_ids": [], "reason": "The mapped layer query returned no features; this does not establish real-world absence."}
+        empty_status = "no_features_returned" if verified_area else "unknown_source_area_unverified"
+        return {"layer_name": layer_name, "frame": frame, "status": empty_status, "feature_count": 0, "reason": "The mapped layer query returned no features; this does not establish real-world absence." if verified_area else "The cached layer has no features and its source area is unverified.", "verified_area": verified_area, "geometries": [], "records": [], "tree": None, "quality": {}}
     try:
         projected = frame.to_crs(data.area.working_crs)
-        line = gpd.GeoSeries([line_wgs84], crs="EPSG:4326").to_crs(data.area.working_crs).iloc[0]
-        indexed_geometries = [
-            (row_index, geometry)
-            for row_index, geometry in enumerate(projected.geometry)
-            if geometry is not None and not geometry.is_empty
-        ]
-        geometries = [geometry for _, geometry in indexed_geometries]
+        records: list[dict[str, Any]] = []
+        geometries = []
+        polygon_count = 0
+        quality: Counter[str] = Counter()
+        identities: dict[tuple[str, str], dict[str, Any]] = {}
+        for row_index, geometry in enumerate(projected.geometry):
+            row = projected.iloc[row_index]
+            osm_id = row.get("osm_id", row.get("osm_element_id"))
+            element_type = row.get("osm_element_type", "")
+            identity = (str(element_type or ""), str(osm_id)) if osm_id is not None else ("row", str(row_index))
+            if geometry is None or geometry.is_empty:
+                quality["null_or_empty_geometry_count"] += 1
+                continue
+            valid = bool(geometry.is_valid)
+            if not valid:
+                quality["invalid_geometry_count"] += 1
+            if geometry.geom_type not in {"Polygon", "MultiPolygon"}:
+                quality["nonpolygon_geometry_count"] += 1
+            else:
+                polygon_count += 1
+            previous = identities.get(identity)
+            if previous is not None:
+                if previous["geometry"].equals(geometry):
+                    quality["duplicate_record_count"] += 1
+                    continue
+                quality["ambiguous_duplicate_identity_count"] += 1
+                previous["ambiguous_identity"] = True
+            record = {"geometry": geometry, "feature_id": str(osm_id) if osm_id is not None else str(row_index), "identity": identity, "row_index": row_index, "ambiguous_identity": previous is not None, "geometry_valid": valid, "polygonal": geometry.geom_type in {"Polygon", "MultiPolygon"}}
+            identities.setdefault(identity, record)
+            geometries.append(geometry)
+            records.append(record)
+        tree = STRtree(geometries) if geometries else None
         if not geometries:
-            return {"status": "unknown", "feature_count": int(len(frame)), "feature_ids": [], "reason": "Mapped layer has no usable geometry."}
-        tree = STRtree(geometries)
-        ids: list[str] = []
-        for match in tree.query(line):
-            index = int(match)
-            if line.intersects(geometries[index]):
-                row = projected.iloc[indexed_geometries[index][0]]
-                feature_id = row.get("osm_id", row.get("osm_element_id", index))
-                ids.append(str(feature_id))
-        unique_ids = sorted(set(ids))
-        return {
-            "status": "mapped_obstacle_intersection" if unique_ids else "no_intersection_observed",
-            "feature_count": int(len(frame)),
-            "feature_ids": unique_ids[:20],
-            "intersection_count": len(unique_ids),
-            "reason": "Candidate line intersects mapped layer geometry." if unique_ids else "No intersection was found in this mapped layer; this is not proof of feasibility.",
-        }
+            status = "unknown_source_area_unverified" if not verified_area else "unknown"
+            reason = "No usable polygon geometry was found in the mapped layer."
+        else:
+            status, reason = "available", "Mapped polygon geometries are available for screening."
+        return {"layer_name": layer_name, "frame": frame, "status": status, "feature_count": int(len(frame)), "polygon_count": polygon_count, "reason": reason, "verified_area": verified_area, "geometries": geometries, "records": records, "tree": tree, "quality": dict(sorted(quality.items())), "working_crs": data.area.working_crs}
     except Exception as error:
-        return {"status": "unknown", "feature_count": int(len(frame)), "feature_ids": [], "reason": f"Layer screening failed: {type(error).__name__}: {error}"}
+        return {"layer_name": layer_name, "frame": frame, "status": "unknown", "feature_count": int(len(frame)), "reason": f"Layer screening failed: {type(error).__name__}: {error}", "verified_area": verified_area, "geometries": [], "records": [], "tree": None, "quality": {}}
+
+
+def _line_intersection_class(line: LineString, polygon: Any) -> tuple[str | None, float]:
+    if any(
+        polygon.contains(point) and polygon.boundary.distance(point) > GEOMETRY_CONTACT_TOLERANCE_M
+        for point in (Point(line.coords[0]), Point(line.coords[-1]))
+    ):
+        return "endpoint_inside", 0.0
+    intersection = line.intersection(polygon)
+    if intersection.is_empty:
+        return None, 0.0
+    segments = []
+    if intersection.geom_type == "LineString":
+        segments = [intersection]
+    elif intersection.geom_type == "MultiLineString":
+        segments = list(intersection.geoms)
+    elif intersection.geom_type == "GeometryCollection":
+        segments = [part for part in intersection.geoms if part.geom_type == "LineString"]
+    interior_length = sum(
+        float(part.length)
+        for part in segments
+        if part.length > 0
+        and polygon.contains(part.interpolate(0.5, normalized=True))
+        and polygon.boundary.distance(part.interpolate(0.5, normalized=True)) > GEOMETRY_CONTACT_TOLERANCE_M
+    )
+    if interior_length >= MATERIAL_BUILDING_OVERLAP_M:
+        return "interior_crossing", interior_length
+    if interior_length > 0:
+        return "short_interior_overlap_requires_review", interior_length
+    return "boundary_only_contact", 0.0
+
+
+def _feature_intersections(index: Mapping[str, Any], line: LineString) -> dict[str, Any]:
+    layer_name = str(index.get("layer_name", "mapped layer"))
+    frame = index.get("frame")
+    feature_count = int(index.get("feature_count", 0))
+    if index.get("status") in {"unknown", "unknown_source_area_unverified", "no_features_returned"}:
+        if index.get("status") == "no_features_returned":
+            return {"status": "no_intersection_observed", "classification": "no_mapped_conflict_observed", "feature_count": 0, "feature_ids": [], "intersection_count": 0, "intersections": [], "quality": {}, "reason": "The mapped layer query returned no features; this does not establish real-world absence."}
+        status = "unknown_source_area_unverified" if index.get("status") == "unknown_source_area_unverified" else "unknown"
+        return {"status": status, "classification": status, "feature_count": feature_count, "feature_ids": [], "intersection_count": 0, "intersections": [], "quality": dict(index.get("quality", {})), "reason": str(index.get("reason", "Mapped coverage is unknown."))}
+    try:
+        # The index and candidate geometry use the study area's metric CRS.
+        metric_line = gpd.GeoSeries([line], crs="EPSG:4326").to_crs(index["working_crs"]).iloc[0]
+        hits: list[dict[str, Any]] = []
+        for match in index["tree"].query(metric_line.buffer(GEOMETRY_CONTACT_TOLERANCE_M)):
+            record = index["records"][int(match)]
+            polygon = record["geometry"]
+            try:
+                if not metric_line.intersects(polygon):
+                    if metric_line.distance(polygon) > GEOMETRY_CONTACT_TOLERANCE_M:
+                        continue
+                    if record["polygonal"] and record["geometry_valid"] and not record["ambiguous_identity"]:
+                        hits.append({"feature_id": record["feature_id"], "classification": "boundary_only_contact", "interior_overlap_m": 0.0, "identity_ambiguous": False})
+                        continue
+            except Exception:
+                try:
+                    if not metric_line.intersects(polygon.envelope):
+                        continue
+                except Exception:
+                    continue
+                record = {**record, "geometry_valid": False}
+            if not record["geometry_valid"] or not record["polygonal"] or record["ambiguous_identity"]:
+                hits.append({"feature_id": record["feature_id"], "classification": "ambiguous_invalid_feature", "interior_overlap_m": 0.0, "identity_ambiguous": bool(record["ambiguous_identity"])})
+                continue
+            classification, overlap_m = _line_intersection_class(metric_line, polygon)
+            if classification is None:
+                continue
+            hits.append({"feature_id": record["feature_id"], "classification": classification, "interior_overlap_m": round(overlap_m, 3), "identity_ambiguous": bool(record["ambiguous_identity"])})
+        hits.sort(key=lambda hit: (hit["classification"], hit["feature_id"]))
+        unique_ids = sorted({hit["feature_id"] for hit in hits})
+        classifications = Counter(hit["classification"] for hit in hits)
+        material = classifications["interior_crossing"] + classifications["endpoint_inside"]
+        if material:
+            classification = "mapped_material_conflict"
+            status = "mapped_obstacle_intersection"
+        elif classifications["ambiguous_invalid_feature"]:
+            classification = "ambiguous_invalid_feature"
+            status = "ambiguous_obstacle_geometry"
+        elif hits:
+            classification = hits[0]["classification"] if len(classifications) == 1 else "mixed_review_intersections"
+            status = "conditional_review"
+        elif not index.get("verified_area", True):
+            classification, status = "unknown_source_area_unverified", "unknown_source_area_unverified"
+        elif index.get("polygon_count", 0) == 0:
+            classification, status = "unknown_invalid_feature_geometry", "unknown"
+        elif index.get("quality", {}).get("null_or_empty_geometry_count", 0):
+            classification, status = "unknown_invalid_feature_geometry", "unknown"
+        else:
+            classification, status = "no_mapped_conflict_observed", "no_intersection_observed"
+        reason = "Candidate intersects mapped geometry with a material interior or endpoint conflict." if material else "Candidate intersects a mapped feature whose geometry or identity is ambiguous." if classifications["ambiguous_invalid_feature"] else "Mapped layer screening found no material interior conflict; incomplete mapping and field conditions still require review."
+        return {"status": status, "classification": classification, "feature_count": feature_count, "feature_ids": unique_ids[:20], "intersection_count": len(unique_ids), "classification_counts": dict(sorted(classifications.items())), "intersections": hits[:MAX_SCREENED_FEATURE_DETAILS], "quality": dict(index.get("quality", {})), "reason": reason}
+    except Exception as error:
+        return {"status": "unknown", "classification": "unknown", "feature_count": feature_count, "feature_ids": [], "intersection_count": 0, "intersections": [], "quality": dict(index.get("quality", {})), "reason": f"Layer screening failed: {type(error).__name__}: {error}"}
 
 
 def _issue_ids_for_nodes(issues: Iterable[Mapping[str, Any]], nodes: tuple[Any, Any]) -> list[str]:
@@ -181,6 +304,7 @@ def discover_intervention_candidates(
     *,
     issues: Iterable[Mapping[str, Any]] = (),
     max_candidates: int = DEFAULT_CANDIDATE_LIMIT,
+    candidate_pool_limit: int = DEFAULT_CANDIDATE_POOL_LIMIT,
     max_connection_length_m: float = MAX_CONNECTION_LENGTH_M,
     detour_ratio_threshold: float = DEFAULT_DETOUR_RATIO_THRESHOLD,
     max_screened_pairs: int = DEFAULT_MAX_SCREENED_PAIRS,
@@ -192,6 +316,7 @@ def discover_intervention_candidates(
     The search uses a metric STRtree over nodes inside the selected polygon.
     It prioritizes weak-component gaps, one-way reachability gaps, then large
     route detours. The search is bounded by source, neighbor, and pair limits.
+    A bounded pool is obstacle-screened before a final shortlist is selected.
     Each output is a hypothetical graph edit requiring field verification.
     """
     if "walk" not in data.graphs:
@@ -205,6 +330,7 @@ def discover_intervention_candidates(
         raise ValueError("detour_ratio_threshold must be greater than 1.")
     for value, name, upper in (
         (max_candidates, "max_candidates", 50),
+        (candidate_pool_limit, "candidate_pool_limit", MAX_CANDIDATE_POOL_LIMIT),
         (max_screened_pairs, "max_screened_pairs", 100_000),
         (max_source_nodes, "max_source_nodes", 5_000),
         (max_neighbors_per_source, "max_neighbors_per_source", 100),
@@ -255,7 +381,8 @@ def discover_intervention_candidates(
     tree = STRtree(points)
     index_to_node = {index: node for index, node in enumerate(nodes)}
     area_metric = gpd.GeoSeries([data.area.polygon], crs="EPSG:4326").to_crs(data.area.working_crs).iloc[0]
-    component_for, _ = _components(graph)
+    component_for, component_groups = _components(graph)
+    component_area_counts: Counter[int] = Counter(component_for[node] for node in nodes)
     source_nodes = _nearest_screen_sources(nodes, max_source_nodes)
     reverse_graph = graph.reverse(copy=False) if graph.is_directed() else graph
     path_distance_cache: dict[Any, dict[Any, float]] = {}
@@ -342,6 +469,8 @@ def discover_intervention_candidates(
                 "rationale": rationale,
                 "detour_ratio": detour_ratio,
                 "directional_distances": directional_distances,
+                "component_sizes": [len(component_groups[component_for[node]]) for node in (source, target)],
+                "component_in_area_node_counts": [component_area_counts[component_for[node]] for node in (source, target)],
             })
         if screened_pairs >= max_screened_pairs:
             break
@@ -362,52 +491,70 @@ def discover_intervention_candidates(
 
     raw.sort(key=lambda item: (
         {"disconnected_components": 0, "directional_reachability_gap": 1, "excessive_route_detour": 2}[item["category"]],
-        -len(item["related_issue_ids"]),
         -(item["detour_ratio"] or 0.0),
         item["length_m"],
         tuple(_node_sort_key(node) for node in item["nodes"]),
     ))
-    selected: list[dict[str, Any]] = []
+    deduplicated: list[dict[str, Any]] = []
     for item in raw:
-        if any(_equivalent_endpoints(item["points"], existing["points"]) for existing in selected):
+        if any(_equivalent_endpoints(item["points"], existing["points"]) for existing in deduplicated):
             rejected["functionally_equivalent_candidate"] += 1
             continue
-        selected.append(item)
-        if len(selected) >= max_candidates:
-            break
+        deduplicated.append(item)
 
-    candidate_records: list[dict[str, Any]] = []
+    pool = deduplicated[:candidate_pool_limit]
+    building_index = _prepare_feature_index(data, "buildings")
+    water_layer_name = next((name for name in ("water", "barriers") if name in data.layers), "water")
+    water_index = _prepare_feature_index(data, water_layer_name)
+
+    screened_records: list[dict[str, Any]] = []
+    eligible_records: list[dict[str, Any]] = []
     graph_source = source_graph.graph.get("arteria_source", "OpenStreetMap or imported graph")
     retrieved_at = source_graph.graph.get("arteria_retrieved_at") or data.metadata.get("retrieved_at")
-    for item in selected:
+    blocked_counts: Counter[str] = Counter()
+    for item in pool:
         start_node, end_node = item["nodes"]
         start_attrs, end_attrs = graph.nodes[start_node], graph.nodes[end_node]
         start = [float(start_attrs["longitude"]), float(start_attrs["latitude"])]
         end = [float(end_attrs["longitude"]), float(end_attrs["latitude"])]
         line_wgs84 = LineString([start, end])
-        building_screen = _feature_intersections(data, line_wgs84, "buildings")
-        water_layer_name = next((name for name in ("water", "barriers") if name in data.layers), "water")
-        water_screen = _feature_intersections(data, line_wgs84, water_layer_name)
+        building_screen = _feature_intersections(building_index, line_wgs84)
+        water_screen = _feature_intersections(water_index, line_wgs84)
         warnings = [
             "No field survey, property ownership, legal approval, accessibility standard, crossing safety, or construction review was performed.",
             "Missing mapped geometry is not evidence that a connection is physically feasible.",
         ]
-        if building_screen["status"] == "mapped_obstacle_intersection":
-            warnings.append("The hypothetical segment intersects mapped building geometry and needs detailed review.")
-        if building_screen["status"] == "unknown":
+        if building_screen["classification"] == "mapped_material_conflict":
+            warnings.append("The hypothetical segment has a mapped material building conflict and is excluded from the eligible shortlist.")
+        if building_screen["classification"] == "ambiguous_invalid_feature":
+            warnings.append("The hypothetical segment intersects an invalid or ambiguous building-layer feature and is excluded from the eligible shortlist.")
+        if water_screen["classification"] in {"mapped_material_conflict", "ambiguous_invalid_feature"}:
+            warnings.append("The hypothetical segment intersects mapped water or barrier geometry and is excluded from the eligible shortlist.")
+        if building_screen["status"] in {"unknown", "unknown_source_area_unverified"}:
             warnings.append("Building obstacle screening is unknown because mapped building geometry is unavailable or unusable.")
+        if building_screen["status"] == "conditional_review":
+            warnings.append("Building contact or a short interior overlap requires geometry and field review.")
         missing_evidence = [
             "land ownership and access rights",
             "elevation, slope, and accessibility conditions",
             "field-verified pedestrian safety and construction constraints",
         ]
-        if water_screen["status"] == "unknown":
+        if water_screen["status"] in {"unknown", "unknown_source_area_unverified"}:
             missing_evidence.append("water and other physical barrier geometry")
         node_ids = tuple(sorted(item["nodes"], key=_node_sort_key))
         seed = f"{CANDIDATE_METHOD_VERSION}|add_pedestrian_connection|{type(node_ids[0]).__name__}:{node_ids[0]}|{type(node_ids[1]).__name__}:{node_ids[1]}"
         candidate_id = "cand_" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:20]
-        obstacle_present = building_screen["status"] == "mapped_obstacle_intersection" or water_screen["status"] == "mapped_obstacle_intersection"
-        candidate_records.append({
+        building_blocked = building_screen["classification"] in {"mapped_material_conflict", "ambiguous_invalid_feature"}
+        water_blocked = water_screen["classification"] in {"mapped_material_conflict", "ambiguous_invalid_feature"}
+        blocked = building_blocked or water_blocked
+        material_conflict = building_screen["classification"] == "mapped_material_conflict" or water_screen["classification"] == "mapped_material_conflict"
+        if building_screen["classification"] == "mapped_material_conflict":
+            blocked_counts["material_building_conflict"] += 1
+        if building_screen["classification"] == "ambiguous_invalid_feature":
+            blocked_counts["ambiguous_building_geometry"] += 1
+        if water_screen["classification"] in {"mapped_material_conflict", "ambiguous_invalid_feature"}:
+            blocked_counts["mapped_water_or_barrier_conflict"] += 1
+        candidate = {
             "candidate_id": candidate_id,
             "intervention": {"type": "add_pedestrian_connection", "start": start, "end": end},
             "start": {"node_id": str(start_node), "coordinates": start},
@@ -418,17 +565,24 @@ def discover_intervention_candidates(
                 "method": item["category"],
                 "detour_ratio": item["detour_ratio"],
                 "directed_route_distances_m": item["directional_distances"],
+                "endpoint_component_sizes": item["component_sizes"],
+                "endpoint_component_in_area_node_counts": item["component_in_area_node_counts"],
+                "small_component_caution": any(value <= 3 for value in item["component_in_area_node_counts"]),
             },
             "related_issue_ids": item["related_issue_ids"],
             "related_issue_associations": item["related_issue_associations"],
             "selection_rationale": [item["rationale"], *item.get("issue_selection_rationale", [])],
             "screening": {
-                "status": "candidate_with_mapped_obstacle_warnings" if obstacle_present else "candidate_requires_field_verification",
+                "status": "rejected_mapped_obstacle_conflict" if blocked else "conditional_candidate_requires_field_review",
+                "eligibility": "blocked" if blocked else "conditional",
+                "recommendation_status": "not_eligible" if blocked else "conditional_candidate_requires_field_review",
                 "geometry_valid": True,
                 "hard_constraints_passed": ["distinct graph endpoints", "maximum modeled link length", "straight segment inside the selected study polygon", "metric geometry is finite"],
                 "mapped_buildings": building_screen,
                 "mapped_water_or_barriers": water_screen,
                 "physical_feasibility": "unknown",
+                "material_conflict": material_conflict,
+                "mapped_obstacle_conflict": blocked,
                 "missing_evidence": missing_evidence,
                 "warnings": warnings,
             },
@@ -445,26 +599,54 @@ def discover_intervention_candidates(
                 "Candidate ranking is a graph-screening result, not a construction recommendation.",
             ],
             "candidate_generation_method_version": CANDIDATE_METHOD_VERSION,
-        })
+        }
+        if blocked:
+            candidate["screening"]["exclusion_reasons"] = [
+                reason for condition, reason in (
+                    (building_screen["classification"] == "mapped_material_conflict", "mapped_material_building_conflict"),
+                    (building_screen["classification"] == "ambiguous_invalid_feature", "ambiguous_or_invalid_building_feature"),
+                    (water_blocked, "mapped_water_or_barrier_conflict"),
+                ) if condition
+            ]
+            screened_records.append(candidate)
+        else:
+            eligible_records.append(candidate)
 
     report_warnings = [
         "Only add_pedestrian_connection interventions are generated; other intervention types are unsupported.",
         "Candidate screening does not establish legal, physical, safety, ownership, or construction feasibility.",
+        "Candidates in the shortlist remain conditional until field, ownership, accessibility, and safety checks are complete.",
     ]
+    candidate_records = eligible_records[:max_candidates]
+    if any(candidate["discovery"]["small_component_caution"] for candidate in candidate_records):
+        report_warnings.append("Some opportunities touch a component with three or fewer in-area nodes; graph and boundary artifacts require review.")
     return {
         "schema_version": 1,
         "method_version": CANDIDATE_METHOD_VERSION,
         "area_id": data.area.area_id,
         "candidate_intervention_types": ["add_pedestrian_connection"],
         "candidates": candidate_records,
+        "eligible_candidates": eligible_records,
+        "screened_candidates": screened_records[:MAX_CANDIDATE_POOL_LIMIT],
         "screening": {
-            "status": "candidates_found" if candidate_records else "no_candidates",
-            "reason": None if candidate_records else "No candidate passed graph, geometry, and duplicate screening.",
+            "status": "conditional_candidates_found" if candidate_records else "no_eligible_candidates",
+            "reason": None if candidate_records else "No candidate passed material building and mapped barrier conflict screening within the bounded opportunity pool.",
             "study_area_node_count": len(nodes),
             "source_node_count_screened": len(source_nodes),
             "screened_pairs": screened_pairs,
             "candidate_count_before_limit": len(raw),
+            "candidate_count_deduplicated": len(deduplicated),
+            "candidate_pool_count": len(pool),
+            "candidate_pool_limit": candidate_pool_limit,
+            "candidate_count_screened": len(pool),
+            "candidate_count_eligible_conditional": len(eligible_records),
+            "candidate_count_rejected_conflict": len(screened_records),
+            "candidate_count_rejected_material_conflict": blocked_counts["material_building_conflict"],
+            "candidate_count_rejected_ambiguous_building_geometry": blocked_counts["ambiguous_building_geometry"],
+            "candidate_count_rejected_mapped_barrier_conflict": blocked_counts["mapped_water_or_barrier_conflict"],
             "candidate_count_returned": len(candidate_records),
+            "final_shortlist_is_conditional": bool(candidate_records),
+            "screening_truncated_count": max(0, len(deduplicated) - len(pool)),
             "configured_limits": {
                 "max_candidates": max_candidates,
                 "max_connection_length_m": float(max_connection_length_m),
@@ -474,6 +656,7 @@ def discover_intervention_candidates(
                 "max_neighbors_per_source": max_neighbors_per_source,
             },
             "rejected": dict(sorted(rejected.items())),
+            "material_conflict_rejected": dict(sorted(blocked_counts.items())),
             "algorithm_complexity": "Spatial-index candidate lookup over a deterministic bounded source sample; shortest paths are computed at most once per screened source and its reverse graph.",
         },
         "warnings": report_warnings,

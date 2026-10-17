@@ -91,7 +91,7 @@ Analysis only emits network metrics for graphs present in the snapshot. Walking/
 
 The default cache is `sim/.cache/osm/` and contains local GraphML/GeoJSON snapshots plus OSMnx's HTTP response cache. `sim/.gitignore` excludes those generated files. Use `force_refresh=True` to reacquire a snapshot or `cache_dir=...` to provide a different local cache directory. `overpass_url` can select an Overpass-compatible endpoint when the default endpoint is unavailable. The selected endpoint's usage policy still applies.
 
-Metadata records the source, retrieval time, area extent, working CRS, query tags, cached modes, and limitations. An empty OSM layer is `no_features_returned`; a failed or unproven query is `unknown`. Neither status means the real-world feature is absent. OSM tags and network coverage are incomplete and may change after the snapshot was retrieved.
+Metadata records the source, retrieval time, area extent, working CRS, query tags, cached modes, and limitations. New cache sidecars also store the exact normalized WGS84 source polygon and its SHA-256 hash, area identifiers, CRS, and request parameters. Existing sidecars are not rewritten. A legacy cache-key mismatch without a matching source-geometry hash leaves area equivalence unverified. An empty OSM layer is `no_features_returned`; a failed or unproven query is `unknown`. Neither status means the real-world feature is absent. OSM tags and network coverage are incomplete and may change after the snapshot was retrieved.
 
 ## Layers and analysis
 
@@ -117,13 +117,13 @@ The hypothetical link does not evaluate street crossing safety, grade, accessibi
 
 ## Candidate discovery and multi-route impact
 
-`discover_intervention_candidates(snapshot, issues=analysis["issues"])` searches the metric walking graph with bounded spatial indexing. It considers nearby nodes in separate weak components, directed reachability gaps, and connected pairs with route detours above the configured ratio. It rejects direct existing links, invalid/out-of-area lines, links above the scenario engine's 1,000 m maximum, and equivalent returned candidates. The only generated intervention is `add_pedestrian_connection`.
+`discover_intervention_candidates(snapshot, issues=analysis["issues"])` searches the metric walking graph with bounded spatial indexing. It considers nearby nodes in separate weak components, directed reachability gaps, and connected pairs with route detours above the configured ratio. It rejects direct existing links, invalid/out-of-area lines, links above the scenario engine's 1,000 m maximum, and functionally equivalent links. The default opportunity pool is 100 (hard limit 500); mapped layers are indexed once and every pool entry is screened before the final shortlist is selected. The only generated intervention is `add_pedestrian_connection`.
 
-Candidate output includes a stable ID, endpoints, WGS84 LineString, length, graph evidence, related issue IDs, mapped-building intersection findings, missing feasibility evidence, and method/provenance fields. A missing building, water, barrier, elevation, slope, ownership, legal, safety, or access-rights record stays unknown. A segment without a mapped building intersection is not considered buildable.
+Building findings distinguish material interior crossings, endpoints inside a building, boundary-only contact, short interior overlaps, ambiguous/invalid features, and no observed mapped conflict. Interior overlaps of at least 0.5 m, endpoint-inside cases, and intersecting ambiguous features are excluded from the eligible pool. Boundary contact and shorter overlaps remain conditional for review. A no-hit result is marked unknown when the cached source area is unverified. Duplicate OSM identities are deduplicated by element type and ID, with conflicting duplicate geometry treated as ambiguous. Candidate output includes feature-quality counts and bounded intersection details. Water/barrier, elevation, slope, ownership, legal, safety, and access-rights evidence can still be missing; no candidate is labeled buildable.
 
 `sample_route_pairs` accepts explicit graph-node pairs or creates a bounded deterministic sample from in-area graph nodes with a stable seed. It never invents resident trips. `evaluate_multi_route_impact` reports Before/After reachability, network distance, constant-speed walking time, outcome, and deltas for every sampled pair. Distance savings are aggregated only for pairs reachable before and after; newly reachable/unreachable pairs are counted separately. Route geometry has its own cap, independent of the numeric sample count.
 
-`evaluate_candidates` analyzes the baseline, discovers candidates, excludes candidate discovery pairs from its deterministic route sample, evaluates every alternative from the same original baseline, and ranks by a documented lexicographic rule. The ranking favors newly reachable and improved sample pairs, then comparable route savings, fewer mapped obstacle intersections, fewer unknown obstacle layers, shorter hypothetical links, and a stable ID. It does not use construction cost or claim population or feasibility impact.
+`evaluate_candidates` analyzes the baseline, screens the bounded opportunity pool, excludes evaluated discovery pairs from a common deterministic comparison sample, and evaluates each eligible alternative from the same immutable baseline. The shared sample alone drives the lexicographic ranking: newly reachable pairs, improved pairs, comparable route savings, obstacle findings, unknown layers, link length, and stable ID. Up to 12 eligible candidates are evaluated by default and up to 3 are returned. A separate bounded diagnostic sample uses nearby nodes in each candidate's endpoint components to show local reachability or detour effects; both route directions are retained, and these candidate-specific probes never affect shared-sample ranking. Returned candidates remain conditional, and the API makes no construction recommendation. When no candidate passes material-conflict screening, it returns an honest empty result with bounded rejected-candidate diagnostics.
 
 ## Reproducible demonstration
 
@@ -133,7 +133,7 @@ Run from the repository root:
 .\.venv\Scripts\python.exe -m sim.demo
 ```
 
-The default `auto` mode loads a local cached walking snapshot if available and otherwise uses a tiny deterministic offline fixture. The demo never downloads OSM. Use `--source cache` to require a cached snapshot, or `--source fixture` for the synthetic example. It writes `results.json` and `results.geojson` under ignored `sim/.cache/sim-engine-demo/`. Cache-key mismatches are included in the output when the original snapshot polygon cannot be verified.
+The default `auto` mode loads a local cached walking snapshot if available and otherwise uses a tiny deterministic offline fixture. The demo never downloads OSM. Use `--source cache` to require a cached snapshot, or `--source fixture` for the synthetic example. It writes `results.json` and `results.geojson` under ignored `sim/.cache/sim-engine-demo/`. Output includes source-area verification, pool/screen/rejection counts, the shared comparison sample, targeted diagnostic routes, and screened-out candidates. Cache-key mismatches without a matching original geometry hash remain explicitly unverified.
 
 ## Tests and verified Iași snapshot
 
@@ -143,7 +143,7 @@ Offline engine tests use small in-memory fixtures and mocks; they do not require
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-stabilization tests sim/test_engine.py
 ```
 
-The latest local regression run completed with 59 cases (5 project tests and 54 SIM cases). The checked-in `scripts/check.ps1` and `scripts/check.sh` explicitly invoke `pytest -q tests sim/test_engine.py`, so CI includes the simulation suite. A bare `pytest -q` follows `pyproject.toml`'s `testpaths = ["tests"]` and omits `sim/test_engine.py`; use the explicit command above.
+The SIM v2.1 local regression run completed with 65 cases (5 project tests and 60 SIM cases). The checked-in `scripts/check.ps1` and `scripts/check.sh` explicitly invoke `pytest -q tests sim/test_engine.py`, so CI includes the simulation suite. A bare `pytest -q` follows `pyproject.toml`'s `testpaths = ["tests"]` and omits `sim/test_engine.py`; use the explicit command above.
 
 Scenario parameter validation rejects non-finite travel speeds and thresholds so results cannot silently contain NaN or Infinity. The baseline and scenario use the same configured walking speed, including the estimate attached to a hypothetical connection. Scenario outputs include deterministic route comparisons, WGS84 GeoJSON, source provenance, and explicit warnings that the intervention is hypothetical.
 

@@ -17,7 +17,7 @@ from shapely.geometry import LineString
 
 from .analysis import analyze_snapshot
 from .candidates import discover_intervention_candidates
-from .geo import LAYER_TAGS, OSMData, _area_key, _layer_masks, _load_cached_frame, normalize_area
+from .geo import LAYER_TAGS, OSMData, _area_key, _layer_masks, _load_cached_frame, _source_area_geometry_hash, normalize_area
 from .impact import evaluate_candidates
 
 
@@ -117,14 +117,17 @@ def load_cached_snapshot(cache_dir: str | Path | None = None) -> OSMData:
         availability[name] = {"status": status, "feature_count": int(len(frame)), "coverage": "Cached OpenStreetMap tagged features; empty categories do not prove absence."}
     availability["walk_network"] = {"status": "available", "node_count": int(graph.number_of_nodes()), "edge_count": int(graph.number_of_edges())}
     cache_key_matches = graph_metadata.get("area_key") == current_key
+    cached_geometry_hash = graph_metadata.get("source_area_geometry_sha256")
+    source_geometry_matches = cached_geometry_hash == _source_area_geometry_hash(area) if cached_geometry_hash else None
+    area_equivalence_verified = bool(cache_key_matches or source_geometry_matches is True)
     warnings = []
     limitations = [
         "OSM feature and network coverage are partial and may have changed since retrieval.",
-        "The cache sidecar contains no original study polygon, so a cache-key mismatch prevents boundary equivalence from being verified.",
+        "Legacy cache sidecars without source geometry cannot verify boundary equivalence when their cache key differs from the current area.",
         "Network-node route results do not describe observed trips or population demand.",
     ]
-    if not cache_key_matches:
-        warnings.append("Cached OSM snapshot key differs from the current demo-area key; the original source polygon is unavailable, so area equivalence is unverified.")
+    if not area_equivalence_verified:
+        warnings.append("Cached OSM snapshot key differs from the current demo-area key and no matching source-geometry hash is available, so area equivalence is unverified.")
     if "warning" in features_metadata:
         warnings.append(features_metadata["warning"])
     retrieved_at = max(
@@ -144,7 +147,14 @@ def load_cached_snapshot(cache_dir: str | Path | None = None) -> OSMData:
             "extent_wgs84": area.extent,
             "area_key": graph_metadata.get("area_key"),
             "current_area_key": current_key,
-            "cache": {"directory": str(cache), "read_only_reuse": True, "area_key_matches": cache_key_matches},
+            "cache": {"directory": str(cache), "read_only_reuse": True, "area_key_matches": cache_key_matches, "source_area_geometry_matches": source_geometry_matches, "area_equivalence_verified": area_equivalence_verified},
+            "source_area": {
+                "source_area_id": graph_metadata.get("area_id"),
+                "source_city_id": graph_metadata.get("city_id"),
+                "source_boundary_source": graph_metadata.get("boundary_source"),
+                "source_geometry_sha256": cached_geometry_hash,
+                "equivalence_verified": area_equivalence_verified,
+            },
             "limitations": limitations,
         },
         warnings=warnings,
@@ -172,6 +182,30 @@ def _result_geojson(result: dict[str, Any], data: OSMData) -> dict[str, Any]:
                         "geometry": geometry,
                         "properties": {"layer": f"{phase}_route", "candidate_id": candidate_id, "origin_node_id": route["origin_node_id"], "destination_node_id": route["destination_node_id"], "outcome": route["outcome"]},
                     })
+        for route in candidate.get("targeted_diagnostic_impact", {}).get("routes", []):
+            for phase in ("before", "after"):
+                geometry = route[phase].get("geometry")
+                if geometry is not None:
+                    features.append({
+                        "type": "Feature",
+                        "id": f"{candidate_id}:targeted:{route['origin_node_id']}:{route['destination_node_id']}:{phase}",
+                        "geometry": geometry,
+                        "properties": {"layer": f"targeted_{phase}_route", "candidate_id": candidate_id, "origin_node_id": route["origin_node_id"], "destination_node_id": route["destination_node_id"], "outcome": route["outcome"], "sample_role": "candidate_specific_targeted_diagnostic"},
+                    })
+    for candidate in result.get("rejected_candidates", []):
+        features.append({
+            "type": "Feature",
+            "id": candidate["candidate_id"],
+            "geometry": candidate["geometry"],
+            "properties": {
+                "layer": "screened_out_candidate",
+                "candidate_id": candidate["candidate_id"],
+                "length_m": candidate["length_m"],
+                "screening_status": candidate["screening"]["status"],
+                "exclusion_reasons": candidate["screening"].get("exclusion_reasons", []),
+                "building_classification": candidate["screening"]["mapped_buildings"]["classification"],
+            },
+        })
     return {
         "type": "FeatureCollection",
         "metadata": {
@@ -204,6 +238,7 @@ def run_demo(source: str = "auto", *, output_dir: str | Path = DEFAULT_OUTPUT) -
     analysis = analyze_snapshot(data)
     result = evaluate_candidates(data, analysis=analysis)
     result["analysis"] = analysis
+    discovery_summary = result.get("candidate_discovery", {})
     result["demo"] = {
         "source_mode": data_source,
         "network_requests_made": False,
@@ -211,6 +246,27 @@ def run_demo(source: str = "auto", *, output_dir: str | Path = DEFAULT_OUTPUT) -
         "data_source": data.metadata.get("source"),
         "source_retrieved_at": data.metadata.get("retrieved_at"),
         "study_area": analysis["area"],
+        "source_area": data.metadata.get("source_area", {
+            "source_area_id": data.metadata.get("area_id"),
+            "source_city_id": data.metadata.get("city_id"),
+            "source_boundary_source": data.metadata.get("boundary_source"),
+            "source_geometry_sha256": data.metadata.get("source_area_geometry_sha256"),
+            "equivalence_verified": data.metadata.get("cache", {}).get("area_equivalence_verified", True),
+        }),
+        "candidate_quality": {
+            "raw_opportunities": discovery_summary.get("candidate_count_before_limit", 0),
+            "deduplicated_opportunities": discovery_summary.get("candidate_count_deduplicated", 0),
+            "screened_pool": discovery_summary.get("candidate_count_screened", 0),
+            "pool_limit": discovery_summary.get("candidate_pool_limit"),
+            "material_conflicts_rejected": discovery_summary.get("candidate_count_rejected_material_conflict", 0),
+            "mapped_barrier_conflicts_rejected": discovery_summary.get("candidate_count_rejected_mapped_barrier_conflict", 0),
+            "all_conflicts_rejected": discovery_summary.get("candidate_count_rejected_conflict", 0),
+            "conditional_candidates": discovery_summary.get("candidate_count_eligible_conditional", 0),
+            "returned_ranked_candidates": len(result.get("ranked_candidates", [])),
+            "recommendation_status": result.get("recommendation_status"),
+        },
+        "shared_sample": result.get("sample"),
+        "targeted_diagnostic_sample_role": "candidate-specific; local explanatory evidence only; excluded from shared ranking",
         "limitations": data.metadata.get("limitations", []),
     }
     folder = Path(output_dir)
@@ -236,14 +292,25 @@ def main() -> int:
     aggregate_candidates = result.get("ranked_candidates", [])
     print(f"SIM demo source: {result['demo']['source_mode']} ({result['demo']['data_source']})")
     print(f"Network requests: {result['demo']['network_requests_made']}; area: {result['area_id']}")
-    print(f"Candidates returned: {len(aggregate_candidates)}; sampled graph routes per candidate: {result.get('sample', {}).get('evaluated_pair_count', 0)}")
+    quality = result["demo"]["candidate_quality"]
+    print(
+        "Candidate screening: "
+        f"{quality['raw_opportunities']} raw → {quality['screened_pool']} screened "
+        f"(limit {quality['pool_limit']}); {quality['material_conflicts_rejected']} material conflicts rejected; "
+        f"{quality['conditional_candidates']} conditional candidates"
+    )
+    print(f"Candidates returned: {len(aggregate_candidates)}; shared sample routes per candidate: {result.get('sample', {}).get('evaluated_pair_count', 0)}")
     for candidate in aggregate_candidates:
         aggregate = candidate["impact"]["aggregate"]
+        targeted = candidate.get("targeted_diagnostic_impact", {}).get("aggregate") or {}
         print(
             f"  rank {candidate['rank']}: {candidate['candidate_id']} — "
             f"{aggregate['improved_count']} improved, {aggregate['newly_reachable_count']} newly reachable, "
-            f"{aggregate['regressed_count']} regressed; length {candidate['length_m']:.1f} m"
+            f"{aggregate['regressed_count']} regressed in shared sample; "
+            f"{targeted.get('newly_reachable_count', 0)} newly reachable in targeted diagnostic; "
+            f"length {candidate['length_m']:.1f} m; {candidate['screening']['recommendation_status']}"
         )
+    print(f"Recommendation: {result.get('recommendation_status')}")
     print(f"JSON: {result['output']['json']}")
     print(f"GeoJSON: {result['output']['geojson']}")
     return 0
