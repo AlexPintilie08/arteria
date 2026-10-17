@@ -27,7 +27,7 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for implementation and integration detail
 - The run covers catalog import/validation, point-only and oversized boundaries, bounded candidate discovery and obstacle warnings, deterministic route sampling, multiple outcome classes, aggregate calculations, geometry caps, baseline immutability, independent alternatives, and stable ranking alongside the existing regressions.
 - Cached OSM demo: `.venv/Scripts/python.exe -m sim.demo --source cache` used the local 136-node walking graph and made no network request. It returned 3 graph candidates and evaluated 32 sampled graph-node pairs per candidate. Each result had 1 newly reachable, 30 unchanged, 1 unreachable in both, 0 improved/regressed, and 0 m savings among comparable routes. The 3 candidate lines each intersected 5 mapped building geometries; each requires field verification. The cache key did not match the current demo-area key and the sidecar lacks the original polygon, so boundary equivalence is unverified.
 - Offline fixture demo: `python -m sim.demo --source fixture` used 7 synthetic graph nodes, returned 3 candidates, and evaluated 18 pairs per candidate without network requests.
-- The existing CI run [39044641288](https://github.com/AlexPintilie08/arteria/actions/runs/39044641288) passed before these v2 changes with 36 tests on Windows x64 and macOS ARM64. It does not verify the current v2 revision; current commit CI must be checked after publication.
+- V2 implementation commit `a3075c3` passed [GitHub Actions run 39051501061](https://github.com/AlexPintilie08/arteria/actions/runs/39051501061): Windows x64 and macOS 15 ARM64 each ran all 59 tests, plus the existing backend HTTP and synthetic SUMO smoke checks.
 - The `uv` executable is not available in the current Windows environment. Tests use the existing `.venv`; no dependency installation was performed. The SUMO synthetic smoke and earlier platform CI checks do not establish real-area SUMO behavior.
 
 ## Backend readiness
@@ -41,4 +41,4 @@ Package-root imports now expose catalog loading/selection/validation, candidate 
 - Route samples are graph-node pairs, not observed trips or a statistically representative sample. Counts are not extrapolated to residents.
 - Walking/cycling times use constant-speed assumptions. Population, congestion, observed traffic volumes, and real-time conditions are not inferred.
 - Real-area OSM-to-SUMO conversion and synthetic vehicle demand are not implemented. Only the existing optional synthetic TraCI smoke is supported.
-- The previous CI run covered macOS ARM64, not macOS Intel. Current v2 CI status is pending verification.
+- The current workflow does not include a separate macOS Intel job; this revision was CI-verified on Windows x64 and macOS ARM64.
