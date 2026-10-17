@@ -2,6 +2,8 @@
 
 Updated: 2026-10-17
 
+See [ARCHITECTURE.md](ARCHITECTURE.md) for the implementation and integration contract, [README.md](README.md) for usage, and [AGENTS.md](AGENTS.md) for component agent instructions.
+
 ## Working
 
 - Bounded Polygon, MultiPolygon, GeoJSON, GeoDataFrame, and bbox validation; 5 km² / 5 km defaults; metric UTM working CRS and WGS84 GeoJSON output.

@@ -2,6 +2,8 @@
 
 This package acquires bounded OpenStreetMap snapshots, builds walking/cycling/driving networks, calculates reproducible network indicators, detects evidence-backed access/connectivity issues, exports GeoJSON, and evaluates hypothetical pedestrian-network changes. The backend can import the Python functions directly; no FastAPI or LLM dependency is required.
 
+See [ARCHITECTURE.md](ARCHITECTURE.md) for module relationships and result contracts, [STATUS.md](STATUS.md) for verification and limitations, and [AGENTS.md](AGENTS.md) for component-specific agent instructions.
+
 ## Public Python API
 
 ```python
@@ -22,6 +24,7 @@ print(result["layer_availability"]["schools"])
 
 # Reuse the same immutable baseline snapshot for scenario evaluations.
 snapshot = acquire_osm_data(area, modes=("walk",))
+# Choose points inside the area and within the snap limit of mapped walking nodes.
 scenario = evaluate_pedestrian_connection(
     snapshot,
     start=[27.5800, 47.1620],
@@ -48,7 +51,7 @@ print(scenario["comparison"]["distance_delta_m"])
 Network modes are independent: a drive-only or bike-only request does not require a walking graph. The iterable must contain at least one supported mode (`walk`, `bike`, or `drive`); duplicate modes are removed while preserving request order. A graph is available only when it contains nodes and routable edges. For partial success, the returned `OSMData.graphs` contains only successful modes, `layer_availability["<mode>_network"]` reports `available` or `request_failed`, and `warnings` includes each failed network request. If every requested mode fails, acquisition raises `OSMDataError` with the per-mode errors and skips the POI query. A POI-query failure does not discard successfully acquired networks; its layers remain `unknown`.
 
 ```python
-from sim import analyze_snapshot
+from sim import acquire_osm_data, analyze_snapshot
 
 drive_snapshot = acquire_osm_data(area, modes=("drive",))
 drive_result = analyze_snapshot(drive_snapshot)
@@ -95,9 +98,7 @@ Offline engine tests use small in-memory fixtures and mocks; they do not require
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-stabilization tests sim/test_engine.py
 ```
 
-Verified locally after stabilization: 36 passed (5 repository tests and 31 simulation-engine tests). The default `pytest -q` collected only the 5 repository tests, confirming the CI coverage gap below.
-
-CI coverage gap: `pyproject.toml` sets `testpaths = ["tests"]`, and the shared Windows/macOS check scripts run `pytest -q` without naming `sim/test_engine.py`. The regular CI therefore does not collect the simulation-engine regression tests. The smallest proposed shared change is to pass `tests sim/test_engine.py` explicitly in both `scripts/check.ps1` and `scripts/check.sh`; those files were left untouched because this component owns only `sim/`.
+The recorded regression run completed with 36 cases (5 project tests and 31 simulation-engine cases). The checked-in `scripts/check.ps1` and `scripts/check.sh` now explicitly invoke `pytest -q tests sim/test_engine.py`, so CI includes the simulation suite. A bare `pytest -q` still follows `pyproject.toml`'s `testpaths = ["tests"]` and omits `sim/test_engine.py`; use the explicit command above.
 
 Scenario parameter validation rejects non-finite travel speeds and thresholds so results cannot silently contain NaN or Infinity. The baseline and scenario use the same configured walking speed, including the estimate attached to a hypothetical connection. Scenario outputs include deterministic route comparisons, WGS84 GeoJSON, source provenance, and explicit warnings that the intervention is hypothetical.
 
