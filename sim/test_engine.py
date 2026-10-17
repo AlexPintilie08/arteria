@@ -13,12 +13,24 @@ import geopandas as gpd
 import networkx as nx
 import pandas as pd
 import pytest
-from shapely.geometry import LineString, Point, Polygon
+from shapely.geometry import LineString, MultiPolygon, Point, Polygon, mapping, shape
 
 from sim.analysis import analyze_snapshot, network_metrics, route_between
 from sim import geo as geo_module
 from sim.geo import AreaValidationError, LAYER_TAGS, OSMData, OSMDataError, acquire_osm_data, feature_collection, geojson_geometry, normalize_area
 from sim.scenario import InterventionError, evaluate_pedestrian_connection, evaluate_scenario
+from sim.candidates import discover_intervention_candidates
+from sim.impact import evaluate_candidates, evaluate_multi_route_impact, sample_route_pairs
+from sim.neighborhoods import (
+    NeighborhoodCatalogError,
+    get_neighborhood,
+    get_neighborhoods,
+    load_neighborhood_catalog,
+    neighborhood_area_input,
+    neighborhoods_geojson,
+    search_neighborhoods,
+    validate_neighborhood_boundary,
+)
 
 
 def _fixture_data(*, disconnected: bool = True, with_school: bool = True) -> OSMData:
@@ -607,3 +619,363 @@ def test_non_finite_analysis_and_scenario_parameters_are_rejected() -> None:
             destination=[27.582, 47.160],
             walking_speed_mps=math.inf,
         )
+
+
+# SIM engine v2 regression coverage
+
+
+def _geojson_feature(identifier: str, name: str, geometry: dict, **properties: object) -> dict:
+    return {
+        "type": "Feature",
+        "id": identifier,
+        "geometry": geometry,
+        "properties": {"neighborhood_id": identifier, "name": name, "source": "test source", "source_object_id": identifier, **properties},
+    }
+
+
+def test_neighborhood_catalog_loads_sourced_polygons_and_point_only_records() -> None:
+    records = get_neighborhoods()
+    polygons = [record for record in records if record["geometry_type"] in {"Polygon", "MultiPolygon"}]
+    points = [record for record in records if record["geometry_type"] == "Point"]
+
+    assert len(polygons) == 24
+    assert len(points) == 7
+    assert all(record["provenance"]["license"] == "ODbL-1.0" for record in records)
+    assert all(record["boundary_status"] != "official" for record in polygons)
+    assert all(record["boundary_status"] == "point_only" for record in points)
+    assert get_neighborhood(points[0]["id"])["id"] == points[0]["id"]
+    assert search_neighborhoods("Tatarasi")
+
+
+def test_neighborhood_polygon_validation_and_analysis_input() -> None:
+    record = next(record for record in get_neighborhoods() if record["geometry_type"] == "Polygon")
+
+    validation = validate_neighborhood_boundary(record)
+    area_input = neighborhood_area_input(record)
+
+    assert validation["status"] == "valid"
+    assert validation["analysis_eligible"] is True
+    assert validation["area_km2"] > 0
+    assert normalize_area(area_input).boundary_source.startswith("catalog:")
+
+
+def test_neighborhood_multipolygon_import_is_preserved() -> None:
+    west, south = 27.58, 47.16
+    first = Polygon([(west, south), (west + 0.0002, south), (west + 0.0002, south + 0.0002), (west, south + 0.0002), (west, south)])
+    second = Polygon([(west + 0.001, south), (west + 0.0012, south), (west + 0.0012, south + 0.0002), (west + 0.001, south + 0.0002), (west + 0.001, south)])
+    feature = _geojson_feature("multi-1", "Two mapped pieces", {"type": "MultiPolygon", "coordinates": [[list(first.exterior.coords)], [list(second.exterior.coords)]]})
+
+    record = load_neighborhood_catalog([feature])[0]
+    validation = validate_neighborhood_boundary(record)
+
+    assert record["geometry_type"] == "MultiPolygon"
+    assert validation["status"] == "valid"
+    assert shape(record["geometry"]).geom_type == "MultiPolygon"
+
+
+def test_neighborhood_catalog_rejects_invalid_geometry_and_crs() -> None:
+    bowtie = {"type": "Polygon", "coordinates": [[[27.58, 47.16], [27.582, 47.162], [27.582, 47.16], [27.58, 47.162], [27.58, 47.16]]]}
+    with pytest.raises(NeighborhoodCatalogError, match="invalid geometry"):
+        load_neighborhood_catalog([_geojson_feature("bad", "Invalid", bowtie)])
+
+    valid = _geojson_feature("crs", "Wrong CRS", mapping(_fixture_data().area.polygon))
+    with pytest.raises(NeighborhoodCatalogError, match="EPSG:4326"):
+        load_neighborhood_catalog({"type": "FeatureCollection", "metadata": {"coordinate_reference_system": "EPSG:3857"}, "features": [valid]})
+
+
+def test_point_only_neighborhood_never_becomes_an_analysis_area() -> None:
+    point = _geojson_feature("point-1", "Named place", {"type": "Point", "coordinates": [27.58, 47.16]}, boundary_status="point_only")
+    record = load_neighborhood_catalog([point])[0]
+
+    validation = validate_neighborhood_boundary(record)
+
+    assert validation["status"] == "point_only"
+    assert validation["analysis_eligible"] is False
+    with pytest.raises(AreaValidationError, match="no neighborhood boundary"):
+        neighborhood_area_input(record)
+
+
+def test_missing_neighborhood_provenance_is_explicitly_marked() -> None:
+    polygon = _geojson_feature("unprovenanced", "Imported area", mapping(_fixture_data().area.polygon))
+    record = load_neighborhood_catalog([polygon])[0]
+
+    assert record["source_object_id"] == "unprovenanced"
+    assert record["retrieved_at"] is None
+    assert record["provenance"]["source"] == "test source"
+    assert record["uncertainty_notes"]
+
+
+def test_oversized_neighborhood_requires_explicit_controlled_limits() -> None:
+    large = Polygon([(27.50, 47.10), (27.60, 47.10), (27.60, 47.20), (27.50, 47.20), (27.50, 47.10)])
+    record = _geojson_feature("large", "Large area", mapping(large))
+
+    standard = validate_neighborhood_boundary(record)
+    controlled = validate_neighborhood_boundary(record, max_area_km2=100, max_extent_km=20)
+
+    assert standard["status"] == "requires_controlled_analysis"
+    assert standard["analysis_eligible"] is False
+    assert controlled["status"] == "valid"
+    assert neighborhood_area_input(record, max_area_km2=100, max_extent_km=20)["area_id"] == "large"
+
+
+def test_neighborhood_geojson_serialization_is_stable() -> None:
+    first = neighborhoods_geojson()
+    second = neighborhoods_geojson()
+
+    assert json.dumps(first, ensure_ascii=False, sort_keys=True, allow_nan=False) == json.dumps(second, ensure_ascii=False, sort_keys=True, allow_nan=False)
+    assert first["type"] == "FeatureCollection"
+    assert len(first["features"]) == 31
+
+
+def test_candidate_discovery_finds_disconnected_nodes_with_stable_supported_output() -> None:
+    data = _fixture_data(disconnected=True)
+    issues = analyze_snapshot(data)["issues"]
+
+    first = discover_intervention_candidates(data, issues=issues)
+    second = discover_intervention_candidates(data, issues=issues)
+
+    assert first == second
+    assert first["candidates"]
+    assert all(candidate["intervention"]["type"] == "add_pedestrian_connection" for candidate in first["candidates"])
+    assert all(candidate["geometry"]["type"] == "LineString" for candidate in first["candidates"])
+    assert all(candidate["screening"]["physical_feasibility"] == "unknown" for candidate in first["candidates"])
+    assert all(candidate["candidate_generation_method_version"] == first["method_version"] for candidate in first["candidates"])
+    json.dumps(first, ensure_ascii=False, allow_nan=False)
+
+
+def test_candidate_discovery_detects_a_large_connected_route_detour() -> None:
+    data = _fixture_data(disconnected=False)
+    for _, _, _, attrs in data.graphs["walk"].edges(keys=True, data=True):
+        attrs["length_m"] = attrs["length"] = 600.0
+
+    report = discover_intervention_candidates(data, max_candidates=10)
+
+    assert any(candidate["discovery"]["method"] == "excessive_route_detour" for candidate in report["candidates"])
+    assert all(candidate["discovery"]["detour_ratio"] > 2.0 for candidate in report["candidates"] if candidate["discovery"]["method"] == "excessive_route_detour")
+
+
+def test_candidate_discovery_skips_existing_direct_connections_and_duplicates() -> None:
+    data = _fixture_data(disconnected=False)
+    graph = data.graphs["walk"]
+    graph.add_edge(1, 3, key=0, length=50.0, length_m=50.0)
+    graph.add_edge(3, 1, key=0, length=50.0, length_m=50.0)
+    no_opportunity = discover_intervention_candidates(data, max_candidates=10)
+    assert no_opportunity["candidates"] == []
+    assert no_opportunity["screening"]["rejected"]["already_directly_connected"] > 0
+
+    duplicate_data = _fixture_data(disconnected=True)
+    duplicate_data.graphs["walk"].add_node(5, x=27.58501, y=47.160)
+    deduplicated = discover_intervention_candidates(duplicate_data, max_candidates=10)
+    assert deduplicated["screening"]["rejected"].get("functionally_equivalent_candidate", 0) > 0
+
+
+def test_candidate_discovery_respects_maximum_length_and_study_area() -> None:
+    bounded = discover_intervention_candidates(_fixture_data(disconnected=True), max_connection_length_m=50)
+    assert all(candidate["length_m"] <= 50 for candidate in bounded["candidates"])
+
+    first = Polygon([(27.57565, 47.1599), (27.57595, 47.1599), (27.57595, 47.1601), (27.57565, 47.1601), (27.57565, 47.1599)])
+    second = Polygon([(27.57795, 47.1599), (27.57825, 47.1599), (27.57825, 47.1601), (27.57795, 47.1601), (27.57795, 47.1599)])
+    area = normalize_area({"area_id": "two-islands", "boundary": MultiPolygon([first, second]), "crs": "EPSG:4326"})
+    graph = nx.MultiDiGraph(crs="EPSG:4326")
+    graph.add_node(1, x=27.5758, y=47.1600)
+    graph.add_node(2, x=27.5781, y=47.1600)
+    graph.add_node(3, x=27.5770, y=47.1600)
+    for left, right in ((1, 3), (3, 2)):
+        graph.add_edge(left, right, length=500.0, length_m=500.0)
+        graph.add_edge(right, left, length=500.0, length_m=500.0)
+    base = _fixture_data(disconnected=False)
+    outside_line_data = OSMData(area, {"walk": graph}, base.layers, base.layer_availability, base.metadata, [])
+    outside_line_report = discover_intervention_candidates(outside_line_data, max_candidates=10)
+    assert outside_line_report["candidates"] == []
+    assert outside_line_report["screening"]["rejected"].get("outside_study_polygon", 0) > 0
+
+
+def test_candidate_discovery_flags_mapped_buildings_and_missing_feasibility_evidence() -> None:
+    data = _fixture_data(disconnected=True)
+    building = Polygon([(27.5833, 47.15999), (27.5837, 47.15999), (27.5837, 47.16001), (27.5833, 47.16001), (27.5833, 47.15999)])
+    data.layers["buildings"] = gpd.GeoDataFrame({"osm_id": ["building-1"]}, geometry=[building], crs="EPSG:4326")
+    data.layer_availability["buildings"] = {"status": "available", "feature_count": 1}
+
+    report = discover_intervention_candidates(data, max_candidates=1)
+    candidate = report["candidates"][0]
+
+    assert candidate["screening"]["mapped_buildings"]["status"] == "mapped_obstacle_intersection"
+    assert candidate["screening"]["mapped_buildings"]["feature_ids"] == ["building-1"]
+    assert candidate["screening"]["physical_feasibility"] == "unknown"
+    assert "land ownership and access rights" in candidate["screening"]["missing_evidence"]
+
+
+def test_candidate_discovery_returns_an_honest_empty_result_without_walking_graph() -> None:
+    data = _fixture_data()
+
+    report = discover_intervention_candidates(_snapshot_with_graphs(data, {}))
+
+    assert report["candidates"] == []
+    assert report["screening"]["reason"] == "missing_walking_graph"
+
+
+def test_candidate_discovery_skips_nonfinite_nodes_and_marks_missing_buildings_unknown() -> None:
+    data = _fixture_data(disconnected=True)
+    data.graphs["walk"].add_node(99, x=math.nan, y=47.160)
+    data.layers.pop("buildings", None)
+    data.layer_availability.pop("buildings", None)
+
+    report = discover_intervention_candidates(data)
+
+    assert report["candidates"]
+    assert all("99" not in {candidate["start"]["node_id"], candidate["end"]["node_id"]} for candidate in report["candidates"])
+    assert all(candidate["screening"]["mapped_buildings"]["status"] == "unknown" for candidate in report["candidates"])
+
+
+def test_impact_engine_classifies_improved_unchanged_and_newly_reachable_routes() -> None:
+    data = _fixture_data(disconnected=True)
+    intervention = {"type": "add_pedestrian_connection", "start": [27.582, 47.160], "end": [27.585, 47.160]}
+
+    result = evaluate_multi_route_impact(data, [intervention], route_pairs=[(1, 3), (1, 4), (2, 4)])
+
+    assert result["aggregate"]["unchanged_count"] == 1
+    assert result["aggregate"]["newly_reachable_count"] == 2
+    assert result["aggregate"]["improved_count"] == 0
+    assert result["aggregate"]["reachable_both_comparable_pair_count"] == 1
+    assert result["aggregate"]["total_distance_savings_m"] == pytest.approx(0)
+    assert {route["outcome"] for route in result["routes"]} == {"unchanged", "newly_reachable"}
+    json.dumps(result, allow_nan=False)
+
+
+def test_impact_engine_measures_improvement_and_caps_route_geometry_only() -> None:
+    data = _fixture_data(disconnected=False)
+    intervention = {"type": "add_pedestrian_connection", "start": [27.580, 47.160], "end": [27.582, 47.160]}
+
+    result = evaluate_multi_route_impact(data, [intervention], route_pairs=[(1, 3), (1, 2)], route_geometry_limit=1, walking_speed_mps=2.0)
+
+    assert result["routes"][0]["outcome"] == "improved"
+    assert result["routes"][0]["after"]["estimated_walk_time_s"] == pytest.approx(result["routes"][0]["after"]["network_distance_m"] / 2.0)
+    assert result["configuration"]["route_geometries_included_count"] <= 1
+    assert sum(
+        int(route["before"]["geometry_included"]) + int(route["after"]["geometry_included"])
+        for route in result["routes"]
+    ) <= 1
+    assert result["aggregate"]["evaluated_pair_count"] == 2
+    assert result["aggregate"]["improved_count"] == 1
+
+
+def test_route_sampler_is_stable_bounded_and_validates_explicit_pairs() -> None:
+    data = _fixture_data(disconnected=True)
+    first = sample_route_pairs(data, sample_count=6, seed="sample-a")
+    second = sample_route_pairs(data, sample_count=6, seed="sample-a")
+
+    assert first == second
+    assert len(first) == 6
+    assert all(origin != destination for origin, destination in first)
+    with pytest.raises(ValueError, match="unknown walking graph node"):
+        sample_route_pairs(data, route_pairs=[(1, "missing")])
+
+
+def test_impact_results_are_repeatable_and_preserve_the_baseline_graph() -> None:
+    data = _fixture_data(disconnected=True)
+    baseline = data.graphs["walk"]
+    fingerprint = _graph_fingerprint(baseline)
+    intervention = {"type": "add_pedestrian_connection", "start": [27.582, 47.160], "end": [27.585, 47.160]}
+    args = (data, [intervention])
+    kwargs = {"route_pairs": [(1, 4), (2, 4)], "seed": "stable"}
+
+    first = evaluate_multi_route_impact(*args, **kwargs)
+    second = evaluate_multi_route_impact(*args, **kwargs)
+
+    assert first == second
+    assert _graph_fingerprint(baseline) == fingerprint
+
+
+def test_independent_alternatives_start_from_the_same_baseline() -> None:
+    data = _fixture_data(disconnected=True)
+    first = evaluate_multi_route_impact(
+        data,
+        [{"type": "add_pedestrian_connection", "start": [27.580, 47.160], "end": [27.582, 47.160]}],
+        route_pairs=[(1, 4)],
+    )
+    second = evaluate_multi_route_impact(
+        data,
+        [{"type": "add_pedestrian_connection", "start": [27.582, 47.160], "end": [27.585, 47.160]}],
+        route_pairs=[(1, 4)],
+    )
+
+    assert first["routes"][0]["before"]["status"] == second["routes"][0]["before"]["status"] == "unreachable"
+    assert first["routes"][0]["after"]["status"] == "unreachable"
+    assert second["routes"][0]["after"]["status"] == "reachable"
+
+
+def test_impact_engine_classifies_regression_and_newly_unreachable_routes() -> None:
+    connected = _fixture_data(disconnected=False)
+    start, end = [27.580, 47.160], [27.582, 47.160]
+    enabled = evaluate_pedestrian_connection(connected, start, end)["interventions"][0]
+    connected_line = LineString([(27.580, 47.160), (27.582, 47.160)])
+    edge_attrs = {
+        "arteria_virtual_id": enabled["connection_id"],
+        "length": enabled["connection_length_m"],
+        "length_m": enabled["connection_length_m"],
+        "geometry": connected_line,
+    }
+    connected.graphs["walk"].add_edge(1, 3, key=f"{enabled['connection_id']}:forward", **edge_attrs)
+    connected.graphs["walk"].add_edge(3, 1, key=f"{enabled['connection_id']}:reverse", **edge_attrs)
+    regressed = evaluate_multi_route_impact(
+        connected,
+        [{"type": "set_connection_enabled", "connection_id": enabled["connection_id"], "enabled": False}],
+        route_pairs=[(1, 3)],
+    )
+
+    disconnected = _fixture_data(disconnected=True)
+    bridge = evaluate_pedestrian_connection(disconnected, [27.582, 47.160], [27.585, 47.160])["interventions"][0]
+    bridge_line = LineString([(27.582, 47.160), (27.585, 47.160)])
+    bridge_attrs = {
+        "arteria_virtual_id": bridge["connection_id"],
+        "length": bridge["connection_length_m"],
+        "length_m": bridge["connection_length_m"],
+        "geometry": bridge_line,
+    }
+    disconnected.graphs["walk"].add_edge(3, 4, key=f"{bridge['connection_id']}:forward", **bridge_attrs)
+    disconnected.graphs["walk"].add_edge(4, 3, key=f"{bridge['connection_id']}:reverse", **bridge_attrs)
+    newly_unreachable = evaluate_multi_route_impact(
+        disconnected,
+        [{"type": "set_connection_enabled", "connection_id": bridge["connection_id"], "enabled": False}],
+        route_pairs=[(1, 4)],
+    )
+
+    assert regressed["routes"][0]["outcome"] == "regressed"
+    assert regressed["aggregate"]["regressed_count"] == 1
+    assert newly_unreachable["routes"][0]["outcome"] == "newly_unreachable"
+    assert newly_unreachable["aggregate"]["newly_unreachable_count"] == 1
+
+
+def test_impact_aggregates_are_null_when_no_two_reachable_routes_can_be_compared() -> None:
+    result = evaluate_multi_route_impact(_fixture_data(disconnected=True), [], route_pairs=[(1, 4)])
+
+    assert result["aggregate"]["unreachable_in_both_count"] == 1
+    assert result["aggregate"]["reachable_both_comparable_pair_count"] == 0
+    assert result["aggregate"]["total_distance_savings_m"] is None
+    assert result["aggregate"]["average_distance_savings_m"] is None
+    assert result["aggregate"]["improvement_percent"] is None
+    json.dumps(result, allow_nan=False)
+
+
+def test_candidate_pipeline_uses_one_shared_non_discovery_sample_and_stable_ranking() -> None:
+    data = _fixture_data(disconnected=True)
+
+    first = evaluate_candidates(data, sample_count=8, seed="ranking")
+    second = evaluate_candidates(data, sample_count=8, seed="ranking")
+
+    assert first == second
+    ranked = first["ranked_candidates"]
+    assert ranked
+    assert [item["rank"] for item in ranked] == list(range(1, len(ranked) + 1))
+    samples = [item["impact"]["sample"] for item in ranked]
+    assert all(sample == samples[0] for sample in samples)
+    discovery_pairs = {
+        frozenset((candidate["start"]["node_id"], candidate["end"]["node_id"]))
+        for candidate in ranked
+    }
+    evaluated_pairs = {
+        frozenset((route["origin_node_id"], route["destination_node_id"]))
+        for route in ranked[0]["impact"]["routes"]
+    }
+    assert not discovery_pairs.intersection(evaluated_pairs)
+    assert "Lexicographic" in first["ranking_rule"]

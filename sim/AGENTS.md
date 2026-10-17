@@ -17,7 +17,7 @@ These instructions apply to work owned by `sim/`. Repository-level instructions 
 
 ## Public entry points
 
-Import supported APIs from `sim`: `normalize_area`, `acquire_osm_data`, `analyze_area`, `analyze_snapshot`, `route_between`, `network_metrics`, `normalize_graph`, `project_graph`, `evaluate_pedestrian_connection`, and `evaluate_scenario`. Package-root types include `StudyArea`, `OSMData`, `AreaValidationError`, `OSMDataError`, and `InterventionError`. `RouteError` is available from `sim.analysis`, not the package root. Exact signatures and output fields are in [ARCHITECTURE.md](ARCHITECTURE.md) and [README.md](README.md).
+Import supported APIs from `sim`: existing acquisition/analysis/scenario functions plus `load_neighborhood_catalog`, `get_neighborhoods`, `get_neighborhood`, `search_neighborhoods`, `neighborhoods_geojson`, `validate_neighborhood_boundary`, `neighborhood_area_input`, `discover_intervention_candidates`, `sample_route_pairs`, `evaluate_multi_route_impact`, and `evaluate_candidates`. Package-root types include `StudyArea`, `OSMData`, `AreaValidationError`, `OSMDataError`, `InterventionError`, and `NeighborhoodCatalogError`. `RouteError` is available from `sim.analysis`, not the package root. Exact signatures and output fields are in [ARCHITECTURE.md](ARCHITECTURE.md) and [README.md](README.md).
 
 ## Geographic and evidence conventions
 
@@ -27,6 +27,8 @@ Import supported APIs from `sim`: `normalize_area`, `acquire_osm_data`, `analyze
 - Network-node counts are not population counts. Weighted graph routes and constant-speed times are calculations, not observed journeys.
 - Do not confuse graph access/connectivity with observed traffic or traffic simulation.
 - A virtual pedestrian link is a hypothetical graph edge. Do not describe it as physically feasible or approved infrastructure.
+- The tracked Iași neighborhood catalog is partial OpenStreetMap place data under ODbL-1.0. Its place polygons are not verified municipal/legal boundaries; point-only records never imply polygons.
+- Automatic candidate scores and sampled graph-node route counts describe the network snapshot only. They are not observed trips, resident impact, construction cost, or feasibility evidence.
 
 ## Cache and tests
 

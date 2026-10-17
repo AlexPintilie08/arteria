@@ -7,7 +7,16 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for module relationships and result contr
 ## Public Python API
 
 ```python
-from sim import analyze_area, acquire_osm_data, evaluate_pedestrian_connection
+from sim import (
+    analyze_area,
+    acquire_osm_data,
+    evaluate_candidates,
+    evaluate_multi_route_impact,
+    evaluate_pedestrian_connection,
+    neighborhood_area_input,
+    search_neighborhoods,
+    validate_neighborhood_boundary,
+)
 
 area = {
     "city_id": "iasi-ro",
@@ -33,9 +42,25 @@ scenario = evaluate_pedestrian_connection(
 print(scenario["baseline"]["network_distance_m"])
 print(scenario["scenario"]["network_distance_m"])
 print(scenario["comparison"]["distance_delta_m"])
+
+# Select and validate a sourced polygon boundary, then run ranked alternatives.
+record = next(item for item in search_neighborhoods("Tătărași") if item["geometry_type"] == "Polygon")
+print(validate_neighborhood_boundary(record))
+neighborhood_area = neighborhood_area_input(record)
+neighborhood_snapshot = acquire_osm_data(neighborhood_area, modes=("walk",))
+ranking = evaluate_candidates(neighborhood_snapshot, sample_count=32, seed="iasi-demo-v1")
+print(ranking["ranked_candidates"])
 ```
 
 `analyze_area` returns the API-friendly JSON-ready result. For a preloaded or synthetic snapshot, call `analyze_snapshot`. `evaluate_scenario` accepts a sequence of `add_pedestrian_connection` and `set_connection_enabled` interventions plus a route origin and destination. `route_between` calculates a weighted graph route and returns network distance, straight-line reference, and detour ratio when node coordinates and CRS are available.
+
+## Neighborhood catalog
+
+`load_neighborhood_catalog()` reads the tracked `iasi-neighborhoods.geojson` dataset by default. It contains 24 OSM-mapped polygons and 7 point-only named places from a partial bounded query. Use `get_neighborhoods`, `get_neighborhood`, `search_neighborhoods`, and `neighborhoods_geojson` to enumerate, select, search, or export records. Search includes identifiers, names, and alternative names and ignores diacritics when matching.
+
+`validate_neighborhood_boundary` distinguishes a valid polygon from a point-only location and applies the same 5 km² area and 5 km extent safeguards as `normalize_area`. An oversized polygon returns `requires_controlled_analysis`; pass explicit larger `max_area_km2` and `max_extent_km` values only for a controlled analysis. `neighborhood_area_input` returns a normal acquisition input only after validation. Geometry is not simplified, replaced, shrunk, or inferred from point locations.
+
+The catalog preserves source object IDs, source URLs, query/retrieval dates, review status, and uncertainty notes. Its OSM place polygons are not verified municipal or legal neighborhood boundaries, and point-only records remain points. The source query was partial, so the catalog is not a complete Iași neighborhood inventory. The derived dataset is distributed under ODbL-1.0 with attribution; see [NEIGHBORHOODS_LICENSE.md](NEIGHBORHOODS_LICENSE.md).
 
 ## Geographic inputs and limits
 
@@ -90,6 +115,26 @@ Issue/heatmap point samples are capped for response size, but indicator counts u
 
 The hypothetical link does not evaluate street crossing safety, grade, accessibility standards, land ownership, utilities, legal approval, or construction feasibility.
 
+## Candidate discovery and multi-route impact
+
+`discover_intervention_candidates(snapshot, issues=analysis["issues"])` searches the metric walking graph with bounded spatial indexing. It considers nearby nodes in separate weak components, directed reachability gaps, and connected pairs with route detours above the configured ratio. It rejects direct existing links, invalid/out-of-area lines, links above the scenario engine's 1,000 m maximum, and equivalent returned candidates. The only generated intervention is `add_pedestrian_connection`.
+
+Candidate output includes a stable ID, endpoints, WGS84 LineString, length, graph evidence, related issue IDs, mapped-building intersection findings, missing feasibility evidence, and method/provenance fields. A missing building, water, barrier, elevation, slope, ownership, legal, safety, or access-rights record stays unknown. A segment without a mapped building intersection is not considered buildable.
+
+`sample_route_pairs` accepts explicit graph-node pairs or creates a bounded deterministic sample from in-area graph nodes with a stable seed. It never invents resident trips. `evaluate_multi_route_impact` reports Before/After reachability, network distance, constant-speed walking time, outcome, and deltas for every sampled pair. Distance savings are aggregated only for pairs reachable before and after; newly reachable/unreachable pairs are counted separately. Route geometry has its own cap, independent of the numeric sample count.
+
+`evaluate_candidates` analyzes the baseline, discovers candidates, excludes candidate discovery pairs from its deterministic route sample, evaluates every alternative from the same original baseline, and ranks by a documented lexicographic rule. The ranking favors newly reachable and improved sample pairs, then comparable route savings, fewer mapped obstacle intersections, fewer unknown obstacle layers, shorter hypothetical links, and a stable ID. It does not use construction cost or claim population or feasibility impact.
+
+## Reproducible demonstration
+
+Run from the repository root:
+
+```powershell
+.\.venv\Scripts\python.exe -m sim.demo
+```
+
+The default `auto` mode loads a local cached walking snapshot if available and otherwise uses a tiny deterministic offline fixture. The demo never downloads OSM. Use `--source cache` to require a cached snapshot, or `--source fixture` for the synthetic example. It writes `results.json` and `results.geojson` under ignored `sim/.cache/sim-engine-demo/`. Cache-key mismatches are included in the output when the original snapshot polygon cannot be verified.
+
 ## Tests and verified Iași snapshot
 
 Offline engine tests use small in-memory fixtures and mocks; they do not require Overpass access. The explicit local verification command is:
@@ -98,7 +143,7 @@ Offline engine tests use small in-memory fixtures and mocks; they do not require
 .\.venv\Scripts\python.exe -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-stabilization tests sim/test_engine.py
 ```
 
-The recorded regression run completed with 36 cases (5 project tests and 31 simulation-engine cases). The checked-in `scripts/check.ps1` and `scripts/check.sh` now explicitly invoke `pytest -q tests sim/test_engine.py`, so CI includes the simulation suite. A bare `pytest -q` still follows `pyproject.toml`'s `testpaths = ["tests"]` and omits `sim/test_engine.py`; use the explicit command above.
+The latest local regression run completed with 59 cases (5 project tests and 54 SIM cases). The checked-in `scripts/check.ps1` and `scripts/check.sh` explicitly invoke `pytest -q tests sim/test_engine.py`, so CI includes the simulation suite. A bare `pytest -q` follows `pyproject.toml`'s `testpaths = ["tests"]` and omits `sim/test_engine.py`; use the explicit command above.
 
 Scenario parameter validation rejects non-finite travel speeds and thresholds so results cannot silently contain NaN or Infinity. The baseline and scenario use the same configured walking speed, including the estimate attached to a hypothetical connection. Scenario outputs include deterministic route comparisons, WGS84 GeoJSON, source provenance, and explicit warnings that the intervention is hypothetical.
 

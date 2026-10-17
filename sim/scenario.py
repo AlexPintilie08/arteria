@@ -261,16 +261,15 @@ def _route_result(graph: nx.Graph, origin: Any, destination: Any, speed_mps: flo
     }
 
 
-def evaluate_scenario(
+def _prepare_scenario_graph(
     data: OSMData,
     interventions: Iterable[dict[str, Any]],
     *,
-    origin: Any,
-    destination: Any,
-    max_snap_distance_m: float = 50.0,
-    walking_speed_mps: float = WALK_SPEED_MPS,
-) -> dict[str, Any]:
-    """Apply pedestrian interventions on an isolated graph and compare routes."""
+    max_snap_distance_m: float,
+    walking_speed_mps: float,
+    baseline_graph: nx.Graph | None = None,
+) -> tuple[nx.Graph, nx.Graph, list[dict[str, Any]]]:
+    """Build the same isolated baseline/scenario pair used by public scenario APIs."""
     if "walk" not in data.graphs:
         raise InterventionError("A walking baseline network is required.")
     try:
@@ -282,15 +281,39 @@ def evaluate_scenario(
         raise InterventionError(f"Node snap tolerance must be in (0, {MAX_NODE_SNAP_M:g}] m.")
     if not math.isfinite(walking_speed_mps) or walking_speed_mps <= 0:
         raise InterventionError("Walking speed must be finite and positive.")
-    baseline_graph = project_graph(data.graphs["walk"], data.area.working_crs)
+    baseline_graph = (
+        project_graph(data.graphs["walk"], data.area.working_crs)
+        if baseline_graph is None
+        else baseline_graph.copy()
+    )
     scenario_graph = baseline_graph.copy()
     applied = _apply_interventions(
         scenario_graph,
+        data,
+        list(interventions),
+        max_snap_distance_m=max_snap_distance_m,
+        walking_speed_mps=walking_speed_mps,
+    )
+    return baseline_graph, scenario_graph, applied
+
+
+def evaluate_scenario(
+    data: OSMData,
+    interventions: Iterable[dict[str, Any]],
+    *,
+    origin: Any,
+    destination: Any,
+    max_snap_distance_m: float = 50.0,
+    walking_speed_mps: float = WALK_SPEED_MPS,
+) -> dict[str, Any]:
+    """Apply pedestrian interventions on an isolated graph and compare routes."""
+    baseline_graph, scenario_graph, applied = _prepare_scenario_graph(
         data,
         interventions,
         max_snap_distance_m=max_snap_distance_m,
         walking_speed_mps=walking_speed_mps,
     )
+    walking_speed_mps = float(walking_speed_mps)
 
     origin_point = _coordinate_point(origin, "origin")
     destination_point = _coordinate_point(destination, "destination")

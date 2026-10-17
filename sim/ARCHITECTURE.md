@@ -4,7 +4,7 @@
 
 ## Component overview
 
-SIM is a Python library for bounded analysis of mapped geographic data. It validates an area, acquires and caches OpenStreetMap (OSM) networks/features, normalizes graphs into metric lengths, calculates connectivity and node-based walking/cycling access, derives deterministic screening issues, and serializes JSON-ready results with GeoJSON layers. It can evaluate a hypothetical pedestrian-network edit against a copied baseline graph. A separate optional utility discovers SUMO and can run a tiny synthetic TraCI smoke scenario.
+SIM is a Python library for bounded analysis of mapped geographic data. It validates an area, acquires and caches OpenStreetMap (OSM) networks/features, normalizes graphs into metric lengths, calculates connectivity and node-based walking/cycling access, derives deterministic screening issues, and serializes JSON-ready results with GeoJSON layers. The v2 engine loads sourced neighborhood geometry, discovers hypothetical pedestrian links, and evaluates independent alternatives over a shared deterministic route sample. A separate optional utility discovers SUMO and can run a tiny synthetic TraCI smoke scenario.
 
 | Responsibility | Existing behavior |
 |---|---|
@@ -12,7 +12,10 @@ SIM is a Python library for bounded analysis of mapped geographic data. It valid
 | Graph construction | OSMnx street graphs retain disconnected components and boundary connectors. Normalization exposes metre edge lengths and WGS84 node coordinates. |
 | Connectivity/access | NetworkX components and shortest paths; walk/bike access to mapped features; graph-node counts, not resident counts. |
 | Issue screening | Deterministic disconnected-component, poor-access, and detour candidates with evidence, units, coverage, and uncertainty. |
-| Virtual interventions | Add or toggle a hypothetical pedestrian connection on an isolated graph copy; recalculate a route Before/After. |
+| Virtual interventions | Add or toggle a hypothetical pedestrian connection on an isolated graph copy; compare one route or a bounded multi-route sample. |
+| Neighborhood geometry | Load a partial sourced OSM place catalog, distinguish polygons from point-only records, validate selected boundaries, and enforce the existing 5 km² / 5 km default limits. |
+| Candidate discovery | Search bounded metric spatial neighbors for disconnected components, directed reachability gaps, and excessive detours; screen mapped obstacles and return only supported pedestrian-link edits. |
+| Alternative evaluation | Evaluate independent candidates over one shared deterministic graph-node pair sample and rank them with an explicit lexicographic rule. |
 | Geographic output | JSON-ready dictionaries, EPSG:4326 GeoJSON layers, source metadata, availability, and warnings. |
 | SUMO support | Portable binary discovery and optional one-step synthetic SUMO/TraCI smoke check, separate from analysis. |
 
@@ -20,18 +23,24 @@ SIM does not render the frontend map, expose backend HTTP routes, invoke cloud A
 
 ## Tracked directory tree
 
-There are no tracked source subdirectories under `sim/`. This tree includes all tracked files after this documentation milestone. `.cache/` and `__pycache__/` are generated and ignored.
+There are no tracked source subdirectories under `sim/`. The tree includes the SIM source and the small separately licensed neighborhood catalog. `.cache/` and `__pycache__/` are generated and ignored.
 
 ~~~text
 sim/
 ├── .gitignore
 ├── AGENTS.md
 ├── ARCHITECTURE.md
+├── NEIGHBORHOODS_LICENSE.md
 ├── README.md
 ├── STATUS.md
 ├── __init__.py
 ├── analysis.py
+├── candidates.py
+├── demo.py
 ├── geo.py
+├── impact.py
+├── iasi-neighborhoods.geojson
+├── neighborhoods.py
 ├── scenario.py
 ├── smoke_test.py
 ├── sumo_support.py
@@ -46,10 +55,19 @@ Solid arrows are imports present in source. The backend is only a potential in-p
 flowchart TD
     API["sim package API (__init__.py)"] --> GEO["geo.py"]
     API --> ANALYSIS["analysis.py"]
+    API --> NEIGHBORHOODS["neighborhoods.py + iasi-neighborhoods.geojson"]
+    API --> CANDIDATES["candidates.py"]
+    API --> IMPACT["impact.py"]
     API --> SCENARIO["scenario.py"]
     ANALYSIS --> GEO
+    CANDIDATES --> ANALYSIS
+    CANDIDATES --> SCENARIO
+    IMPACT --> ANALYSIS
+    IMPACT --> SCENARIO
     SCENARIO --> ANALYSIS
     SCENARIO --> GEO
+    DEMO["demo.py"] --> ANALYSIS
+    DEMO --> IMPACT
     TESTS["test_engine.py"] --> GEO
     TESTS --> ANALYSIS
     TESTS --> SCENARIO
@@ -63,7 +81,11 @@ flowchart TD
 - `sim.__init__` re-exports the package API.
 - `geo` owns area validation, acquisition, caching, feature classification, and geographic serialization.
 - `analysis` consumes `OSMData` and `StudyArea` from `geo`; it owns graph preparation, metrics, access analysis, and issue output.
+- `neighborhoods` owns GeoJSON catalog ingestion, provenance-preserving search, boundary validation, and conversion to `normalize_area` input.
+- `candidates` consumes the existing walking graph, area, mapped building layer, and analysis issues; it uses a bounded metric STRtree search and emits only `add_pedestrian_connection`.
+- `impact` samples graph-node pairs deterministically, reuses the scenario graph-edit helper, calculates Before/After route outcomes, and independently evaluates/ranks alternatives.
 - `scenario` consumes the geo types/serializer and imports graph/route helpers from `analysis`, including private `_nearest_nodes`.
+- `demo` reads a local cache without network access or uses a synthetic offline fixture; generated results are written under ignored `sim/.cache/`.
 - `test_engine.py` uses in-memory fixtures, temporary caches, and OSMnx mocks. SUMO support has a separate optional tool path.
 
 ## Data flow
@@ -87,6 +109,24 @@ The default cache is `sim/.cache/osm/`, including an `http/` subdirectory. Appli
 3. Add/remove the modeled edge on a projected graph copy. A new connection must be over 0 m and at most 1,000 m.
 4. Snap route origin/destination to the baseline graph, calculate weighted routes before and after, and serialize route geometries as WGS84 GeoJSON.
 5. Return route statuses/distances, constant-speed estimates, comparison outcome, intervention details, snap distances, provenance, and feasibility warnings. The source walk graph is not mutated.
+
+### Neighborhood catalog
+
+`load_neighborhood_catalog()` reads the tracked `iasi-neighborhoods.geojson` by default and returns normalized JSON-compatible records. The catalog contains 24 mapped OSM place polygons and 7 named place points from a partial bounded query. A point-only record cannot become an analysis boundary. `validate_neighborhood_boundary` uses the existing `normalize_area` safeguards and reports `requires_controlled_analysis` when configured area or extent caps are exceeded. It does not simplify or alter source geometry. A caller can explicitly pass larger limits for a controlled analysis. The catalog and its reuse terms are documented in [NEIGHBORHOODS_LICENSE.md](NEIGHBORHOODS_LICENSE.md); its polygons are not claimed as official municipal boundaries.
+
+### Candidate discovery and multi-route impact
+
+`discover_intervention_candidates` projects the walking graph, selects nodes covered by the study polygon, and uses an STRtree radius lookup. It bounds source nodes, neighbors per source, examined pairs, link length, and returned candidate count. It screens separate weak components first, then directed reachability gaps and directed route detours. Existing direct edges, out-of-area straight lines, over-limit links, invalid weights, and functionally equivalent returned links are excluded. Candidate IDs derive from the method version and stable endpoint IDs.
+
+Mapped building intersections are reported when usable building geometry exists. Missing water/barrier layers, slope, ownership, access rights, legal review, safety, and construction evidence remain unknown. No candidate is labeled buildable. When analysis issue geometry is nearby, the result records the proximity method and warns that an issue summary does not prove the candidate resolves it.
+
+`sample_route_pairs` accepts explicit in-area graph-node pairs or deterministic seeded pairs selected with bounded SHA-256 hash ranking. The sample is not observed travel demand. The integrated `evaluate_candidates` pipeline excludes discovered endpoint pairs before constructing one shared evaluation sample. Each alternative starts from a copy of the same baseline and applies graph edits through the existing scenario helper. Numerical results cover every sampled pair; WGS84 route geometries have an independent maximum count (20 by default).
+
+Pair outcomes are `improved`, `unchanged`, `regressed`, `newly_reachable`, `newly_unreachable`, and `unreachable_in_both`. Distance/time savings are aggregated only when both routes are reachable; reachability changes are reported separately. Improvement percent is null. Ranking is lexicographic: newly reachable pairs, improved pairs, distance savings among comparable pairs, fewer mapped obstacle intersections, fewer unknown obstacle layers, shorter hypothetical links, then stable candidate ID. It is a graph-screening order and does not include construction costs or feasibility.
+
+### Reproducible demonstration
+
+Run `python -m sim.demo` from the repository root. It loads an existing local cached walking snapshot when available and otherwise uses a tiny synthetic offline graph. It never requests OSM data. Use `--source cache` to require local cached OSM or `--source fixture` for the deterministic synthetic example. Outputs go to ignored `sim/.cache/sim-engine-demo/results.json` and `results.geojson` by default. If a cache sidecar does not preserve its original polygon, the demo reports the cache-key mismatch and does not claim boundary equivalence.
 
 ### SUMO position
 
@@ -126,6 +166,12 @@ The `population_accessibility` indicator is always emitted with a null value and
 
 Scenario output has `scenario_id`, `area_id`, `mode`, `baseline`, `scenario`, `comparison`, `interventions`, `snap`, `provenance`, and `warnings`. Route payloads contain status, network/direct distances, detour ratio, estimated seconds, path node IDs, and a GeoJSON geometry or null. Comparison outcomes are improved, regressed, unchanged, became_reachable, became_unreachable, or unreachable_in_both. `improvement_percent` is intentionally null.
 
+Neighborhood records expose `id`, `name`, `alternative_names`, `geometry`, `geometry_type`, `source`, `source_object_id`, `boundary_status`, `review_status`, `provenance`, `retrieved_at`, `updated_at`, and `uncertainty_notes`. GeoJSON coordinates are interpreted as `[longitude, latitude]` in EPSG:4326. Catalog search includes IDs, names, and aliases with accent-insensitive matching. Polygon selection returns an `analysis_area` input only after validation against the configured limits; point-only records provide localization only.
+
+Candidate discovery returns a schema and method version, a bounded screening summary, warnings, and candidate records. Each record contains the supported intervention payload, endpoints, WGS84 LineString, metric length, graph discovery evidence, related issue IDs and association methods, obstacle screening, missing evidence, provenance, assumptions, and generation method version.
+
+`evaluate_multi_route_impact` returns per-pair Before/After status, distance, estimated time, route paths, and capped GeoJSON. Aggregates separate comparable reachable pairs from reachability transitions. `evaluate_candidates` returns a baseline issue/metric summary, shared sample metadata, independent candidate impact payloads, and the ranking rule. These outputs are Python-library results, not backend HTTP contracts.
+
 ### Errors and unavailable data
 
 | Condition | Behavior |
@@ -143,7 +189,7 @@ Scenario output has `scenario_id`, `area_id`, `mode`, `baseline`, `scenario`, `c
 
 ## File-by-file inventory
 
-This inventory covers all 12 tracked files in `sim/` after this documentation update. There are no tracked nested source directories. Test file references outside this directory are linked where useful.
+This inventory covers the tracked files in `sim/`. There are no tracked nested source directories. Test file references outside this directory are linked where useful.
 
 ### `.gitignore`
 
@@ -183,7 +229,7 @@ This inventory covers all 12 tracked files in `sim/` after this documentation up
 ### `__init__.py`
 
 - **Purpose:** provides the stable package-level import surface and keeps callers from needing module-internal paths.
-- **Public exports:** `AreaValidationError`, `OSMDataError`, and `InterventionError`; `StudyArea` and `OSMData`; `normalize_area`, `acquire_osm_data`, `feature_collection`, `geojson_geometry`, `normalize_graph`, `project_graph`, `network_metrics`, `route_between`, `analyze_snapshot`, `analyze_area`, `evaluate_scenario`, and `evaluate_pedestrian_connection`. The `__all__` list is the explicit export list. `RouteError` is defined in `sim.analysis` but is not re-exported at package root.
+- **Public exports:** existing geo, analysis, and scenario types/functions plus `NeighborhoodCatalogError`, catalog load/get/search/GeoJSON/validation helpers, `discover_intervention_candidates`, `sample_route_pairs`, `evaluate_multi_route_impact`, and `evaluate_candidates`. The `__all__` list is the explicit export list. `RouteError` remains available from `sim.analysis`, not package root.
 - **Parameters/results/errors:** no functions are defined here; imported callables retain their module signatures, return values, and exceptions documented below.
 - **Dependencies/callers/side effects:** re-exports from `geo`, `analysis`, and `scenario`. README examples and tests import this surface. Importing it imports the geospatial stack; it does not acquire data or write files.
 - **Assumptions/limits/tests:** repository root/package must be importable. Package import paths are exercised by `sim/test_engine.py` and `tests/test_spatial_smoke.py`; there is no separate __init__ test.
@@ -214,6 +260,39 @@ This inventory covers all 12 tracked files in `sim/` after this documentation up
 - **Errors/dependencies/callers:** requires `data.graphs["walk"]`, valid in-area points near the walk network, finite positive speed, and supported intervention payloads; otherwise raises `InterventionError`. Uses NetworkX, GeoPandas, OSMnx, Shapely, and `geo` serialization plus helpers from `analysis`. Exposed by package `__init__` and used in the README/demo exporter.
 - **Helpers/side effects/assumptions:** `_coordinate_point` and `_snap_to_graph` validate/snap coordinates; `_connection_id`, `_has_connection`, `_remove_connection`, `_add_connection`, and `_apply_interventions` implement stable virtual edges and toggles; `_route_geometry` and `_route_result` create route payloads. It projects/copies the graph before editing and does not mutate source baseline data. Assumes straight-line link length and constant walking speed; does not check crossings, slope, rights, legal approval, safety, or feasibility.
 - **Tests/limits/integration:** covered by baseline immutability, improvement/regression/reachability changes, disable/enable, endpoint/snap/length validation, deterministic output, and finite parameter tests in `test_engine.py`. It evaluates one origin/destination pair and does not calculate a network-wide impact or percent improvement.
+
+### `neighborhoods.py`
+
+- **Purpose:** load and normalize GeoJSON catalog records; search IDs, names, and aliases; validate selected Polygon/MultiPolygon boundaries through `normalize_area`; and create acquisition-ready area inputs.
+- **Public API:** `NeighborhoodCatalogError`, `load_neighborhood_catalog`, `get_neighborhoods`, `get_neighborhood`, `search_neighborhoods`, `neighborhoods_geojson`, `validate_neighborhood_boundary`, and `neighborhood_area_input`.
+- **Limits:** EPSG:4326 GeoJSON is interpreted in longitude/latitude order. Point-only records are not analysis areas. Default area and extent limits remain 5 km² and 5 km. Oversized polygons require caller-supplied controlled limits; geometry is not simplified. Data provenance and license are retained.
+- **Tests:** polygon/MultiPolygon, invalid geometry/CRS, points, missing provenance, configured limits, and stable GeoJSON are covered in `test_engine.py`.
+
+### `iasi-neighborhoods.geojson` and `NEIGHBORHOODS_LICENSE.md`
+
+- **Purpose:** a compact OSM-derived Iași place catalog plus source, attribution, coverage, and reuse terms.
+- **Contents:** 24 source-mapped polygons and 7 point-only records from a partial bounded Overpass query retrieved 2026-10-17. OSM IDs, URLs, retrieval timestamps, uncertainty notes, and ODbL-1.0 markings are included.
+- **Limits:** place extents are not verified legal or municipal boundaries; coverage is partial. The raw Overpass/geocoder responses remain ignored in the local demo cache and are not tracked.
+
+### `candidates.py`
+
+- **Purpose:** deterministic spatial-index discovery and obstacle screening for hypothetical pedestrian connections.
+- **Public API:** `discover_intervention_candidates(data, *, issues=(), max_candidates=3, max_connection_length_m=1000, detour_ratio_threshold=2, max_screened_pairs=10000, max_source_nodes=500, max_neighbors_per_source=20)`.
+- **Methods/limits:** only separate weak components, directed reachability gaps, and excessive directed route detours are screened. Node lookup is spatially bounded; all returned links must remain inside the study polygon and within the scenario engine's 1,000 m maximum. Existing direct edges and returned equivalent candidates are removed. Building intersections are evidence only; missing physical/ownership/legal information stays unknown.
+- **Tests:** graph components, detours, direct-edge exclusion, duplicate links, length and polygon limits, buildings, missing data, stable IDs, and unsupported types are covered in `test_engine.py`.
+
+### `impact.py`
+
+- **Purpose:** deterministic route-node sampling, independent multi-route Before/After calculations, and candidate ranking.
+- **Public API:** `sample_route_pairs`, `evaluate_multi_route_impact`, and `evaluate_candidates`.
+- **Methods/limits:** explicit OD pairs or seeded SHA-256 hash sampling; no all-pairs allocation or undocumented randomness. Discovery pairs are excluded from the integrated evaluation sample. Route graph edits reuse the existing scenario helper; numerical calculations include every sampled pair, while route geometry and path-node ID output are capped separately. Distances/time are compared only when reachable both before and after; reachability transitions remain separate. The lexicographic ranking is documented in the result and does not claim project feasibility.
+- **Tests:** improved/unchanged/newly reachable outcomes, invalid pairs, determinism, independent alternatives, immutability, aggregate math, geometry cap, and stable ranking are covered in `test_engine.py`.
+
+### `demo.py`
+
+- **Purpose:** run analysis, candidate discovery, multi-route evaluation, ranking, and JSON/GeoJSON export from one command.
+- **Use:** `python -m sim.demo`; optional `--source cache|fixture` selects cached OSM or the tiny offline graph. The `auto` default uses the cache if present and otherwise uses the fixture. The CLI never downloads data and writes only to ignored `sim/.cache/` by default.
+- **Limitations:** cache-key mismatch is preserved as a warning when the original source polygon is unavailable. Synthetic results are labeled as synthetic and are not evidence about Iași.
 
 ### `smoke_test.py`
 
@@ -320,19 +399,37 @@ delta_m = comparison.get("comparison", {}).get("distance_delta_m")
 
 The coordinate pairs use the correct format; whether they satisfy the 50 m snap rule depends on the acquired graph. Handle `InterventionError` rather than assuming every selected point has a nearby mapped node. Acquisition may use cache or contact OSM/Overpass if no usable local snapshot exists. Requested modes are fetched serially.
 
+V2 neighborhood, discovery, impact, and ranking entry points are also available at package root:
+
+~~~python
+from sim import (
+    evaluate_candidates,
+    get_neighborhoods,
+    neighborhood_area_input,
+    search_neighborhoods,
+)
+
+record = next(item for item in search_neighborhoods("Tătărași") if item["geometry_type"] == "Polygon")
+area_input = neighborhood_area_input(record)  # raises for point-only/invalid/over-limit areas
+snapshot = acquire_osm_data(area_input, modes=("walk",))
+ranked = evaluate_candidates(snapshot, sample_count=32, seed="iasi-demo-v1")
+~~~
+
+Only `add_pedestrian_connection` is auto-discovered. Keep the analysis issue set, candidate screening, shared route sample, ranking rule, provenance, warnings, and unknown feasibility visible to downstream consumers. Do not translate graph-node route counts into residents or observed trips.
+
 Backend responsibilities include HTTP request/response validation and adaptation, stable `baseline_id` assignment, persistence of source snapshots and metadata, authorization, timeouts, and API error mapping. SIM has no baseline store, HTTP endpoint, LLM proposal API, or traffic simulation evaluation mode. The scenario functions return graph-route comparisons only.
 
 The draft [API contract](../docs/API_CONTRACT.md) describes planned `/analyze`, `/propose`, and `/evaluate` routes; current `backend/main.py` only implements `GET /health`. The draft and SIM result schemas differ: SIM returns an indicators array, issues array, dictionary-valued `layer_availability`, and named `layers`/`networks` FeatureCollections. SIM does not persist `baseline_id`, return the draft availability array, generate AI proposals, or populate a `simulation` response. Backend code must map shapes and preserve unknown values, provenance, warnings, units, and uncertainty.
 
 ## Testing and verification
 
-- `sim/test_engine.py` uses in-memory graph/GeoDataFrame fixtures, temporary cache directories, and mocked OSMnx requests. Coverage includes validation, metric routing, deterministic access/issues, missing data, independent/partial network acquisition, cache reuse, GeoJSON order, finite JSON, scenario constraints/reachability, and baseline immutability.
+- `sim/test_engine.py` uses in-memory graph/GeoDataFrame fixtures, temporary cache directories, and mocked OSMnx requests. Coverage includes existing acquisition/analysis/scenario behavior plus catalog validation, bounded candidate generation, mapped obstacle screening, deterministic route sampling, multi-route outcomes/aggregates, baseline immutability, independent alternatives, and stable ranking.
 - `tests/test_spatial_smoke.py` checks imports and a deterministic 200 m synthetic NetworkX route; no OSM request.
 - `tests/test_sumo_support.py` checks portable binary discovery using temporary dummy files; it does not execute SUMO.
 - `tests/test_backend.py` checks health, CORS, and that planned routes remain 404; it does not exercise SIM.
 - [scripts/check.ps1](../scripts/check.ps1) and [scripts/check.sh](../scripts/check.sh) run `pytest -q tests sim/test_engine.py`, backend health, frontend checks/build, and optional SUMO smoke. Since `pyproject.toml` sets `testpaths = ["tests"]`, bare `pytest -q` omits `sim/test_engine.py`.
 - CI is [../.github/workflows/ci.yml](../.github/workflows/ci.yml): Windows x64 (`windows-latest`) and macOS ARM64 (`macos-15`, asserted as `ARM64`/`arm64`). Python is constrained to 3.12. Current workflow does not test macOS Intel.
-- [STATUS.md](STATUS.md) records the historical result of 36 pytest cases (31 simulation plus 5 project tests). Check the current PR/workflow before treating historical results as current. SUMO smoke is a separate synthetic executable check, not real-area traffic simulation.
+- [STATUS.md](STATUS.md) records the current local result of 59 pytest cases (54 SIM plus 5 project tests) and separately records the CI result for the published commit. SUMO smoke is a separate synthetic executable check, not real-area traffic simulation.
 
 Run the SIM regression suite in an already provisioned environment. The project check scripts use `uv run --locked`; that command may create/sync an environment when none exists. If dependency installation is not authorized, use an existing interpreter directly (for example, `.venv/Scripts/python.exe -m pytest -q tests sim/test_engine.py` on Windows):
 
@@ -344,8 +441,8 @@ Standalone checks: `python -m sim.smoke_test` and, if SUMO/netconvert are availa
 
 ## Current capabilities and future work
 
-**Implemented:** bounded validation; cached OSM network/features; walk/bike/drive graph metrics; walking/cycling node access and detour analysis; deterministic issue candidates; WGS84 serialization; isolated pedestrian-link comparison; SUMO discovery and synthetic TraCI smoke support.
+**Implemented:** bounded validation; cached OSM network/features; walk/bike/drive graph metrics; walking/cycling node access and detour analysis; deterministic issue candidates; WGS84 serialization; ODbL-attributed neighborhood/place catalog with polygon/point distinction; automatic bounded pedestrian-link candidate discovery; mapped-building obstacle screening; deterministic multi-route evaluation; independent candidate ranking; an offline/cached reproducible JSON/GeoJSON demo; SUMO discovery and synthetic TraCI smoke support.
 
 **Experimental/local-only:** the ignored browser preview and neighborhood mapping/editor under `sim/.cache/local_demo/`, if present. It is absent from clones and is not a production SIM module. Its local-only notes are in `sim/.cache/local_demo/ARCHITECTURE.md`.
 
-**Planned or absent:** real-area OSM-to-SUMO conversion; traffic demand and calibrated/live/offline simulation; automatic intervention generation; multi-route impact analysis; expanded POI sources; neighborhood-aware engine analysis. These are not implemented.
+**Planned or absent:** real-area OSM-to-SUMO conversion and synthetic vehicle demand; traffic calibration/live/offline simulation; water/elevation/slope/ownership/legal/safety feasibility screening; expanded POI sources; browser preview integration of the new result schema. These are not implemented.
