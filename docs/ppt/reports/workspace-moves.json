@@ -1,0 +1,90 @@
+[
+  {
+    "from": "PROJECT_RESEARCH_FULL.md",
+    "to": "research/PROJECT_RESEARCH_FULL.md"
+  },
+  {
+    "from": "PITCH_CONTENT.md",
+    "to": "research/PITCH_CONTENT.md"
+  },
+  {
+    "from": "PRESENTATION_DESIGN_PLAN.md",
+    "to": "research/PRESENTATION_DESIGN_PLAN.md"
+  },
+  {
+    "from": "build_deck.py",
+    "to": "scripts/build_deck.py"
+  },
+  {
+    "from": "render_deck.ps1",
+    "to": "scripts/render_deck.ps1"
+  },
+  {
+    "from": "qa_deck.py",
+    "to": "scripts/qa_deck.py"
+  },
+  {
+    "from": "apply_transitions.ps1",
+    "to": "scripts/apply_transitions.ps1"
+  },
+  {
+    "from": "export_preview.ps1",
+    "to": "scripts/export_preview.ps1"
+  },
+  {
+    "from": "PRESENTATION_QA_REPORT.md",
+    "to": "reports/PRESENTATION_QA_REPORT.md"
+  },
+  {
+    "from": "qa-results.json",
+    "to": "reports/qa-results.json"
+  },
+  {
+    "from": "deck-manifest.json",
+    "to": "reports/deck-manifest.json"
+  },
+  {
+    "from": "validation.log",
+    "to": "reports/validation.log"
+  },
+  {
+    "from": "backend-audit-probes.json",
+    "to": "reports/backend-audit-probes.json"
+  },
+  {
+    "from": "Template-Pitch-Hackathon.backup.inspection.json",
+    "to": "reports/Template-Pitch-Hackathon.backup.inspection.json"
+  },
+  {
+    "from": "Template-Pitch-Hackathon.inspection.json",
+    "to": "reports/Template-Pitch-Hackathon.inspection.json"
+  },
+  {
+    "from": "Template-Pitch-Hackathon.backup.pptx",
+    "to": "archive/original-backup/Template-Pitch-Hackathon.backup.pptx"
+  },
+  {
+    "from": "Template-Pitch-Hackathon.pre-audit.pptx",
+    "to": "archive/pre-audit/Template-Pitch-Hackathon.pre-audit.pptx"
+  },
+  {
+    "from": "build_deck.pre-audit.py",
+    "to": "archive/pre-audit/build_deck.pre-audit.py"
+  },
+  {
+    "from": "preview-pre-audit",
+    "to": "archive/old-previews/pre-audit"
+  },
+  {
+    "from": "preview-template",
+    "to": "archive/old-previews/original-template"
+  },
+  {
+    "from": "preview",
+    "to": "archive/v1/preview"
+  },
+  {
+    "from": ".qa",
+    "to": "reports/.qa"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "slides": 13,
+  "slide_size_inches": [
+    13.333333333333334,
+    7.5
+  ],
+  "objects": {
+    "textboxes": 142,
+    "tables": 2,
+    "pictures": 2,
+    "connectors": 14,
+    "notes": 13
+  },
+  "text_bounds_checked": 133,
+  "text_overflow": [],
+  "out_of_canvas": [],
+  "remaining_template_prompts": [],
+  "rendered_slides": 13,
+  "render_size": [
+    1920,
+    1080
+  ],
+  "backup_sha256": "56133b4d2fe6946ff4c5a246e4d0f8be0baa0ac2f6638a6e25f969994695d170",
+  "backup_unchanged": true,
+  "pptx_sha256": "e9d3cb96e1eedff92a3263a64e4483afa5bd05fb13be2e9c4ebf8f93e5a2f543"
+}

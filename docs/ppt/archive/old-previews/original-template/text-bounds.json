@@ -1,0 +1,5258 @@
+[
+  {
+    "slide": 1,
+    "name": "TextBox 2",
+    "text": "HACKATHON · TEMPLATE DE PITCH",
+    "height": 9.5,
+    "boundHeight": 9.85504,
+    "width": 178.91347,
+    "boundWidth": 166.5
+  },
+  {
+    "slide": 1,
+    "name": "TextBox 3",
+    "text": "Pitch-ul tău, slide cu slide",
+    "height": 47.0,
+    "boundHeight": 44.38504,
+    "width": 476.44504,
+    "boundWidth": 446.87503
+  },
+  {
+    "slide": 1,
+    "name": "TextBox 4",
+    "text": "Ce trebuie să conțină prezentarea echipei tale: problema, demo-ul, business-ul și echipa.",
+    "height": 32.0,
+    "boundHeight": 31.04504,
+    "width": 391.68,
+    "boundWidth": 363.5
+  },
+  {
+    "slide": 1,
+    "name": "TextBox 6",
+    "text": "„Juriul nu vede codul. Vede 3 minute.”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 221.64095,
+    "boundWidth": 206.25
+  },
+  {
+    "slide": 1,
+    "name": "TextBox 7",
+    "text": "Fiecare slide-șablon răspunde la o singură întrebare a juriului. Completezi parantezele, ștergi ghidajul — rămâne pitch-ul tău.",
+    "height": 24.0,
+    "boundHeight": 23.03,
+    "width": 391.68,
+    "boundWidth": 371.5
+  },
+  {
+    "slide": 1,
+    "name": "TextBox 8",
+    "text": "Andrei Margelatu",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 81.76409,
+    "boundWidth": 75.37504
+  },
+  {
+    "slide": 1,
+    "name": "TextBox 10",
+    "text": "P · R · O · B · A — aceeași ordine, acum pe slide-uri",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 244.23654,
+    "boundWidth": 229.5
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 1",
+    "text": "ÎNAINTE SĂ ÎNCEPI",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 93.23063,
+    "boundWidth": 89.1
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 2",
+    "text": "Trei pași. Apoi e pitch-ul tău.",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 352.7681,
+    "boundWidth": 330.75
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 3",
+    "text": "Slide-urile marcate „Slide N din pitch” le copiezi. Restul te ajută să le umpli.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 368.1919,
+    "boundWidth": 340.87503
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 7",
+    "text": "1",
+    "height": 14.0,
+    "boundHeight": 11.285039,
+    "width": 5.5144095,
+    "boundWidth": 7.5
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 8",
+    "text": "Copiază structura",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 111.025276,
+    "boundWidth": 103.25
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 9",
+    "text": "Câte un slide al tău pentru fiecare slide-șablon, în aceeași ordine. Zece slide-uri, plus anexele.",
+    "height": 32.5,
+    "boundHeight": 30.54,
+    "width": 274.89,
+    "boundWidth": 260.37503
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 13",
+    "text": "2",
+    "height": 14.0,
+    "boundHeight": 11.285039,
+    "width": 5.5144095,
+    "boundWidth": 7.5
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 14",
+    "text": "Înlocuiește parantezele",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 147.34874,
+    "boundWidth": 137.0
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 15",
+    "text": "Tot ce e între [PARANTEZE] devine conținutul tău. O paranteză pe care nu o poți completa nu e o problemă de design: e o întrebare la care nu ai încă răspuns.",
+    "height": 48.75,
+    "boundHeight": 46.54,
+    "width": 274.89,
+    "boundWidth": 271.87503
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 19",
+    "text": "3",
+    "height": 14.0,
+    "boundHeight": 11.285039,
+    "width": 5.5144095,
+    "boundWidth": 7.5
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 20",
+    "text": "Șterge ghidajul",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 94.95189,
+    "boundWidth": 88.25
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 21",
+    "text": "Coloana din dreapta e pentru tine, nu pentru juriu. Pe slide-ul tău rămâne doar ce e în chenarul punctat.",
+    "height": 32.5,
+    "boundHeight": 30.54,
+    "width": 274.89,
+    "boundWidth": 275.25
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 23",
+    "text": "[PARANTEZĂ]",
+    "height": 9.5,
+    "boundHeight": 9.56,
+    "width": 52.89937,
+    "boundWidth": 51.0
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 24",
+    "text": "ce completezi tu",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 74.66811,
+    "boundWidth": 68.75
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 27",
+    "text": "Ce menționezi",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 60.813778,
+    "boundWidth": 55.37504
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 28",
+    "text": "semn că slide-ul e complet",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 120.38252,
+    "boundWidth": 111.12504
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 31",
+    "text": "Juriul verifică",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 59.117794,
+    "boundWidth": 53.62504
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 32",
+    "text": "întrebarea pe care o vei primi",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 129.93378,
+    "boundWidth": 119.75
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 35",
+    "text": "Greșeala clasică",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 69.42843,
+    "boundWidth": 63.0
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 36",
+    "text": "ce te costă puncte",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 82.58252,
+    "boundWidth": 76.0
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 40",
+    "text": "TREI REGULI PENTRU TOATE SLIDE-URILE",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 166.78032,
+    "boundWidth": 156.32504
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 42",
+    "text": "O singură idee pe slide.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 115.29472,
+    "boundWidth": 106.5
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 44",
+    "text": "Orice cifră are lângă ea sursa și anul.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 179.79094,
+    "boundWidth": 166.12505
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 46",
+    "text": "Textul se citește din fundul sălii.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 157.80284,
+    "boundWidth": 146.5
+  },
+  {
+    "slide": 2,
+    "name": "TextBox 48",
+    "text": "Un template nu scrie pitch-ul în locul tău. Îți arată unde e gol.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 291.62497
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 1",
+    "text": "STRUCTURA",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 50.77315,
+    "boundWidth": 49.5
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 2",
+    "text": "Zece slide-uri, în ordinea deciziilor",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 424.33496,
+    "boundWidth": 395.75
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 3",
+    "text": "Întâi omul, apoi dovada, apoi demo-ul. Banii și echipa vin după ce juriul a înțeles pe cine ajuți.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 454.54126,
+    "boundWidth": 420.0
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 6",
+    "text": "1",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 7",
+    "text": "Titlul",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 26.869684,
+    "boundWidth": 24.37504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 10",
+    "text": "2",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 11",
+    "text": "Omul și durerea",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 75.55409,
+    "boundWidth": 69.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 12",
+    "text": "P",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 8.67,
+    "boundWidth": 7.1250396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 15",
+    "text": "3",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 16",
+    "text": "De ce nu merge azi",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 88.49716,
+    "boundWidth": 81.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 17",
+    "text": "R",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 8.830315,
+    "boundWidth": 7.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 20",
+    "text": "4",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 21",
+    "text": "Soluția",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 35.324093,
+    "boundWidth": 32.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 22",
+    "text": "B",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 8.77126,
+    "boundWidth": 7.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 25",
+    "text": "5",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 26",
+    "text": "Demo",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 29.40937,
+    "boundWidth": 26.5
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 27",
+    "text": "A",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 8.92315,
+    "boundWidth": 7.3750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 30",
+    "text": "6",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 31",
+    "text": "Cum e construit",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 74.88748,
+    "boundWidth": 68.87504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 32",
+    "text": "B",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 8.77126,
+    "boundWidth": 7.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 35",
+    "text": "7",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 36",
+    "text": "Cine plătește",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 63.235275,
+    "boundWidth": 58.0
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 37",
+    "text": "Business",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 39.41622,
+    "boundWidth": 38.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 40",
+    "text": "8",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 41",
+    "text": "Piața și primii clienți",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 96.884094,
+    "boundWidth": 89.37504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 42",
+    "text": "R",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 8.830315,
+    "boundWidth": 7.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 45",
+    "text": "9",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 46",
+    "text": "Echipa",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 33.84748,
+    "boundWidth": 30.87504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 47",
+    "text": "O",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 9.176221,
+    "boundWidth": 7.6250396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 50",
+    "text": "10",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 8.327323,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 51",
+    "text": "Ce urmează și cererea",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 103.97157,
+    "boundWidth": 95.37504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 52",
+    "text": "A",
+    "height": 10.0,
+    "boundHeight": 9.53,
+    "width": 8.92315,
+    "boundWidth": 7.3750396
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 53",
+    "text": "+ anexe pentru Q&A, după slide-ul 10 — nu se prezintă",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 244.23654,
+    "boundWidth": 229.5
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 54",
+    "text": "PITCH DE 3 MINUTE",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 93.23063,
+    "boundWidth": 89.1
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 55",
+    "text": "180 s · lățimea segmentului = secundele lui",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 170.76283,
+    "boundWidth": 159.5
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 58",
+    "text": "2",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 59",
+    "text": "30 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 60",
+    "text": "Omul și durerea",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 59.43,
+    "boundWidth": 53.75
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 63",
+    "text": "3",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 64",
+    "text": "30 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 65",
+    "text": "De ce nu merge azi",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 69.50441,
+    "boundWidth": 63.0
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 68",
+    "text": "4",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 69",
+    "text": "10 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 72",
+    "text": "5",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 73",
+    "text": "50 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 74",
+    "text": "Demo",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 23.545275,
+    "boundWidth": 20.62504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 77",
+    "text": "6",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 78",
+    "text": "30 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 79",
+    "text": "Cum e construit",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 58.90685,
+    "boundWidth": 53.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 82",
+    "text": "7",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 83",
+    "text": "10 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 86",
+    "text": "9",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 87",
+    "text": "10 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 90",
+    "text": "10",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 18.55874,
+    "boundWidth": 17.37504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 91",
+    "text": "10 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 92",
+    "text": "0:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 93",
+    "text": "1:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 94",
+    "text": "2:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 95",
+    "text": "3:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 96",
+    "text": "PITCH DE 5 MINUTE",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 93.23063,
+    "boundWidth": 89.1
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 97",
+    "text": "300 s · lățimea segmentului = secundele lui",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 170.76283,
+    "boundWidth": 159.5
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 100",
+    "text": "2",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 101",
+    "text": "40 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 102",
+    "text": "Omul și durerea",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 59.43,
+    "boundWidth": 53.75
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 105",
+    "text": "3",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 106",
+    "text": "40 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 107",
+    "text": "De ce nu merge azi",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 69.50441,
+    "boundWidth": 63.0
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 110",
+    "text": "4",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 111",
+    "text": "15 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 112",
+    "text": "Soluția",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 28.14378,
+    "boundWidth": 24.87504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 115",
+    "text": "5",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 116",
+    "text": "75 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 117",
+    "text": "Demo",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 23.545275,
+    "boundWidth": 20.62504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 120",
+    "text": "6",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 121",
+    "text": "30 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 122",
+    "text": "Cum e construit",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 58.90685,
+    "boundWidth": 53.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 125",
+    "text": "7",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 126",
+    "text": "30 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 127",
+    "text": "Cine plătește",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 49.853466,
+    "boundWidth": 44.62504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 130",
+    "text": "8",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 131",
+    "text": "20 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 132",
+    "text": "Piața",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 21.621574,
+    "boundWidth": 18.87504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 135",
+    "text": "9",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 10.77937,
+    "boundWidth": 10.125039
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 136",
+    "text": "20 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 137",
+    "text": "Echipa",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 26.99622,
+    "boundWidth": 23.87504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 140",
+    "text": "10",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 18.55874,
+    "boundWidth": 17.37504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 141",
+    "text": "30 s",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 142",
+    "text": "Ce urmează",
+    "height": 9.0,
+    "boundHeight": 8.52504,
+    "width": 45.044094,
+    "boundWidth": 40.37504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 143",
+    "text": "0:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 144",
+    "text": "1:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 145",
+    "text": "2:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 146",
+    "text": "3:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 147",
+    "text": "4:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 148",
+    "text": "5:00",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 18.60937,
+    "boundWidth": 18.12504
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 149",
+    "text": "Slide-ul 1 stă pe ecran cât începi cu omul. La 3 minute, slide-ul 8 trece în anexe. Timpii sunt prescripții, nu măsurători — pune un cronometru.",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 658.41656,
+    "boundWidth": 616.25
+  },
+  {
+    "slide": 3,
+    "name": "TextBox 151",
+    "text": "Ordinea nu se negociază. Doar timpul se ajustează.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 242.37505
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 1",
+    "text": "SLIDE 1 DIN PITCH · TITLUL",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 140.99527,
+    "boundWidth": 133.65
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 2",
+    "text": "Numele, și pentru cine e",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 296.9878,
+    "boundWidth": 278.12503
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Ce e asta și pentru cine?” — în 5 secunde.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 348.86157,
+    "boundWidth": 322.5
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  doar pe ecran",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 135.00473,
+    "boundWidth": 127.5
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  doar pe ecran",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 135.00473,
+    "boundWidth": 127.5
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 17",
+    "text": "1 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 18",
+    "text": "[NUMELE ECHIPEI] · [NUMELE HACKATHONULUI]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 222.7378,
+    "boundWidth": 199.5
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 19",
+    "text": "[NUMELE PRODUSULUI]",
+    "height": 39.0,
+    "boundHeight": 38.08504,
+    "width": 372.36,
+    "boundWidth": 360.0
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 20",
+    "text": "Ajutăm [CINE] să [FACĂ CE] fără [OBSTACOL].",
+    "height": 19.5,
+    "boundHeight": 19.27504,
+    "width": 403.95,
+    "boundWidth": 340.0
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 24",
+    "text": "[QR CĂTRE DEMO]",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 55.067245,
+    "boundWidth": 58.0
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 25",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 29",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 31",
+    "text": "Numele produsului: scurt, ușor de pronunțat.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 220.75504,
+    "boundWidth": 203.5
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 33",
+    "text": "One-liner-ul, cu omul în el.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 132.06,
+    "boundWidth": 121.75
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 35",
+    "text": "Numele echipei.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 81.57,
+    "boundWidth": 75.12504
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 37",
+    "text": "Un QR către demo (opțional).",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 143.57716,
+    "boundWidth": 132.62505
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 41",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 42",
+    "text": "După 5 secunde, poate spune cineva din juriu pentru cine e produsul?",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 304.9359,
+    "boundWidth": 282.37503
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 46",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 47",
+    "text": "Titlul e o tehnologie („… cu AI”) sau un slogan care s-ar potrivi oricărui produs.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 343.5122,
+    "boundWidth": 317.25
+  },
+  {
+    "slide": 4,
+    "name": "TextBox 49",
+    "text": "Nu citi titlul. Lasă-l pe ecran și începe direct cu omul.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 251.62495
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 1",
+    "text": "SLIDE 2 DIN PITCH · P — PROBLEMA",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 172.84685,
+    "boundWidth": 163.35
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 2",
+    "text": "Omul și durerea",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 196.4719,
+    "boundWidth": 185.0
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Pe cine ajutați și ce îl doare?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 290.46558,
+    "boundWidth": 268.37503
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  0:00–0:30",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  0:00–0:40",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 17",
+    "text": "2 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 18",
+    "text": "[CINE] nu poate [SĂ FACĂ CE] pentru că [OBSTACOL], și acum îi costă [CE ANUME].",
+    "height": 78.5,
+    "boundHeight": 50.34,
+    "width": 350.88,
+    "boundWidth": 349.62503
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 22",
+    "text": "[FOTO SAU SCHIȚĂ: OMUL, ÎN MOMENTUL ACELA]",
+    "height": 20.0,
+    "boundHeight": 19.56,
+    "width": 103.12197,
+    "boundWidth": 102.0
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 24",
+    "text": "MOMENTUL",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 43.440945,
+    "boundWidth": 42.34504
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 25",
+    "text": "[O SITUAȚIE CONCRETĂ DIN ZIUA OMULUI]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 218.78906,
+    "boundWidth": 204.25
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 27",
+    "text": "VOCEA LUI",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 48.49496,
+    "boundWidth": 47.05
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 28",
+    "text": "„[UN CITAT DE LA UN UTILIZATOR REAL]”",
+    "height": 11.5,
+    "boundHeight": 11.56504,
+    "width": 224.23969,
+    "boundWidth": 198.75
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 29",
+    "text": "Sursă pentru orice cifră: [LINK], [AN]",
+    "height": 9.5,
+    "boundHeight": 9.56,
+    "width": 185.35968,
+    "boundWidth": 165.75
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 30",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 34",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 36",
+    "text": "Un om concret, nu „toată lumea”.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 164.08875,
+    "boundWidth": 152.5
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 38",
+    "text": "Momentul în care apare durerea.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 160.77283,
+    "boundWidth": 148.37505
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 40",
+    "text": "Costul: timp, bani, risc sau stres.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 159.88686,
+    "boundWidth": 148.0
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 42",
+    "text": "De ce acum: ce s-a schimbat.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 144.37874,
+    "boundWidth": 133.5
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 46",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 47",
+    "text": "„Cine e utilizatorul?” După 30 de secunde, oricine din juriu trebuie să-l poată numi.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 362.7497,
+    "boundWidth": 335.62503
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 51",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 52",
+    "text": "„În ziua de azi…” și cuvintele platformă, ecosistem, soluție. Ai sărit direct la răspuns.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 375.34686,
+    "boundWidth": 347.87503
+  },
+  {
+    "slide": 5,
+    "name": "TextBox 54",
+    "text": "Dacă nu poți numi omul, nu ai o problemă. Ai o idee.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 246.62495
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 1",
+    "text": "SLIDE 3 DIN PITCH · R — DOVEZI ȘI ALTERNATIVE",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 241.84032,
+    "boundWidth": 227.7
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 2",
+    "text": "De ce nu merge azi",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 230.99811,
+    "boundWidth": 217.12505
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Există deja asta? Și dacă da, de ce nu ajunge?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 373.07718,
+    "boundWidth": 344.75
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  0:30–1:00",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  0:40–1:20",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 17",
+    "text": "3 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 18",
+    "text": "Ce face azi [CINE]",
+    "height": 19.5,
+    "boundHeight": 19.27504,
+    "width": 153.36473,
+    "boundWidth": 142.12505
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 20",
+    "text": "ALTERNATIVA",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 58.60315,
+    "boundWidth": 56.46
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 21",
+    "text": "DE CE NU AJUNGE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 78.81937,
+    "boundWidth": 75.28
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 24",
+    "text": "[ALTERNATIVA 1, CU NUME]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 158.52,
+    "boundWidth": 150.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 25",
+    "text": "[CE NU REZOLVĂ]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 100.2,
+    "boundWidth": 96.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 28",
+    "text": "[ALTERNATIVA 2, CU NUME]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 158.52,
+    "boundWidth": 150.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 29",
+    "text": "[CE NU REZOLVĂ]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 100.2,
+    "boundWidth": 96.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 32",
+    "text": "Nimic: [CE FAC FĂRĂ UN PRODUS]",
+    "height": 12.5,
+    "boundHeight": 12.6,
+    "width": 191.72157,
+    "boundWidth": 176.75
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 33",
+    "text": "[CÂT ÎI COSTĂ]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 93.72,
+    "boundWidth": 90.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 34",
+    "text": "DOVEZI CĂ PROBLEMA EXISTĂ",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 129.36,
+    "boundWidth": 122.33
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 36",
+    "text": "[URMA 1: SURSĂ, AN]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 93.02079,
+    "boundWidth": 95.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 38",
+    "text": "[URMA 2: SURSĂ, AN]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 93.02079,
+    "boundWidth": 95.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 40",
+    "text": "[URMA 3: SURSĂ, AN]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 93.02079,
+    "boundWidth": 95.0
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 41",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 45",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 47",
+    "text": "Ce face omul acum, în loc.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 129.38527,
+    "boundWidth": 119.62504
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 49",
+    "text": "2–3 alternative reale, cu nume.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 153.45747,
+    "boundWidth": 142.25
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 51",
+    "text": "De ce nu le folosesc oamenii tăi.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 158.18253,
+    "boundWidth": 146.37505
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 53",
+    "text": "Trei urme independente, cu sursă și an.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 192.81,
+    "boundWidth": 178.5
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 57",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 58",
+    "text": "„Există deja asta?” Răspunsul bun: „Da, X și Y. Noi diferim prin Z, pentru W.”",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 333.27747,
+    "boundWidth": 308.87503
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 62",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 63",
+    "text": "„Nu avem concurență.” Aproape întotdeauna e fals, iar juriul găsește alternativa în zece secunde.",
+    "height": 29.25,
+    "boundHeight": 28.53504,
+    "width": 357.51,
+    "boundWidth": 353.62503
+  },
+  {
+    "slide": 6,
+    "name": "TextBox 65",
+    "text": "„Nu există nimic” e aproape întotdeauna fals. „Există X, uite de ce nu ajunge” e un argument.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 442.6249
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 1",
+    "text": "SLIDE 4 DIN PITCH · B — SOLUȚIA",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 167.53969,
+    "boundWidth": 158.4
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 2",
+    "text": "O propoziție, apoi demo",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 291.80716,
+    "boundWidth": 273.75
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Ce face, concret, produsul vostru?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 317.8959,
+    "boundWidth": 294.12503
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  1:00–1:10",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  1:20–1:35",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 17",
+    "text": "4 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 18",
+    "text": "[NUMELE PRODUSULUI] îl ajută pe [CINE] să [O SINGURĂ ACȚIUNE], ca să [REZULTATUL].",
+    "height": 49.0,
+    "boundHeight": 46.55504,
+    "width": 488.4844,
+    "boundWidth": 453.0
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 20",
+    "text": "INTRĂ",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 28.27874,
+    "boundWidth": 28.23
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 21",
+    "text": "[CE INTRODUCE OMUL]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 113.809685,
+    "boundWidth": 107.5
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 24",
+    "text": "FACE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 23.224724,
+    "boundWidth": 23.52504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 25",
+    "text": "[CE FACE PRODUSUL]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 107.97937,
+    "boundWidth": 102.12504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 28",
+    "text": "IESE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 23.224724,
+    "boundWidth": 23.52504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 29",
+    "text": "[CE PRIMEȘTE OMUL]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 107.97937,
+    "boundWidth": 102.12504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 31",
+    "text": "REAL:",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 25.74748,
+    "boundWidth": 25.35
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 32",
+    "text": "[CE FUNCȚIONEAZĂ CU ADEVĂRAT]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 153.33937,
+    "boundWidth": 142.5
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 34",
+    "text": "SIMULAT:",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 39.39937,
+    "boundWidth": 38.02504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 35",
+    "text": "[DATE FALSE, USER HARDCODAT]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 148.15874,
+    "boundWidth": 137.75
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 36",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 40",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 42",
+    "text": "O propoziție, același om ca pe slide-ul 2.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 198.42094,
+    "boundWidth": 183.75
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 44",
+    "text": "Felia: cea mai mică parte care demonstrează ideea.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 250.93591,
+    "boundWidth": 232.5
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 46",
+    "text": "Ce e real și ce e simulat, spus deschis.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 187.42685,
+    "boundWidth": 173.37505
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 50",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 51",
+    "text": "Soluția răspunde exact la durerea de pe slide-ul 2, sau la alta?",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 272.8481,
+    "boundWidth": 252.37505
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 55",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 56",
+    "text": "O listă de zece funcții. Juriul reține una — asigură-te că e cea bună.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 292.54126,
+    "boundWidth": 270.62503
+  },
+  {
+    "slide": 7,
+    "name": "TextBox 58",
+    "text": "Juriul evaluează o cale care merge, nu zece care aproape merg.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 300.37503
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 1",
+    "text": "SLIDE 5 DIN PITCH · A — DEMO",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 151.6181,
+    "boundWidth": 143.55
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 2",
+    "text": "Taci și arată",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 148.72409,
+    "boundWidth": 142.62505
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Chiar merge?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 217.39685,
+    "boundWidth": 201.0
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  1:10–2:00",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  1:35–2:50",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 17",
+    "text": "5 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 26",
+    "text": "[CAPTURĂ SAU DEMO LIVE]",
+    "height": 14.0,
+    "boundHeight": 11.65,
+    "width": 126.68401,
+    "boundWidth": 129.0
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 29",
+    "text": "1",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 30",
+    "text": "[PRIMUL CLICK]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 75.57937,
+    "boundWidth": 71.25
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 34",
+    "text": "2",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 35",
+    "text": "[CE SE ÎNTÂMPLĂ]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 85.94906,
+    "boundWidth": 80.75
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 39",
+    "text": "3",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 4.167638,
+    "boundWidth": 5.8750396
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 40",
+    "text": "[REZULTATUL PE ECRAN]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 111.86906,
+    "boundWidth": 104.5
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 41",
+    "text": "Date: [REALE SAU FALSE — SPUS DESCHIS]",
+    "height": 9.5,
+    "boundHeight": 9.56,
+    "width": 178.66031,
+    "boundWidth": 165.75
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 42",
+    "text": "Plan B: [LINK CĂTRE ÎNREGISTRARE]",
+    "height": 9.5,
+    "boundHeight": 9.56,
+    "width": 156.00558,
+    "boundWidth": 144.5
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 43",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 47",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 49",
+    "text": "O singură cale, de la primul click la rezultat.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 212.77315,
+    "boundWidth": 197.0
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 51",
+    "text": "Rezultatul, lăsat pe ecran câteva secunde.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 206.34378,
+    "boundWidth": 191.12505
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 53",
+    "text": "Dacă datele sunt false, o spui într-o propoziție.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 227.64,
+    "boundWidth": 211.0
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 55",
+    "text": "Planul B: înregistrarea, gata de pornit.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 185.82378,
+    "boundWidth": 171.5
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 59",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 60",
+    "text": "Merge live, de la zero? Se vede rezultatul fără explicații?",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 244.90315,
+    "boundWidth": 227.12505
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 64",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 65",
+    "text": "Vorbești peste demo ca să acoperi emoțiile. Juriul nu mai vede nimic.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 303.2822,
+    "boundWidth": 281.12503
+  },
+  {
+    "slide": 8,
+    "name": "TextBox 67",
+    "text": "Demo-ul nu e prezentarea muncii. E singura parte din muncă pe care o vede cineva.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 394.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 1",
+    "text": "SLIDE 6 DIN PITCH · B — CUM E CONSTRUIT",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 209.99716,
+    "boundWidth": 198.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 2",
+    "text": "O propoziție tehnică pe care o poți apăra",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 494.65314,
+    "boundWidth": 461.5
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Cum funcționează, și cât e făcut de AI?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 341.2678,
+    "boundWidth": 315.37503
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  2:00–2:30",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  2:50–3:20",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 17",
+    "text": "6 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 20",
+    "text": "[SURSA DATELOR]",
+    "height": 28.0,
+    "boundHeight": 27.44504,
+    "width": 84.40504,
+    "boundWidth": 54.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 24",
+    "text": "[COMPONENTA PRINCIPALĂ]",
+    "height": 28.0,
+    "boundHeight": 27.44504,
+    "width": 84.40504,
+    "boundWidth": 72.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 28",
+    "text": "[MODELUL AI: CE FACE EXACT]",
+    "height": 42.0,
+    "boundHeight": 27.44504,
+    "width": 84.40504,
+    "boundWidth": 90.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 32",
+    "text": "[CE VEDE OMUL]",
+    "height": 28.0,
+    "boundHeight": 13.44504,
+    "width": 84.40504,
+    "boundWidth": 90.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 33",
+    "text": "Stack: [3–4 TEHNOLOGII, NU 15 LOGO-URI]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 234.53346,
+    "boundWidth": 215.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 35",
+    "text": "AI-UL A GENERAT:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 83.87347,
+    "boundWidth": 79.98504
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 36",
+    "text": "[CE PĂRȚI DIN COD]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 119.64,
+    "boundWidth": 114.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 37",
+    "text": "[CE DATE DE TEST]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 113.16,
+    "boundWidth": 108.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 39",
+    "text": "NOI AM DECIS:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 68.71126,
+    "boundWidth": 65.87
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 40",
+    "text": "[CE AM ALES]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 80.76,
+    "boundWidth": 78.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 41",
+    "text": "[DE CE AȘA, NU ALTFEL]",
+    "height": 13.0,
+    "boundHeight": 12.69504,
+    "width": 145.56,
+    "boundWidth": 138.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 42",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 46",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 48",
+    "text": "Fluxul, în 3–4 cutii.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 95.19653,
+    "boundWidth": 87.62504
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 50",
+    "text": "De unde vin datele.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 95.736534,
+    "boundWidth": 88.37504
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 52",
+    "text": "Rolul exact al AI-ului: ce generează, ce decide.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 227.69905,
+    "boundWidth": 211.37505
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 54",
+    "text": "Ce ați decis voi, și de ce.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 119.85937,
+    "boundWidth": 111.0
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 58",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 59",
+    "text": "„Cât e făcut de AI?” Răspunsul bun: „Boilerplate-ul. Deciziile sunt ale noastre, uite care.”",
+    "height": 29.25,
+    "boundHeight": 28.53504,
+    "width": 357.51,
+    "boundWidth": 334.37503
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 63",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 64",
+    "text": "Un perete de logo-uri. Sau cod pe care nu-l poți explica: „așa a generat” pierde întrebarea.",
+    "height": 29.25,
+    "boundHeight": 28.53504,
+    "width": 357.51,
+    "boundWidth": 323.37503
+  },
+  {
+    "slide": 9,
+    "name": "TextBox 66",
+    "text": "Poți livra cod pe care nu l-ai scris. Nu poți apăra cod pe care nu l-ai citit.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 339.75
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 1",
+    "text": "SLIDE 7 DIN PITCH · BUSINESS — CINE PLĂTEȘTE",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 236.53314,
+    "boundWidth": 222.75
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 2",
+    "text": "Cine plătește, cât și de ce",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 312.3103,
+    "boundWidth": 292.87503
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Din ce trăiește produsul după hackathon?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 354.6919,
+    "boundWidth": 327.37503
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 4",
+    "text": "BUSINESS",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 45.465904,
+    "boundWidth": 44.55
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 5",
+    "text": "pitch de 3 min  2:30–2:40",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 6",
+    "text": "pitch de 5 min  3:20–3:50",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 8",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 9",
+    "text": "7 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 11",
+    "text": "CINE PLĂTEȘTE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 68.71126,
+    "boundWidth": 65.87
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 12",
+    "text": "[CLIENTUL]",
+    "height": 20.0,
+    "boundHeight": 19.42,
+    "width": 100.2,
+    "boundWidth": 99.0
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 14",
+    "text": "CÂT ȘI CUM",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 53.549057,
+    "boundWidth": 51.75504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 16",
+    "text": "IPOTEZĂ",
+    "height": 8.0,
+    "boundHeight": 7.0150394,
+    "width": 30.082047,
+    "boundWidth": 33.8
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 17",
+    "text": "[PREȚUL]",
+    "height": 20.0,
+    "boundHeight": 19.42,
+    "width": 80.76,
+    "boundWidth": 81.0
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 18",
+    "text": "pe [LUNĂ / UTILIZARE]",
+    "height": 12.5,
+    "boundHeight": 12.6,
+    "width": 138.70874,
+    "boundWidth": 127.62504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 20",
+    "text": "DE CE AR PLĂTI",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 73.765274,
+    "boundWidth": 70.57504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 21",
+    "text": "[CÂT ÎL COSTĂ PROBLEMA]",
+    "height": 39.5,
+    "boundHeight": 38.535038,
+    "width": 133.24544,
+    "boundWidth": 101.5
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 23",
+    "text": "COSTUL NOSTRU PRINCIPAL:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 124.30591,
+    "boundWidth": 117.62504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 24",
+    "text": "[CÂT NE COSTĂ UN UTILIZATOR]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 166.29938,
+    "boundWidth": 155.87505
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 26",
+    "text": "PRIMUL CLIENT PLĂTITOR:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 119.25189,
+    "boundWidth": 112.92
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 27",
+    "text": "[CINE, CONCRET]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 90.48,
+    "boundWidth": 86.0
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 28",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 32",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 34",
+    "text": "Cine plătește: utilizatorul nu e mereu clientul.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 222.94875,
+    "boundWidth": 205.87505
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 36",
+    "text": "Modelul: abonament, per utilizare sau licență.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 223.88527,
+    "boundWidth": 206.87505
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 38",
+    "text": "Prețul, marcat clar ca ipoteză.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 147.12936,
+    "boundWidth": 136.0
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 40",
+    "text": "Costul vostru principal per utilizator.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 177.54654,
+    "boundWidth": 164.75
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 44",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 45",
+    "text": "„Cine plătește?” „Vedem” sau „din reclame”, fără calcul, nu e un răspuns.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 321.73495,
+    "boundWidth": 299.5
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 49",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 50",
+    "text": "Venituri pe cinci ani, fără niciun client numit. Juriul vede decor, nu un plan.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 325.2956,
+    "boundWidth": 302.0
+  },
+  {
+    "slide": 10,
+    "name": "TextBox 52",
+    "text": "Un preț marcat ipoteză e onest. O cifră de venit fără calcul e decor.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 315.62497
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 1",
+    "text": "SLIDE 8 DIN PITCH · R — PIAȚA",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 156.92528,
+    "boundWidth": 148.5
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 2",
+    "text": "Piața, calculată de jos în sus",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 347.5622,
+    "boundWidth": 324.25
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Câți au problema asta și cum ajungi la primii zece?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 396.48285,
+    "boundWidth": 366.87503
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  anexă",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 98.59685,
+    "boundWidth": 93.5
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  3:50–4:10",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 17",
+    "text": "8 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 20",
+    "text": "[CÂȚI CLIENȚI ATINGI]",
+    "height": 28.0,
+    "boundHeight": 27.44504,
+    "width": 120.36,
+    "boundWidth": 84.0
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 21",
+    "text": "sursă: [LINK], [AN]",
+    "height": 9.5,
+    "boundHeight": 9.56,
+    "width": 98.88378,
+    "boundWidth": 85.0
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 25",
+    "text": "[PREȚUL PE AN]",
+    "height": 14.0,
+    "boundHeight": 12.69504,
+    "width": 85.68,
+    "boundWidth": 90.0
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 26",
+    "text": "sursă: [LINK], [AN]",
+    "height": 9.5,
+    "boundHeight": 9.56,
+    "width": 98.88378,
+    "boundWidth": 85.0
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 30",
+    "text": "[VENITUL PE AN]",
+    "height": 14.0,
+    "boundHeight": 12.69504,
+    "width": 91.8,
+    "boundWidth": 96.0
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 32",
+    "text": "PRIMII 10 CLIENȚI:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 93.981575,
+    "boundWidth": 89.39504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 33",
+    "text": "[UNDE SUNT, CONCRET]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 119.64,
+    "boundWidth": 112.87504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 35",
+    "text": "CANALUL:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 43.440945,
+    "boundWidth": 42.34504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 36",
+    "text": "[CUM AJUNGI LA EI]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 107.97937,
+    "boundWidth": 102.12504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 38",
+    "text": "PRIMUL PAS:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 58.60315,
+    "boundWidth": 56.46
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 39",
+    "text": "[CINE, CÂND]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 72.98905,
+    "boundWidth": 69.87504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 40",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 44",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 46",
+    "text": "Calculul de jos în sus: câți × cât.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 156.77347,
+    "boundWidth": 144.75
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 48",
+    "text": "Sursa și anul lângă fiecare cifră.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 155.7778,
+    "boundWidth": 143.87505
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 50",
+    "text": "Unde îi găsești pe primii 10 clienți.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 169.22717,
+    "boundWidth": 156.12505
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 52",
+    "text": "Canalul prin care ajungi la ei.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 141.64503,
+    "boundWidth": 130.75
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 56",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 57",
+    "text": "Cifra pe care nu o poți apăra. Un juriu tehnic o caută exact pe aceea.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 297.78094,
+    "boundWidth": 274.87503
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 61",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 62",
+    "text": "„Piața globală are miliarde; dacă luăm doar 1%…” — o cifră fără an și fără calcul.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 350.5744,
+    "boundWidth": 323.62503
+  },
+  {
+    "slide": 11,
+    "name": "TextBox 64",
+    "text": "Orice cifră de pe slide are lângă ea sursa și anul. Dacă nu le ai, scoate cifra.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 354.37503
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 1",
+    "text": "SLIDE 9 DIN PITCH · O — ECHIPA",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 162.23251,
+    "boundWidth": 153.45
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 2",
+    "text": "Cine a deținut ce, și de ce voi",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 353.25748,
+    "boundWidth": 330.5
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Poate echipa asta să ducă produsul mai departe?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 391.04062,
+    "boundWidth": 361.37503
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  2:40–2:50",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  4:10–4:30",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 17",
+    "text": "9 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 33.332836,
+    "boundWidth": 32.93504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 21",
+    "text": "[NUME]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 37.99874,
+    "boundWidth": 37.62504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 22",
+    "text": "[ROL: PRODUCT, BUILD SAU STORY]",
+    "height": 24.5,
+    "boundHeight": 23.35504,
+    "width": 96.134964,
+    "boundWidth": 99.75
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 23",
+    "text": "A DEȚINUT:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 53.549057,
+    "boundWidth": 51.75496
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 24",
+    "text": "[CE ANUME, ÎN 48H]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 96.31874,
+    "boundWidth": 90.25
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 28",
+    "text": "[NUME]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 37.99874,
+    "boundWidth": 37.62504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 29",
+    "text": "[ROL: PRODUCT, BUILD SAU STORY]",
+    "height": 24.5,
+    "boundHeight": 23.35504,
+    "width": 96.134964,
+    "boundWidth": 99.75
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 30",
+    "text": "A DEȚINUT:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 53.549057,
+    "boundWidth": 51.75496
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 31",
+    "text": "[CE ANUME, ÎN 48H]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 96.31874,
+    "boundWidth": 90.25
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 35",
+    "text": "[NUME]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 37.99874,
+    "boundWidth": 37.62504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 36",
+    "text": "[ROL: PRODUCT, BUILD SAU STORY]",
+    "height": 24.5,
+    "boundHeight": 23.35504,
+    "width": 96.134964,
+    "boundWidth": 99.75
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 37",
+    "text": "A DEȚINUT:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 53.549057,
+    "boundWidth": 51.75496
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 38",
+    "text": "[CE ANUME, ÎN 48H]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 96.31874,
+    "boundWidth": 90.25
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 42",
+    "text": "[NUME]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 37.99874,
+    "boundWidth": 37.62504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 43",
+    "text": "[ROL: PRODUCT, BUILD SAU STORY]",
+    "height": 24.5,
+    "boundHeight": 23.35504,
+    "width": 96.134964,
+    "boundWidth": 99.75
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 44",
+    "text": "A DEȚINUT:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 53.549057,
+    "boundWidth": 51.75496
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 45",
+    "text": "[CE ANUME, ÎN 48H]",
+    "height": 10.5,
+    "boundHeight": 10.60504,
+    "width": 96.31874,
+    "boundWidth": 90.25
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 47",
+    "text": "DE CE NOI:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 53.549057,
+    "boundWidth": 51.75504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 48",
+    "text": "[LEGĂTURA ECHIPEI CU PROBLEMA]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 177.96,
+    "boundWidth": 166.62505
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 50",
+    "text": "DUPĂ HACKATHON CONTINUĂ:",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 124.30591,
+    "boundWidth": 117.62504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 51",
+    "text": "[CINE]",
+    "height": 12.0,
+    "boundHeight": 11.65,
+    "width": 37.99874,
+    "boundWidth": 37.62504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 52",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 56",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 58",
+    "text": "Numele și rolul fiecăruia.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 123.43685,
+    "boundWidth": 114.0
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 60",
+    "text": "Ce a deținut fiecare în aceste 48 de ore.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 194.15158,
+    "boundWidth": 179.87505
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 62",
+    "text": "Legătura echipei cu problema.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 149.21347,
+    "boundWidth": 137.62505
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 64",
+    "text": "Cine continuă după hackathon.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 152.41125,
+    "boundWidth": 140.5
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 68",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 69",
+    "text": "Dacă premiul vine cu un pilot, cine îl duce la capăt?",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 224.40843,
+    "boundWidth": 207.25
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 73",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 74",
+    "text": "Echipa pe primul slide. Sau titluri goale, „CEO, CTO, CMO”, pentru patru oameni și un weekend.",
+    "height": 29.25,
+    "boundHeight": 28.53504,
+    "width": 357.51,
+    "boundWidth": 346.5
+  },
+  {
+    "slide": 12,
+    "name": "TextBox 76",
+    "text": "Echipa nu deschide pitch-ul. Îl închide — și răspunde la „de ce voi?”.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 323.75
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 1",
+    "text": "SLIDE 10 DIN PITCH · A — CE URMEAZĂ",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 188.76843,
+    "boundWidth": 178.2
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 2",
+    "text": "Ce măsori primul, și ce ceri",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 330.96558,
+    "boundWidth": 309.37503
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 3",
+    "text": "Întrebarea la care răspunde: „Ce faceți mâine, și cu ce vă putem ajuta?”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 349.26654,
+    "boundWidth": 323.25
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 4",
+    "text": "P",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 5",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 6",
+    "text": "R",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 7",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 8",
+    "text": "O",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 9",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 10",
+    "text": "B",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 11",
+    "text": "·",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 12",
+    "text": "A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 8.315591,
+    "boundWidth": 9.9
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 13",
+    "text": "pitch de 3 min  2:50–3:00",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 14",
+    "text": "pitch de 5 min  4:30–5:00",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 116.79653,
+    "boundWidth": 110.5
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 16",
+    "text": "RĂMÂNE PE SLIDE-UL TĂU",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 114.19779,
+    "boundWidth": 108.21504
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 17",
+    "text": "10 / 10",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 38.386852,
+    "boundWidth": 37.64
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 20",
+    "text": "Am tăiat, și punem înapoi: [FUNCȚIA 1], [FUNCȚIA 2]",
+    "height": 12.5,
+    "boundHeight": 12.6,
+    "width": 299.43472,
+    "boundWidth": 269.25
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 23",
+    "text": "Măsurăm primul: [METRICA] la [CINE], în [CÂT TIMP]",
+    "height": 12.5,
+    "boundHeight": 12.6,
+    "width": 306.3703,
+    "boundWidth": 267.25
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 26",
+    "text": "Cererea noastră: [PILOT, MENTORAT, ACCES LA DATE SAU O INTRODUCERE]",
+    "height": 12.5,
+    "boundHeight": 12.6,
+    "width": 418.67346,
+    "boundWidth": 387.12503
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 28",
+    "text": "[PROPOZIȚIA DE FINAL]",
+    "height": 25.5,
+    "boundHeight": 22.25504,
+    "width": 218.47763,
+    "boundWidth": 225.5
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 32",
+    "text": "[CONTACT / QR]",
+    "height": 10.0,
+    "boundHeight": 9.56,
+    "width": 59.97118,
+    "boundWidth": 63.75
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 33",
+    "text": "GHIDAJ — NU INTRĂ PE SLIDE",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 134.42252,
+    "boundWidth": 127.03504
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 37",
+    "text": "CE MENȚIONEZI",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 39",
+    "text": "Ce ați tăiat ca să încapă în 48 de ore.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 179.5378,
+    "boundWidth": 166.25
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 41",
+    "text": "Ce ați măsura primul, cu utilizatori reali.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 195.18938,
+    "boundWidth": 180.37505
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 43",
+    "text": "O cerere concretă către juriu sau mentori.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 203.81252,
+    "boundWidth": 188.37505
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 45",
+    "text": "Propoziția de final, aleasă dinainte.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 171.54749,
+    "boundWidth": 158.87505
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 49",
+    "text": "JURIUL VERIFICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 50",
+    "text": "„Ce faceți mai departe?” Răspunsul bun e o măsurătoare, nu o listă de funcții.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 339.6056,
+    "boundWidth": 314.0
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 54",
+    "text": "GREȘEALA CLASICĂ",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 75.79031,
+    "boundWidth": 71.82504
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 55",
+    "text": "Ultimul cuvânt e „Mulțumim!” pe un slide gol. Ultimul cuvânt e cererea.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 311.60156,
+    "boundWidth": 288.5
+  },
+  {
+    "slide": 13,
+    "name": "TextBox 57",
+    "text": "Ultima propoziție e cea pe care juriul o duce în deliberare. Alege-o dinainte.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 357.12497
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 1",
+    "text": "DUPĂ ULTIMUL SLIDE · ANEXE",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 140.99527,
+    "boundWidth": 133.65
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 2",
+    "text": "Slide-uri pe care nu le prezinți",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 370.2675,
+    "boundWidth": 345.62503
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 3",
+    "text": "Stau după slide-ul 10 și se deschid doar când juriul întreabă. Arată că ai întrebat înaintea lor.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 448.28906,
+    "boundWidth": 415.0
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 5",
+    "text": "ANEXA A",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 38.386852,
+    "boundWidth": 37.64
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 7",
+    "text": "Ce nu merge încă",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 107.13559,
+    "boundWidth": 99.62504
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 10",
+    "text": "[LIMITA 1]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 48.95362,
+    "boundWidth": 52.25
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 13",
+    "text": "[LIMITA 2]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 48.95362,
+    "boundWidth": 52.25
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 16",
+    "text": "[CUM AȚI TESTA FIECARE]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 112.60803,
+    "boundWidth": 114.0
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 19",
+    "text": "RĂSPUNDE LA",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 53.042835,
+    "boundWidth": 50.7
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 20",
+    "text": "„Ce nu merge?”",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 74.685036,
+    "boundWidth": 68.87504
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 22",
+    "text": "ANEXA B",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 38.386852,
+    "boundWidth": 37.64
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 24",
+    "text": "Detalii tehnice",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 91.32378,
+    "boundWidth": 84.75
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 27",
+    "text": "[ARHITECTURA COMPLETĂ]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 107.707245,
+    "boundWidth": 109.25
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 30",
+    "text": "[CE E HARDCODAT]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 78.33441,
+    "boundWidth": 80.75
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 33",
+    "text": "[CE A GENERAT AI-UL]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 97.91362,
+    "boundWidth": 99.75
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 36",
+    "text": "RĂSPUNDE LA",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 53.042835,
+    "boundWidth": 50.7
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 37",
+    "text": "„De ce ați făcut așa?”",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 101.82842,
+    "boundWidth": 93.62504
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 39",
+    "text": "ANEXA C",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 38.386852,
+    "boundWidth": 37.64
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 41",
+    "text": "Dovezile complete",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 114.83906,
+    "boundWidth": 106.87504
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 44",
+    "text": "[CELE 3 URME, CU LINK ȘI AN]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 137.08803,
+    "boundWidth": 137.75
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 47",
+    "text": "[TABELUL CU ALTERNATIVELE]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 127.29441,
+    "boundWidth": 128.25
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 50",
+    "text": "RĂSPUNDE LA",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 53.042835,
+    "boundWidth": 50.7
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 51",
+    "text": "„De unde știți că problema există?”",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 164.94095,
+    "boundWidth": 152.37505
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 53",
+    "text": "ANEXA D",
+    "height": 8.0,
+    "boundHeight": 7.7650394,
+    "width": 38.386852,
+    "boundWidth": 37.64
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 55",
+    "text": "Calculele",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 59.590317,
+    "boundWidth": 55.25
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 58",
+    "text": "[CALCULUL PIEȚEI, PAS CU PAS]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 141.98079,
+    "boundWidth": 142.5
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 61",
+    "text": "[IPOTEZELE DE PREȚ ȘI COST]",
+    "height": 12.0,
+    "boundHeight": 10.60504,
+    "width": 132.18724,
+    "boundWidth": 133.0
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 64",
+    "text": "RĂSPUNDE LA",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 53.042835,
+    "boundWidth": 50.7
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 65",
+    "text": "„Cum ați ajuns la cifra asta?”",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 135.84,
+    "boundWidth": 125.87504
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 69",
+    "text": "La un pitch de 3 minute, slide-ul 8 (piața) trece și el aici.",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 245.67937,
+    "boundWidth": 227.37505
+  },
+  {
+    "slide": 14,
+    "name": "TextBox 71",
+    "text": "Anexele nu se prezintă. Se deschid la întrebare — și acolo câștigă puncte.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 346.25
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 1",
+    "text": "Q&A",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 18.93,
+    "boundWidth": 19.8
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 2",
+    "text": "Șapte întrebări, fiecare cu slide-ul ei",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 446.51715,
+    "boundWidth": 416.5
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 3",
+    "text": "Cele cinci din PROBA, plus două despre bani și echipă. Pentru fiecare știi dinainte unde e răspunsul.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 483.59158,
+    "boundWidth": 446.75
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 7",
+    "text": "ÎNTREBAREA",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 48.49496,
+    "boundWidth": 46.47504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 8",
+    "text": "RĂSPUNSUL PROST",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 71.24252,
+    "boundWidth": 67.6
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 9",
+    "text": "RĂSPUNSUL BUN",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 62.14685,
+    "boundWidth": 59.15
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 10",
+    "text": "UNDE E",
+    "height": 7.0,
+    "boundHeight": 7.0150394,
+    "width": 30.30378,
+    "boundWidth": 29.575039
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 13",
+    "text": "„Cine e utilizatorul?”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 130.71,
+    "boundWidth": 121.5
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 14",
+    "text": "Oricine.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 40.234726,
+    "boundWidth": 37.0
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 16",
+    "text": "Grupul concret de pe slide-ul 2.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 155.68504,
+    "boundWidth": 143.5
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 19",
+    "text": "Slide 2",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 22.328424,
+    "boundWidth": 24.12504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 22",
+    "text": "„Există deja asta?”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 119.63158,
+    "boundWidth": 111.0
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 23",
+    "text": "Nu.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 19.714724,
+    "boundWidth": 17.87504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 25",
+    "text": "„Da, X și Y. Noi diferim prin Z, pentru W.”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 198.6319,
+    "boundWidth": 184.62505
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 28",
+    "text": "Slide 3",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 22.328424,
+    "boundWidth": 24.12504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 31",
+    "text": "„Cât e făcut de AI?”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 124.30591,
+    "boundWidth": 115.87504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 32",
+    "text": "Un răspuns defensiv.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 103.77748,
+    "boundWidth": 95.87504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 34",
+    "text": "„Boilerplate-ul. Deciziile sunt ale noastre, uite care.”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 255.89717,
+    "boundWidth": 237.75
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 37",
+    "text": "Slide 6",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 22.328424,
+    "boundWidth": 24.12504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 40",
+    "text": "„Ce nu merge?”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 98.58,
+    "boundWidth": 92.0
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 41",
+    "text": "„Totul merge.”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 71.9259,
+    "boundWidth": 68.87504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 43",
+    "text": "Două limite concrete, numite fără ezitare.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 202.38654,
+    "boundWidth": 187.75
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 46",
+    "text": "Anexa A",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 26.894567,
+    "boundWidth": 28.62504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 49",
+    "text": "„Ce faceți mai departe?”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 153.12,
+    "boundWidth": 142.5
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 50",
+    "text": "O listă de funcții.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 84.20252,
+    "boundWidth": 77.62504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 52",
+    "text": "Ce ați măsura primul, cu utilizatori reali.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 195.18938,
+    "boundWidth": 180.37505
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 55",
+    "text": "Slide 10",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 26.496063,
+    "boundWidth": 28.37504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 58",
+    "text": "„Cine plătește?”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 103.330315,
+    "boundWidth": 96.12504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 59",
+    "text": "„Vedem.” sau „Din reclame.”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 141.02905,
+    "boundWidth": 132.87505
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 61",
+    "text": "Clientul numit, prețul ca ipoteză, motivul.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 202.05748,
+    "boundWidth": 186.62505
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 64",
+    "text": "Slide 7",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 22.328424,
+    "boundWidth": 24.12504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 67",
+    "text": "„De ce voi?”",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 77.77315,
+    "boundWidth": 72.25
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 68",
+    "text": "„Suntem pasionați.”",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 100.06504,
+    "boundWidth": 92.87504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 70",
+    "text": "Legătura echipei cu problema și cine continuă.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 226.98189,
+    "boundWidth": 209.62505
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 73",
+    "text": "Slide 9",
+    "height": 10.195275,
+    "boundHeight": 8.52504,
+    "width": 22.328424,
+    "boundWidth": 24.12504
+  },
+  {
+    "slide": 15,
+    "name": "TextBox 75",
+    "text": "Răspunsul „nu știu, dar uite cum aș afla” este un răspuns bun. „Totul merge” nu este niciodată.",
+    "height": 14.0,
+    "boundHeight": 12.29,
+    "width": 929.22,
+    "boundWidth": 452.25
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 1",
+    "text": "ULTIMUL LUCRU",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 72.00189,
+    "boundWidth": 69.3
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 2",
+    "text": "Lista de verificare, înainte de scenă",
+    "height": 31.0,
+    "boundHeight": 29.34,
+    "width": 432.55316,
+    "boundWidth": 404.37503
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 3",
+    "text": "O bifezi în ultimele 4 ore. Un rând nebifat e singurul lucru la care mai lucrezi.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 370.2,
+    "boundWidth": 342.62503
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 7",
+    "text": "Conținut",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 55.557167,
+    "boundWidth": 51.37504
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 9",
+    "text": "Problema încape într-o propoziție, cu om și cost.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 236.29684,
+    "boundWidth": 218.87505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 11",
+    "text": "Trei urme și două alternative, cu nume.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 190.63315,
+    "boundWidth": 177.0
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 13",
+    "text": "Orice cifră are sursa și anul lângă ea.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 179.79094,
+    "boundWidth": 166.12505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 15",
+    "text": "Ce e real și ce e simulat, spus deschis.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 187.42685,
+    "boundWidth": 173.37505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 17",
+    "text": "Cine plătește: o propoziție, prețul ca ipoteză.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 218.40094,
+    "boundWidth": 202.25
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 19",
+    "text": "Ultima propoziție e o cerere, nu „mulțumim”.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 219.05063,
+    "boundWidth": 203.62505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 23",
+    "text": "Repetiție",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 58.611576,
+    "boundWidth": 54.5
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 25",
+    "text": "Demo repetat de 3 ori, a treia oară cronometrat.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 234.29716,
+    "boundWidth": 216.87505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 27",
+    "text": "Demo pornit de la zero, pe alt laptop.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 181.13252,
+    "boundWidth": 168.12505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 29",
+    "text": "Înregistrarea de rezervă, gata de pornit.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 194.64095,
+    "boundWidth": 179.87505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 31",
+    "text": "Pitch cronometrat, cu 10 secunde rezervă.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 207.76126,
+    "boundWidth": 191.75
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 33",
+    "text": "Fiecare știe ce slide prezintă și ce întrebare preia.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 241.82347,
+    "boundWidth": 223.62505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 37",
+    "text": "Nu face",
+    "height": 16.0,
+    "boundHeight": 15.045039,
+    "width": 49.144726,
+    "boundWidth": 45.87504
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 39",
+    "text": "Nu începe cu echipa sau cu tehnologiile.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 196.58157,
+    "boundWidth": 181.62505
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 41",
+    "text": "Nu citi slide-urile.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 88.38748,
+    "boundWidth": 81.5
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 43",
+    "text": "Nu vorbi peste demo.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 106.07252,
+    "boundWidth": 98.12504
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 45",
+    "text": "Nu adăuga nimic după ora 36.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 147.34874,
+    "boundWidth": 136.0
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 47",
+    "text": "Nu spune „totul merge”.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 119.43748,
+    "boundWidth": 111.5
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 50",
+    "text": "Fotografiază slide-ul ăsta acum. În ora 44, lista decide ce mai repari — nu entuziasmul.",
+    "height": 12.5,
+    "boundHeight": 12.29,
+    "width": 441.92715,
+    "boundWidth": 410.75
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 52",
+    "text": "Andrei Margelatu",
+    "height": 11.5,
+    "boundHeight": 11.285039,
+    "width": 81.76409,
+    "boundWidth": 75.37504
+  },
+  {
+    "slide": 16,
+    "name": "TextBox 54",
+    "text": "P · R · O · B · A — succes la pitch",
+    "height": 8.0,
+    "boundHeight": 8.06,
+    "width": 162.30843,
+    "boundWidth": 153.0
+  }
+]

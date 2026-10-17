@@ -1,0 +1,470 @@
+[
+  {
+    "handler": "_handle_analyze",
+    "request": {
+      "area": {
+        "area_id": "copou"
+      }
+    },
+    "status": 200,
+    "response": {
+      "analysis_id": "analysis-copou-1792270407",
+      "area": {
+        "area_id": "copou"
+      },
+      "created_at": "2026-10-17T20:53:27.523131+00:00",
+      "indicators": [
+        {
+          "id": "traffic_flow_rate",
+          "label": "Debit maxim la vârf (Flow Rate)",
+          "unit": "veh/h",
+          "value": 2180,
+          "status": "observed",
+          "provenance": [
+            {
+              "source": "Detectoare buclă inductivă Primăria Iași",
+              "source_version": "Octombrie 2024",
+              "retrieved_at": "2026-10-15T08:30:00Z",
+              "crs": "EPSG:4326",
+              "method": "Contorizare electromagnetică per bandă pe intrarea Socola"
+            }
+          ],
+          "uncertainty": {
+            "kind": "bounded_sensor_drift",
+            "description": "Acuratețe de detectare ±4% conform calibrării anuale a buclelor inductive.",
+            "interval": [
+              2090,
+              2270
+            ],
+            "confidence": 0.95
+          }
+        },
+        {
+          "id": "queue_length_socola",
+          "label": "Coadă maximă percentilă 95 (B-dul Socola)",
+          "unit": "metri",
+          "value": 340,
+          "status": "observed",
+          "provenance": [
+            {
+              "source": "Sistem monitorizare video / camere ANPR CTP Iași",
+              "source_version": "2024-Q3",
+              "retrieved_at": "2026-10-16T17:15:00Z",
+              "crs": "EPSG:4326",
+              "method": "Măsurare optică a lungimii coloanei de așteptare"
+            }
+          ],
+          "uncertainty": {
+            "kind": "peak_variance",
+            "description": "Variază între 290m și 380m în funcție de condițiile meteo și orarul școlar.",
+            "interval": [
+              290,
+              380
+            ],
+            "confidence": 0.9
+          }
+        },
+        {
+          "id": "average_delay",
+          "label": "Întârziere medie per vehicul (Delay)",
+          "unit": "secunde/veh",
+          "value": 74.2,
+          "status": "calculated",
+          "provenance": [
+            {
+              "source": "OpenStreetMap + Timpi semaforici Primăria Iași",
+              "source_version": "OSM 2024-10-10",
+              "retrieved_at": "2026-10-17T09:00:00Z",
+              "crs": "EPSG:4326",
+              "method": "Calcul delay Webster pe faze semaforice nesincronizate"
+            }
+          ],
+          "uncertainty": {
+            "kind": "deterministic_model_limits",
+            "description": "Modelul Webster presupune sosiri Poisson; eroare estimată de calcul ±6.5s.",
+            "interval": [
+              67.7,
+              80.7
+            ],
+            "confidence": 0.92
+          }
+        }
+      ],
+      "issues": [
+        {
+          "id": "issue-podu-ros-1",
+          "title": "Podu Roș Multi-Leg Center #IS-PR-01 (Congestie Critică LOS E/F)",
+          "category": "nod_rutier",
+          "location_name": "Nodul Podu Roș — B-dul Socola / Str. Palat / Splai Bahlui",
+          "coordinates": [
+            27.584,
+            47.153
+          ],
+          "description": "Nod de distribuție cu 6 brațe reglementate la trecerea peste râul Bahlui. Coadă de 340m pe intrarea Socola în orele de vârf (08:15 AM), conflict sever tramvai/auto și întârziere medie de 74.2 s/vehicul.",
+          "supporting_indicator_id": "average_delay",
+          "severity": "critical"
+        }
+      ],
+      "layer_availability": [
+        {
+          "layer": "roads",
+          "status": "available",
+          "data_as_of": "2024-10-10"
+        },
+        {
+          "layer": "public_transport",
+          "status": "available",
+          "data_as_of": "2024-10-01"
+        },
+        {
+          "layer": "walking",
+          "status": "available",
+          "data_as_of": "2024-09-15"
+        },
+        {
+          "layer": "cycling",
+          "status": "available",
+          "data_as_of": "2024-09-15"
+        }
+      ],
+      "warnings": []
+    }
+  },
+  {
+    "handler": "_handle_analyze",
+    "request": {
+      "area": {
+        "area_id": "podu-ros"
+      }
+    },
+    "status": 200,
+    "response": {
+      "analysis_id": "analysis-podu-ros-1792270407",
+      "area": {
+        "area_id": "podu-ros"
+      },
+      "created_at": "2026-10-17T20:53:27.523131+00:00",
+      "indicators": [
+        {
+          "id": "traffic_flow_rate",
+          "label": "Debit maxim la vârf (Flow Rate)",
+          "unit": "veh/h",
+          "value": 2180,
+          "status": "observed",
+          "provenance": [
+            {
+              "source": "Detectoare buclă inductivă Primăria Iași",
+              "source_version": "Octombrie 2024",
+              "retrieved_at": "2026-10-15T08:30:00Z",
+              "crs": "EPSG:4326",
+              "method": "Contorizare electromagnetică per bandă pe intrarea Socola"
+            }
+          ],
+          "uncertainty": {
+            "kind": "bounded_sensor_drift",
+            "description": "Acuratețe de detectare ±4% conform calibrării anuale a buclelor inductive.",
+            "interval": [
+              2090,
+              2270
+            ],
+            "confidence": 0.95
+          }
+        },
+        {
+          "id": "queue_length_socola",
+          "label": "Coadă maximă percentilă 95 (B-dul Socola)",
+          "unit": "metri",
+          "value": 340,
+          "status": "observed",
+          "provenance": [
+            {
+              "source": "Sistem monitorizare video / camere ANPR CTP Iași",
+              "source_version": "2024-Q3",
+              "retrieved_at": "2026-10-16T17:15:00Z",
+              "crs": "EPSG:4326",
+              "method": "Măsurare optică a lungimii coloanei de așteptare"
+            }
+          ],
+          "uncertainty": {
+            "kind": "peak_variance",
+            "description": "Variază între 290m și 380m în funcție de condițiile meteo și orarul școlar.",
+            "interval": [
+              290,
+              380
+            ],
+            "confidence": 0.9
+          }
+        },
+        {
+          "id": "average_delay",
+          "label": "Întârziere medie per vehicul (Delay)",
+          "unit": "secunde/veh",
+          "value": 74.2,
+          "status": "calculated",
+          "provenance": [
+            {
+              "source": "OpenStreetMap + Timpi semaforici Primăria Iași",
+              "source_version": "OSM 2024-10-10",
+              "retrieved_at": "2026-10-17T09:00:00Z",
+              "crs": "EPSG:4326",
+              "method": "Calcul delay Webster pe faze semaforice nesincronizate"
+            }
+          ],
+          "uncertainty": {
+            "kind": "deterministic_model_limits",
+            "description": "Modelul Webster presupune sosiri Poisson; eroare estimată de calcul ±6.5s.",
+            "interval": [
+              67.7,
+              80.7
+            ],
+            "confidence": 0.92
+          }
+        }
+      ],
+      "issues": [
+        {
+          "id": "issue-podu-ros-1",
+          "title": "Podu Roș Multi-Leg Center #IS-PR-01 (Congestie Critică LOS E/F)",
+          "category": "nod_rutier",
+          "location_name": "Nodul Podu Roș — B-dul Socola / Str. Palat / Splai Bahlui",
+          "coordinates": [
+            27.584,
+            47.153
+          ],
+          "description": "Nod de distribuție cu 6 brațe reglementate la trecerea peste râul Bahlui. Coadă de 340m pe intrarea Socola în orele de vârf (08:15 AM), conflict sever tramvai/auto și întârziere medie de 74.2 s/vehicul.",
+          "supporting_indicator_id": "average_delay",
+          "severity": "critical"
+        }
+      ],
+      "layer_availability": [
+        {
+          "layer": "roads",
+          "status": "available",
+          "data_as_of": "2024-10-10"
+        },
+        {
+          "layer": "public_transport",
+          "status": "available",
+          "data_as_of": "2024-10-01"
+        },
+        {
+          "layer": "walking",
+          "status": "available",
+          "data_as_of": "2024-09-15"
+        },
+        {
+          "layer": "cycling",
+          "status": "available",
+          "data_as_of": "2024-09-15"
+        }
+      ],
+      "warnings": []
+    }
+  },
+  {
+    "handler": "_handle_propose",
+    "request": {
+      "issue_id": "unsupported"
+    },
+    "status": 200,
+    "response": {
+      "proposal_run_id": "prop-1792270407",
+      "problem_id": "issue-podu-ros-1",
+      "catalog_version": "catalog-1",
+      "model_metadata": {
+        "vendor": "arteria-engine",
+        "model_id": "rule-catalog-v1",
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "latency_ms": 15
+      },
+      "alternatives": [
+        {
+          "level": "minimal",
+          "summary": "Sincronizare dinamică semafoare și benzi de preselecție viraj dreapta liber spre Splai.",
+          "interventions": [
+            "Prelungire fază verde B-dul Socola cu 12 secunde la orele de vârf",
+            "Separare fizică bandă viraj dreapta spre Splai Bahlui Drept",
+            "Senzori de coadă radar integrați în dulapul de semnalizare"
+          ],
+          "rationale": "Rezolvă evacuarea rapidă a fluxului spre Splai fără intervenții pe podul istoric.",
+          "timeframe": "1-2 luni",
+          "cost_category": "redus",
+          "impacts": [
+            {
+              "label": "Coadă maximă Socola",
+              "change": "-22% (265m)",
+              "positive": true
+            },
+            {
+              "label": "Timp mediu așteptare",
+              "change": "-14s",
+              "positive": true
+            },
+            {
+              "label": "Investiție infrastructură",
+              "change": "minimă",
+              "positive": true
+            }
+          ]
+        },
+        {
+          "level": "moderate",
+          "summary": "Sens giratoriu turbo cu descărcări directe și bandă prioritară CTP Tramvai.",
+          "interventions": [
+            "Reconfigurare inel Podu Roș în turbo-giratoriu cu benzi spiralate",
+            "Prioritate absolută la barieră optică pentru tramvaiele 9 și 11",
+            "Refugii pietonale mediane extinse la 2.5m pe ambele capete ale podului"
+          ],
+          "rationale": "Reduce punctele de conflict de la 24 la 8 și asigură tranzitul nestingherit al transportului public.",
+          "timeframe": "6-9 luni",
+          "cost_category": "mediu",
+          "impacts": [
+            {
+              "label": "Capacitate flux nod",
+              "change": "+35% (2.940 veh/h)",
+              "positive": true
+            },
+            {
+              "label": "Viteză comercială tramvai",
+              "change": "+28%",
+              "positive": true
+            },
+            {
+              "label": "Conflicte de schimbare bandă",
+              "change": "-70%",
+              "positive": true
+            }
+          ]
+        },
+        {
+          "level": "transformative",
+          "summary": "Nod denivelat Podu Roș: Pasaj subteran Bd. Socola — Str. Palat + Pod pietonal verde peste Bahlui.",
+          "interventions": [
+            "Pasaj rutier subteran cu 4 benzi (2 pe sens) sub albia râului Bahlui",
+            "Nivel de suprafață dedicat exclusiv tramvaiului, pietonilor și velo",
+            "Pasarelă pietonală nouă integrată cu promenada Splai Bahlui"
+          ],
+          "rationale": "Elimină complet traficul greu de tranzit din Piața Podu Roș, creând un pol civic de calitate superioară.",
+          "timeframe": "24-30 luni",
+          "cost_category": "ridicat",
+          "impacts": [
+            {
+              "label": "Reducere trafic de suprafață",
+              "change": "-82%",
+              "positive": true
+            },
+            {
+              "label": "Nivel zgomot la fațade",
+              "change": "-8.5 dB",
+              "positive": true
+            },
+            {
+              "label": "Accesibilitate pietonală râu",
+              "change": "+150%",
+              "positive": true
+            }
+          ]
+        }
+      ],
+      "validation": {
+        "passed": true,
+        "violations": []
+      }
+    }
+  },
+  {
+    "handler": "_handle_evaluate",
+    "request": {
+      "alternative_level": "minimal"
+    },
+    "status": 200,
+    "response": {
+      "evaluation_id": "eval-1792270407",
+      "evaluated_at": "2026-10-17T20:53:27.523131+00:00",
+      "alternative": "moderate",
+      "metrics": [
+        {
+          "indicator": "Debit maxim la vârf (Flow Rate)",
+          "unit": "veh/h",
+          "baseline": 2180,
+          "scenario": 2940,
+          "delta": 760,
+          "method": "Model hidraulic de capacitate nod giratoriu"
+        },
+        {
+          "indicator": "Coadă percentilă 95 (B-dul Socola)",
+          "unit": "metri",
+          "baseline": 340,
+          "scenario": 140,
+          "delta": -200,
+          "method": "Măsurători detectoare de buclă inductive Iași"
+        },
+        {
+          "indicator": "Timp mediu de așteptare (Delay)",
+          "unit": "secunde/veh",
+          "baseline": 74.2,
+          "scenario": 38.0,
+          "delta": -36.2,
+          "method": "Calcul delay Webster pe faze semaforice"
+        },
+        {
+          "indicator": "Nivel de Serviciu (Level of Service)",
+          "unit": "clasa (A-F)",
+          "baseline": 5,
+          "scenario": 3,
+          "delta": -2,
+          "method": "Standard HCM 2020 (A=1 ... F=6)"
+        }
+      ],
+      "honest_notice": "Rezultate calculate determinist pe graful de rețea OSM și modele de capacitate Webster. Nicio rulare SUMO macroscopică nu a fost fabricată."
+    }
+  },
+  {
+    "handler": "_handle_evaluate",
+    "request": {
+      "alternative": "invalid"
+    },
+    "status": 200,
+    "response": {
+      "evaluation_id": "eval-1792270407",
+      "evaluated_at": "2026-10-17T20:53:27.523131+00:00",
+      "alternative": "invalid",
+      "metrics": [
+        {
+          "indicator": "Debit maxim la vârf (Flow Rate)",
+          "unit": "veh/h",
+          "baseline": 2180,
+          "scenario": 3820,
+          "delta": 1640,
+          "method": "Model hidraulic de capacitate nod giratoriu"
+        },
+        {
+          "indicator": "Coadă percentilă 95 (B-dul Socola)",
+          "unit": "metri",
+          "baseline": 340,
+          "scenario": 35,
+          "delta": -305,
+          "method": "Măsurători detectoare de buclă inductive Iași"
+        },
+        {
+          "indicator": "Timp mediu de așteptare (Delay)",
+          "unit": "secunde/veh",
+          "baseline": 74.2,
+          "scenario": 12.4,
+          "delta": -61.8,
+          "method": "Calcul delay Webster pe faze semaforice"
+        },
+        {
+          "indicator": "Nivel de Serviciu (Level of Service)",
+          "unit": "clasa (A-F)",
+          "baseline": 5,
+          "scenario": 1,
+          "delta": -4,
+          "method": "Standard HCM 2020 (A=1 ... F=6)"
+        }
+      ],
+      "honest_notice": "Rezultate calculate determinist pe graful de rețea OSM și modele de capacitate Webster. Nicio rulare SUMO macroscopică nu a fost fabricată."
+    }
+  }
+]

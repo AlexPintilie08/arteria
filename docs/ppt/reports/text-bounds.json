@@ -1,0 +1,1379 @@
+[
+  {
+    "slide": 1,
+    "name": "Text: ARTERIA / TITLU",
+    "text": "ARTERIA / TITLU",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 91.185036
+  },
+  {
+    "slide": 1,
+    "name": "Text: 01",
+    "text": "01",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 1,
+    "name": "Text: ARION · Hackathon AI Iași 2026",
+    "text": "ARION · Hackathon AI Iași 2026",
+    "height": 32.4,
+    "boundHeight": 20.71,
+    "width": 446.4,
+    "boundWidth": 218.55
+  },
+  {
+    "slide": 1,
+    "name": "Text: Prototip demonstrativ",
+    "text": "Prototip demonstrativ",
+    "height": 25.2,
+    "boundHeight": 18.27,
+    "width": 432.0,
+    "boundWidth": 137.49504
+  },
+  {
+    "slide": 1,
+    "name": "Text: Captură din aplicație · © contributori Ope",
+    "text": "Captură din aplicație · © contributori OpenStreetMap",
+    "height": 28.8,
+    "boundHeight": 13.4,
+    "width": 390.24,
+    "boundWidth": 241.37505
+  },
+  {
+    "slide": 1,
+    "name": "reveal:s01_title/Text: ARTERIA",
+    "text": "ARTERIA",
+    "height": 79.2,
+    "boundHeight": 77.95504,
+    "width": 475.2,
+    "boundWidth": 243.5
+  },
+  {
+    "slide": 1,
+    "name": "reveal:s01_subtitle/Text: Planificare urbană pentru\nechipele de mobi",
+    "text": "Planificare urbană pentru\rechipele de mobilitate",
+    "height": 90.0,
+    "boundHeight": 76.72,
+    "width": 442.8,
+    "boundWidth": 295.39
+  },
+  {
+    "slide": 1,
+    "name": "reveal:s01_subtitle/Text: Compararea intervențiilor,\nînainte de impl",
+    "text": "Compararea intervențiilor,\rînainte de implementare",
+    "height": 72.0,
+    "boundHeight": 64.27,
+    "width": 432.0,
+    "boundWidth": 250.44
+  },
+  {
+    "slide": 2,
+    "name": "Text: ARTERIA / P / PROBLEMA",
+    "text": "ARTERIA / P / PROBLEMA",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 141.0
+  },
+  {
+    "slide": 2,
+    "name": "Text: 02",
+    "text": "02",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 2,
+    "name": "Text: O intervenție. Mai multe efecte.",
+    "text": "O intervenție. Mai multe efecte.",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 486.59
+  },
+  {
+    "slide": 2,
+    "name": "Text: Situație propusă · README.md și docs/ARCHI",
+    "text": "Situație propusă · README.md și docs/ARCHITECTURE.md, audit 2026",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 314.37503
+  },
+  {
+    "slide": 2,
+    "name": "Text: Utilizator vizat: specialistul în mobilita",
+    "text": "Utilizator vizat: specialistul în mobilitate",
+    "height": 39.6,
+    "boundHeight": 30.45,
+    "width": 864.0,
+    "boundWidth": 420.85504
+  },
+  {
+    "slide": 2,
+    "name": "Text: Reconfigurarea unei străzi cere o comparaț",
+    "text": "Reconfigurarea unei străzi cere o comparație explicabilă.",
+    "height": 39.6,
+    "boundHeight": 28.01504,
+    "width": 864.0,
+    "boundWidth": 530.67
+  },
+  {
+    "slide": 2,
+    "name": "reveal:s02_intervention/Text: Intervenție",
+    "text": "Intervenție",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 228.24,
+    "boundWidth": 115.615036
+  },
+  {
+    "slide": 2,
+    "name": "reveal:s02_category_1/Text: Transport public",
+    "text": "Transport public",
+    "height": 43.2,
+    "boundHeight": 26.8,
+    "width": 190.08,
+    "boundWidth": 152.88496
+  },
+  {
+    "slide": 2,
+    "name": "reveal:s02_category_2/Text: Pietoni",
+    "text": "Pietoni",
+    "height": 43.2,
+    "boundHeight": 26.8,
+    "width": 190.08,
+    "boundWidth": 69.51
+  },
+  {
+    "slide": 2,
+    "name": "reveal:s02_category_3/Text: Biciclete",
+    "text": "Biciclete",
+    "height": 43.2,
+    "boundHeight": 26.8,
+    "width": 190.08,
+    "boundWidth": 81.45504
+  },
+  {
+    "slide": 2,
+    "name": "reveal:s02_category_4/Text: Trafic auto",
+    "text": "Trafic auto",
+    "height": 43.2,
+    "boundHeight": 26.8,
+    "width": 190.08,
+    "boundWidth": 101.42496
+  },
+  {
+    "slide": 2,
+    "name": "Text: Ce se schimbă? Pe ce date ne bazăm?",
+    "text": "Ce se schimbă? Pe ce date ne bazăm?",
+    "height": 39.6,
+    "boundHeight": 30.45,
+    "width": 864.0,
+    "boundWidth": 386.46
+  },
+  {
+    "slide": 2,
+    "name": "Text: Nevoie propusă; interviurile cu utilizator",
+    "text": "Nevoie propusă; interviurile cu utilizatori urmează.",
+    "height": 21.6,
+    "boundHeight": 17.055038,
+    "width": 864.0,
+    "boundWidth": 290.95
+  },
+  {
+    "slide": 3,
+    "name": "Text: ARTERIA / R / ALTERNATIVE",
+    "text": "ARTERIA / R / ALTERNATIVE",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 152.16
+  },
+  {
+    "slide": 3,
+    "name": "Text: 03",
+    "text": "03",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 3,
+    "name": "Text: Instrumentele există",
+    "text": "Instrumentele există",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 314.25
+  },
+  {
+    "slide": 3,
+    "name": "Text: Surse: qgis.org · sumo.dlr.de · Primăria I",
+    "text": "Surse: qgis.org · sumo.dlr.de · Primăria Iași; consultate 2026",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 268.37503
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_row_1/Table 5:1/1",
+    "text": "QGIS",
+    "height": 61.2,
+    "boundHeight": 25.2,
+    "width": 216.0,
+    "boundWidth": 48.0
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_row_1/Table 5:1/2",
+    "text": "Date și analiză geografică",
+    "height": 61.2,
+    "boundHeight": 25.2,
+    "width": 650.1599,
+    "boundWidth": 218.7
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_row_2/Table 7:1/1",
+    "text": "SUMO",
+    "height": 61.2,
+    "boundHeight": 25.2,
+    "width": 216.0,
+    "boundWidth": 61.0
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_row_2/Table 7:1/2",
+    "text": "Simulare microscopică de trafic",
+    "height": 61.2,
+    "boundHeight": 25.2,
+    "width": 650.1599,
+    "boundWidth": 270.48
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_row_3/Table 9:1/1",
+    "text": "PMUD Iași",
+    "height": 61.2,
+    "boundHeight": 25.2,
+    "width": 216.0,
+    "boundWidth": 95.5
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_row_3/Table 9:1/2",
+    "text": "Context de planificare locală",
+    "height": 61.2,
+    "boundHeight": 25.2,
+    "width": 650.1599,
+    "boundWidth": 245.69504
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_value/Text: ARTERIA propune un parcurs comun:",
+    "text": "ARTERIA propune un parcurs comun:",
+    "height": 36.0,
+    "boundHeight": 30.45,
+    "width": 864.0,
+    "boundWidth": 387.17
+  },
+  {
+    "slide": 3,
+    "name": "reveal:s03_value/Text: zonă → alternative → comparație",
+    "text": "zonă → alternative → comparație",
+    "height": 36.0,
+    "boundHeight": 34.105038,
+    "width": 864.0,
+    "boundWidth": 386.98505
+  },
+  {
+    "slide": 3,
+    "name": "Text: Avantajul de utilizare trebuie validat cu ",
+    "text": "Avantajul de utilizare trebuie validat cu specialiști.",
+    "height": 25.2,
+    "boundHeight": 19.485039,
+    "width": 864.0,
+    "boundWidth": 326.37503
+  },
+  {
+    "slide": 4,
+    "name": "Text: ARTERIA / B / SOLUȚIA",
+    "text": "ARTERIA / B / SOLUȚIA",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 126.435036
+  },
+  {
+    "slide": 4,
+    "name": "Text: 04",
+    "text": "04",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 4,
+    "name": "Text: Parcursul unei comparații",
+    "text": "Parcursul unei comparații",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 388.29504
+  },
+  {
+    "slide": 4,
+    "name": "reveal:s04_stage_1/Text: 01",
+    "text": "01",
+    "height": 61.2,
+    "boundHeight": 58.46504,
+    "width": 259.2,
+    "boundWidth": 59.62504
+  },
+  {
+    "slide": 4,
+    "name": "reveal:s04_stage_1/Text: Alege zona",
+    "text": "Alege zona",
+    "height": 90.0,
+    "boundHeight": 32.88504,
+    "width": 259.2,
+    "boundWidth": 127.62504
+  },
+  {
+    "slide": 4,
+    "name": "reveal:s04_stage_2/Text: 02",
+    "text": "02",
+    "height": 61.2,
+    "boundHeight": 58.46504,
+    "width": 259.2,
+    "boundWidth": 59.62504
+  },
+  {
+    "slide": 4,
+    "name": "reveal:s04_stage_2/Text: Examinează\nalternativele",
+    "text": "Examinează\ralternativele",
+    "height": 90.0,
+    "boundHeight": 74.23,
+    "width": 259.2,
+    "boundWidth": 148.42
+  },
+  {
+    "slide": 4,
+    "name": "reveal:s04_stage_3/Text: 03",
+    "text": "03",
+    "height": 61.2,
+    "boundHeight": 58.46504,
+    "width": 259.2,
+    "boundWidth": 59.62504
+  },
+  {
+    "slide": 4,
+    "name": "reveal:s04_stage_3/Text: Compară\nscenariul",
+    "text": "Compară\rscenariul",
+    "height": 90.0,
+    "boundHeight": 74.23,
+    "width": 259.2,
+    "boundWidth": 107.15504
+  },
+  {
+    "slide": 4,
+    "name": "Text: Astăzi: interfață și scenarii demonstrativ",
+    "text": "Astăzi: interfață și scenarii demonstrative",
+    "height": 43.2,
+    "boundHeight": 29.235039,
+    "width": 864.0,
+    "boundWidth": 405.11505
+  },
+  {
+    "slide": 4,
+    "name": "Text: Urmează: date verificate și evaluare repro",
+    "text": "Urmează: date verificate și evaluare reproductibilă",
+    "height": 43.2,
+    "boundHeight": 29.235039,
+    "width": 864.0,
+    "boundWidth": 495.34
+  },
+  {
+    "slide": 5,
+    "name": "Text: ARTERIA / A / DEMO",
+    "text": "ARTERIA / A / DEMO",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 115.5
+  },
+  {
+    "slide": 5,
+    "name": "Text: 05",
+    "text": "05",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 5,
+    "name": "Text: Podu Roș, în prototip",
+    "text": "Podu Roș, în prototip",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 323.37
+  },
+  {
+    "slide": 5,
+    "name": "Text: DEMO: date predefinite\nși ajustări locale",
+    "text": "DEMO: date predefinite\rși ajustări locale",
+    "height": 68.4,
+    "boundHeight": 61.785038,
+    "width": 295.19992,
+    "boundWidth": 221.97504
+  },
+  {
+    "slide": 5,
+    "name": "Text: Fără analiză urbană sau\nrulare SUMO din in",
+    "text": "Fără analiză urbană sau\rrulare SUMO din interfață",
+    "height": 46.8,
+    "boundHeight": 46.83504,
+    "width": 295.19992,
+    "boundWidth": 170.93504
+  },
+  {
+    "slide": 5,
+    "name": "Text: Demo local: localhost:3000/app · Captură d",
+    "text": "Demo local: localhost:3000/app · Captură din aplicația existentă",
+    "height": 25.2,
+    "boundHeight": 14.62,
+    "width": 548.64,
+    "boundWidth": 312.74
+  },
+  {
+    "slide": 5,
+    "name": "reveal:s05_step_1/Text: 01",
+    "text": "01",
+    "height": 32.4,
+    "boundHeight": 20.71,
+    "width": 36.0,
+    "boundWidth": 21.12504
+  },
+  {
+    "slide": 5,
+    "name": "reveal:s05_step_1/Text: Selectează reperul",
+    "text": "Selectează reperul",
+    "height": 46.8,
+    "boundHeight": 26.8,
+    "width": 248.4,
+    "boundWidth": 172.58
+  },
+  {
+    "slide": 5,
+    "name": "reveal:s05_step_2/Text: 02",
+    "text": "02",
+    "height": 32.4,
+    "boundHeight": 20.71,
+    "width": 36.0,
+    "boundWidth": 21.12504
+  },
+  {
+    "slide": 5,
+    "name": "reveal:s05_step_2/Text: Alege o alternativă",
+    "text": "Alege o alternativă",
+    "height": 46.8,
+    "boundHeight": 26.8,
+    "width": 248.4,
+    "boundWidth": 176.97
+  },
+  {
+    "slide": 5,
+    "name": "reveal:s05_step_3/Text: 03",
+    "text": "03",
+    "height": 32.4,
+    "boundHeight": 20.71,
+    "width": 36.0,
+    "boundWidth": 21.12504
+  },
+  {
+    "slide": 5,
+    "name": "reveal:s05_step_3/Text: Deschide comparația",
+    "text": "Deschide comparația",
+    "height": 46.8,
+    "boundHeight": 26.8,
+    "width": 248.4,
+    "boundWidth": 196.45503
+  },
+  {
+    "slide": 6,
+    "name": "Text: ARTERIA / B / CONSTRUCȚIE",
+    "text": "ARTERIA / B / CONSTRUCȚIE",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 155.72
+  },
+  {
+    "slide": 6,
+    "name": "Text: 06",
+    "text": "06",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 6,
+    "name": "Text: Frontend · Backend · Sim",
+    "text": "Frontend · Backend · Sim",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 377.3
+  },
+  {
+    "slide": 6,
+    "name": "Text: backend/main.py · backend/server.py · sim/",
+    "text": "backend/main.py · backend/server.py · sim/ · Audit 2026; legături întrerupte = integrări urbane viitoare",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 462.75
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_frontend/Text: Frontend",
+    "text": "Frontend",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 219.6,
+    "boundWidth": 96.06
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_frontend/Text: Next.js / MapLibre\nFixtures locale",
+    "text": "Next.js / MapLibre\rFixtures locale",
+    "height": 110.16,
+    "boundHeight": 56.8,
+    "width": 219.6,
+    "boundWidth": 154.36504
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_backend/Text: Backend",
+    "text": "Backend",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 270.0,
+    "boundWidth": 89.47
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_backend/Text: FastAPI: GET /health\nDemo HTTP: /analyze\n/",
+    "text": "FastAPI: GET /health\rDemo HTTP: /analyze\r/propose · /evaluate",
+    "height": 110.16,
+    "boundHeight": 89.24,
+    "width": 270.0,
+    "boundWidth": 178.3
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_sim/Text: Sim",
+    "text": "Sim",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 218.16,
+    "boundWidth": 42.12504
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_sim/Text: NetworkX sintetic\nSmoke SUMO opțional",
+    "text": "NetworkX sintetic\rSmoke SUMO opțional",
+    "height": 110.16,
+    "boundHeight": 56.8,
+    "width": 218.16,
+    "boundWidth": 187.76505
+  },
+  {
+    "slide": 6,
+    "name": "Text: Endpoint-uri demo: date fixe, fără LLM sau",
+    "text": "Endpoint-uri demo: date fixe, fără LLM sau evaluare SUMO.",
+    "height": 32.4,
+    "boundHeight": 21.92504,
+    "width": 864.0,
+    "boundWidth": 445.64
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_ai_future/Text: AI planificat",
+    "text": "AI planificat",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 630.0,
+    "boundWidth": 124.38504
+  },
+  {
+    "slide": 6,
+    "name": "reveal:s06_ai_future/Text: Alternative structurate; validare înainte ",
+    "text": "Alternative structurate; validare înainte de evaluare",
+    "height": 30.24,
+    "boundHeight": 24.36,
+    "width": 630.0,
+    "boundWidth": 423.37503
+  },
+  {
+    "slide": 7,
+    "name": "Text: ARTERIA / BUSINESS / CINE PLĂTEȘTE",
+    "text": "ARTERIA / BUSINESS / CINE PLĂTEȘTE",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 204.36
+  },
+  {
+    "slide": 7,
+    "name": "Text: 07",
+    "text": "07",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 7,
+    "name": "Text: Model economic de testat",
+    "text": "Model economic de testat",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 397.92
+  },
+  {
+    "slide": 7,
+    "name": "Text: Sursă preț: ipoteza din pitch-ul anterior,",
+    "text": "Sursă preț: ipoteza din pitch-ul anterior, 2026",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 205.37505
+  },
+  {
+    "slide": 7,
+    "name": "Text: Ipoteză de abonament,\nnevalidată",
+    "text": "Ipoteză de abonament,\rnevalidată",
+    "height": 75.6,
+    "boundHeight": 69.25,
+    "width": 352.8,
+    "boundWidth": 245.28
+  },
+  {
+    "slide": 7,
+    "name": "Text: Niciun client plătitor confirmat",
+    "text": "Niciun client plătitor confirmat",
+    "height": 32.4,
+    "boundHeight": 21.92504,
+    "width": 864.0,
+    "boundWidth": 228.07504
+  },
+  {
+    "slide": 7,
+    "name": "reveal:s07_customer/Text: Cumpărător vizat",
+    "text": "Cumpărător vizat",
+    "height": 28.8,
+    "boundHeight": 21.92504,
+    "width": 464.4,
+    "boundWidth": 131.99504
+  },
+  {
+    "slide": 7,
+    "name": "reveal:s07_customer/Text: Administrație locală /\nconsultanță de mobi",
+    "text": "Administrație locală /\rconsultanță de mobilitate",
+    "height": 75.6,
+    "boundHeight": 69.25,
+    "width": 464.4,
+    "boundWidth": 271.38
+  },
+  {
+    "slide": 7,
+    "name": "reveal:s07_price/Text: 1.500 €",
+    "text": "1.500 €",
+    "height": 79.2,
+    "boundHeight": 70.64504,
+    "width": 374.4,
+    "boundWidth": 188.62505
+  },
+  {
+    "slide": 7,
+    "name": "reveal:s07_price/Text: / lună",
+    "text": "/ lună",
+    "height": 39.6,
+    "boundHeight": 34.105038,
+    "width": 352.8,
+    "boundWidth": 72.87504
+  },
+  {
+    "slide": 7,
+    "name": "reveal:s07_value/Text: Valoare de verificat: timpul\npregătirii un",
+    "text": "Valoare de verificat: timpul\rpregătirii unei comparații",
+    "height": 68.4,
+    "boundHeight": 64.27,
+    "width": 464.4,
+    "boundWidth": 257.16
+  },
+  {
+    "slide": 7,
+    "name": "reveal:s07_value/Text: Costuri de măsurat:\ndate, calcul și suport",
+    "text": "Costuri de măsurat:\rdate, calcul și suport",
+    "height": 64.8,
+    "boundHeight": 64.27,
+    "width": 464.4,
+    "boundWidth": 196.97504
+  },
+  {
+    "slide": 8,
+    "name": "Text: ARTERIA / R / PIAȚA",
+    "text": "ARTERIA / R / PIAȚA",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 110.71504
+  },
+  {
+    "slide": 8,
+    "name": "Text: 08",
+    "text": "08",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 8,
+    "name": "Text: Primii utilizatori, înainte de extindere",
+    "text": "Primii utilizatori, înainte de extindere",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 564.86505
+  },
+  {
+    "slide": 8,
+    "name": "Text: Ipoteze de lucru, 2026 · Nu reprezintă ven",
+    "text": "Ipoteze de lucru, 2026 · Nu reprezintă venit sau piață măsurată",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 283.37503
+  },
+  {
+    "slide": 8,
+    "name": "Text: Scenariu ipotetic; organizațiile și conver",
+    "text": "Scenariu ipotetic; organizațiile și conversia nu sunt validate",
+    "height": 32.4,
+    "boundHeight": 21.92504,
+    "width": 864.0,
+    "boundWidth": 433.19
+  },
+  {
+    "slide": 8,
+    "name": "reveal:s08_first_case/Text: Iași: primul specialist și un caz de lucru",
+    "text": "Iași: primul specialist și un caz de lucru",
+    "height": 61.2,
+    "boundHeight": 32.88504,
+    "width": 864.0,
+    "boundWidth": 437.78503
+  },
+  {
+    "slide": 8,
+    "name": "reveal:s08_outreach/Text: Apoi: listă de 10 organizații de interviev",
+    "text": "Apoi: listă de 10 organizații de intervievat",
+    "height": 61.2,
+    "boundHeight": 29.235039,
+    "width": 864.0,
+    "boundWidth": 406.21
+  },
+  {
+    "slide": 8,
+    "name": "reveal:s08_outreach/Text: Canal propus: introduceri prin mentori și ",
+    "text": "Canal propus: introduceri prin mentori și comunități de mobilitate",
+    "height": 61.2,
+    "boundHeight": 26.8,
+    "width": 864.0,
+    "boundWidth": 591.04504
+  },
+  {
+    "slide": 8,
+    "name": "reveal:s08_commercial/Text: Exercițiu comercial",
+    "text": "Exercițiu comercial",
+    "height": 28.8,
+    "boundHeight": 21.92504,
+    "width": 864.0,
+    "boundWidth": 141.47
+  },
+  {
+    "slide": 8,
+    "name": "reveal:s08_commercial/Text: 10 × 18.000 € = 180.000 € / an",
+    "text": "10 × 18.000 € = 180.000 € / an",
+    "height": 52.56,
+    "boundHeight": 42.63,
+    "width": 864.0,
+    "boundWidth": 441.62503
+  },
+  {
+    "slide": 9,
+    "name": "Text: ARTERIA / O / ECHIPA",
+    "text": "ARTERIA / O / ECHIPA",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 120.30504
+  },
+  {
+    "slide": 9,
+    "name": "Text: 09",
+    "text": "09",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 9,
+    "name": "Text: ARION",
+    "text": "ARION",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 108.0
+  },
+  {
+    "slide": 9,
+    "name": "Text: Responsabilități confirmate de echipă · Ce",
+    "text": "Responsabilități confirmate de echipă · Cerința V2, 18 octombrie 2026",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 315.0
+  },
+  {
+    "slide": 9,
+    "name": "reveal:s09_member_1/Text: Iustin Fagateanu",
+    "text": "Iustin Fagateanu",
+    "height": 46.8,
+    "boundHeight": 30.45,
+    "width": 241.2,
+    "boundWidth": 175.95
+  },
+  {
+    "slide": 9,
+    "name": "reveal:s09_member_1/Text: Frontend and\nweb experience",
+    "text": "Frontend and\rweb experience",
+    "height": 113.75992,
+    "boundHeight": 61.785038,
+    "width": 241.2,
+    "boundWidth": 146.09505
+  },
+  {
+    "slide": 9,
+    "name": "reveal:s09_member_2/Text: Alex Pintilie",
+    "text": "Alex Pintilie",
+    "height": 46.8,
+    "boundHeight": 30.45,
+    "width": 241.2,
+    "boundWidth": 128.38
+  },
+  {
+    "slide": 9,
+    "name": "reveal:s09_member_2/Text: Bootstrap and\nsimulation foundation",
+    "text": "Bootstrap and\rsimulation foundation",
+    "height": 113.75992,
+    "boundHeight": 61.785038,
+    "width": 241.2,
+    "boundWidth": 201.75504
+  },
+  {
+    "slide": 9,
+    "name": "reveal:s09_member_3/Text: Fagateanu Eusebiu",
+    "text": "Fagateanu Eusebiu",
+    "height": 46.8,
+    "boundHeight": 30.45,
+    "width": 241.2,
+    "boundWidth": 199.23
+  },
+  {
+    "slide": 9,
+    "name": "reveal:s09_member_3/Text: Backend",
+    "text": "Backend",
+    "height": 113.75992,
+    "boundHeight": 26.8,
+    "width": 241.2,
+    "boundWidth": 80.04
+  },
+  {
+    "slide": 9,
+    "name": "Text: Următoarea nevoie: validare cu un speciali",
+    "text": "Următoarea nevoie: validare cu un specialist în mobilitate",
+    "height": 57.6,
+    "boundHeight": 29.235039,
+    "width": 864.0,
+    "boundWidth": 564.42
+  },
+  {
+    "slide": 10,
+    "name": "Text: ARTERIA / A / CE URMEAZĂ",
+    "text": "ARTERIA / A / CE URMEAZĂ",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 152.37505
+  },
+  {
+    "slide": 10,
+    "name": "Text: 10",
+    "text": "10",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 10,
+    "name": "Text: Prima comparație pe date verificate",
+    "text": "Prima comparație pe date verificate",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 541.60504
+  },
+  {
+    "slide": 10,
+    "name": "Text: Măsurăm timpul pregătirii comparației și t",
+    "text": "Măsurăm timpul pregătirii comparației și trasabilitatea rezultatului.",
+    "height": 61.2,
+    "boundHeight": 26.8,
+    "width": 864.0,
+    "boundWidth": 600.81
+  },
+  {
+    "slide": 10,
+    "name": "Text: Un caz verificabil. Apoi extindere.",
+    "text": "Un caz verificabil. Apoi extindere.",
+    "height": 36.0,
+    "boundHeight": 26.8,
+    "width": 864.0,
+    "boundWidth": 301.85504
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_priority_1/Text: Date și",
+    "text": "Date și",
+    "height": 36.0,
+    "boundHeight": 28.01504,
+    "width": 262.8,
+    "boundWidth": 70.25504
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_priority_1/Text: contract unic",
+    "text": "contract unic",
+    "height": 43.2,
+    "boundHeight": 28.01504,
+    "width": 262.8,
+    "boundWidth": 127.12504
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_priority_2/Text: Un indicator",
+    "text": "Un indicator",
+    "height": 36.0,
+    "boundHeight": 28.01504,
+    "width": 262.8,
+    "boundWidth": 122.8
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_priority_2/Text: reproductibil",
+    "text": "reproductibil",
+    "height": 43.2,
+    "boundHeight": 28.01504,
+    "width": 262.8,
+    "boundWidth": 125.95
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_priority_3/Text: Test cu",
+    "text": "Test cu",
+    "height": 36.0,
+    "boundHeight": 28.01504,
+    "width": 262.8,
+    "boundWidth": 70.37504
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_priority_3/Text: un specialist",
+    "text": "un specialist",
+    "height": 43.2,
+    "boundHeight": 28.01504,
+    "width": 262.8,
+    "boundWidth": 120.365036
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_request/Text: Cererea noastră",
+    "text": "Cererea noastră",
+    "height": 28.8,
+    "boundHeight": 20.71,
+    "width": 864.0,
+    "boundWidth": 115.30504
+  },
+  {
+    "slide": 10,
+    "name": "reveal:s10_request/Text: O introducere către un specialist\nși acces",
+    "text": "O introducere către un specialist\rși acces la un set de date local.",
+    "height": 95.04,
+    "boundHeight": 86.685036,
+    "width": 864.0,
+    "boundWidth": 436.25
+  },
+  {
+    "slide": 11,
+    "name": "Text: ARTERIA / ANEXA A / DOVEZI",
+    "text": "ARTERIA / ANEXA A / DOVEZI",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 162.09
+  },
+  {
+    "slide": 11,
+    "name": "Text: 11",
+    "text": "11",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 11,
+    "name": "Text: Ce este verificat astăzi",
+    "text": "Ce este verificat astăzi",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 338.14505
+  },
+  {
+    "slide": 11,
+    "name": "Text: Sursă: verificări locale ale repository-ul",
+    "text": "Sursă: verificări locale ale repository-ului, 2026",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 211.5
+  },
+  {
+    "slide": 11,
+    "name": "Text: Typecheck\nweb · mobile · shared",
+    "text": "Typecheck\rweb · mobile · shared",
+    "height": 86.4,
+    "boundHeight": 71.73504,
+    "width": 464.4,
+    "boundWidth": 238.00504
+  },
+  {
+    "slide": 11,
+    "name": "Text: Build web\n/ și /app",
+    "text": "Build web\r/ și /app",
+    "height": 86.4,
+    "boundHeight": 71.73504,
+    "width": 464.4,
+    "boundWidth": 113.42
+  },
+  {
+    "slide": 11,
+    "name": "Text: Date urbane reale / AI generativ / SUMO di",
+    "text": "Date urbane reale / AI generativ / SUMO din UI — neintegrate",
+    "height": 54.0,
+    "boundHeight": 25.58,
+    "width": 864.0,
+    "boundWidth": 545.2
+  },
+  {
+    "slide": 11,
+    "name": "Text: Testele Python și SUMO nu au fost rerulate",
+    "text": "Testele Python și SUMO nu au fost rerulate în audit.",
+    "height": 32.4,
+    "boundHeight": 21.92504,
+    "width": 864.0,
+    "boundWidth": 380.9
+  },
+  {
+    "slide": 11,
+    "name": "reveal:s11_test_result/Text: 5 / 5",
+    "text": "5 / 5",
+    "height": 93.6,
+    "boundHeight": 87.69504,
+    "width": 345.6,
+    "boundWidth": 152.75
+  },
+  {
+    "slide": 11,
+    "name": "reveal:s11_test_result/Text: teste ale clientului API",
+    "text": "teste ale clientului API",
+    "height": 46.8,
+    "boundHeight": 30.45,
+    "width": 345.6,
+    "boundWidth": 230.7
+  },
+  {
+    "slide": 12,
+    "name": "Text: ARTERIA / ANEXA B / AI",
+    "text": "ARTERIA / ANEXA B / AI",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 132.37505
+  },
+  {
+    "slide": 12,
+    "name": "Text: 12",
+    "text": "12",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 12,
+    "name": "Text: Rolul AI în fluxul propus",
+    "text": "Rolul AI în fluxul propus",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 364.7
+  },
+  {
+    "slide": 12,
+    "name": "Text: Sursă: docs/ARCHITECTURE.md; stare verific",
+    "text": "Sursă: docs/ARCHITECTURE.md; stare verificată în cod, 2026",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 271.37503
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: Dovezi",
+    "text": "Dovezi",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 156.96,
+    "boundWidth": 71.72
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: și catalog",
+    "text": "și catalog",
+    "height": 59.76,
+    "boundHeight": 24.36,
+    "width": 156.96,
+    "boundWidth": 79.90504
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: LLM",
+    "text": "LLM",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 156.96,
+    "boundWidth": 46.62504
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: Alternative",
+    "text": "Alternative",
+    "height": 59.76,
+    "boundHeight": 24.36,
+    "width": 156.96,
+    "boundWidth": 94.40504
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: Reguli",
+    "text": "Reguli",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 156.96,
+    "boundWidth": 66.65
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: și geometrie",
+    "text": "și geometrie",
+    "height": 59.76,
+    "boundHeight": 24.36,
+    "width": 156.96,
+    "boundWidth": 105.48
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: Evaluare",
+    "text": "Evaluare",
+    "height": 39.6,
+    "boundHeight": 29.235039,
+    "width": 156.96,
+    "boundWidth": 90.38504
+  },
+  {
+    "slide": 12,
+    "name": "reveal:s12_proposed_flow/Text: independentă",
+    "text": "independentă",
+    "height": 59.76,
+    "boundHeight": 24.36,
+    "width": 156.96,
+    "boundWidth": 118.07
+  },
+  {
+    "slide": 12,
+    "name": "Text: Astăzi: catalog fix, fără apel LLM",
+    "text": "Astăzi: catalog fix, fără apel LLM",
+    "height": 43.2,
+    "boundHeight": 32.88504,
+    "width": 864.0,
+    "boundWidth": 364.35
+  },
+  {
+    "slide": 12,
+    "name": "Text: Planificat: validare pe server și aprobare",
+    "text": "Planificat: validare pe server și aprobare de către specialist",
+    "height": 46.8,
+    "boundHeight": 28.01504,
+    "width": 864.0,
+    "boundWidth": 551.05
+  },
+  {
+    "slide": 12,
+    "name": "Text: O recomandare nu constituie o măsurătoare.",
+    "text": "O recomandare nu constituie o măsurătoare.",
+    "height": 39.6,
+    "boundHeight": 30.45,
+    "width": 864.0,
+    "boundWidth": 460.57
+  },
+  {
+    "slide": 13,
+    "name": "Text: ARTERIA / ANEXA C / METODĂ",
+    "text": "ARTERIA / ANEXA C / METODĂ",
+    "height": 21.6,
+    "boundHeight": 15.835039,
+    "width": 720.0,
+    "boundWidth": 168.97
+  },
+  {
+    "slide": 13,
+    "name": "Text: 13",
+    "text": "13",
+    "height": 25.2,
+    "boundHeight": 17.055038,
+    "width": 55.44,
+    "boundWidth": 17.37496
+  },
+  {
+    "slide": 13,
+    "name": "Text: Condițiile unei evaluări credibile",
+    "text": "Condițiile unei evaluări credibile",
+    "height": 72.0,
+    "boundHeight": 43.85,
+    "width": 864.0,
+    "boundWidth": 490.39505
+  },
+  {
+    "slide": 13,
+    "name": "Text: Surse: docs/ARCHITECTURE.md · SUMO Calibra",
+    "text": "Surse: docs/ARCHITECTURE.md · SUMO Calibrator · Audit repository, 2026",
+    "height": 19.44,
+    "boundHeight": 13.4,
+    "width": 864.0,
+    "boundWidth": 333.5
+  },
+  {
+    "slide": 13,
+    "name": "Text: Lipsă date → necunoscut\nPropunere AI → ipo",
+    "text": "Lipsă date → necunoscut\rPropunere AI → ipoteză\rRulare repetată → rezultat verificabil",
+    "height": 97.2,
+    "boundHeight": 93.0,
+    "width": 864.0,
+    "boundWidth": 317.59
+  },
+  {
+    "slide": 13,
+    "name": "Text: Nu există încă efecte de trafic validate î",
+    "text": "Nu există încă efecte de trafic validate în repository.",
+    "height": 27.36,
+    "boundHeight": 20.71,
+    "width": 864.0,
+    "boundWidth": 359.22504
+  },
+  {
+    "slide": 13,
+    "name": "reveal:s13_method/Table 5:1/1",
+    "text": "Date",
+    "height": 70.56,
+    "boundHeight": 25.2,
+    "width": 201.6,
+    "boundWidth": 45.8
+  },
+  {
+    "slide": 13,
+    "name": "reveal:s13_method/Table 5:1/2",
+    "text": "Sursă, dată, acoperire, licență",
+    "height": 70.56,
+    "boundHeight": 25.2,
+    "width": 664.56,
+    "boundWidth": 256.04
+  },
+  {
+    "slide": 13,
+    "name": "reveal:s13_method/Table 5:2/1",
+    "text": "Comparație",
+    "height": 70.56,
+    "boundHeight": 25.2,
+    "width": 201.6,
+    "boundWidth": 106.09504
+  },
+  {
+    "slide": 13,
+    "name": "reveal:s13_method/Table 5:2/2",
+    "text": "Aceeași zonă și aceeași metodă",
+    "height": 70.56,
+    "boundHeight": 25.2,
+    "width": 664.56,
+    "boundWidth": 270.97
+  },
+  {
+    "slide": 13,
+    "name": "reveal:s13_method/Table 5:3/1",
+    "text": "Simulare",
+    "height": 70.56,
+    "boundHeight": 25.2,
+    "width": 201.6,
+    "boundWidth": 81.51504
+  },
+  {
+    "slide": 13,
+    "name": "reveal:s13_method/Table 5:3/2",
+    "text": "Cerere documentată, versiune, seed și rezultate păstrate",
+    "height": 70.56,
+    "boundHeight": 25.2,
+    "width": 664.56,
+    "boundWidth": 485.14
+  }
+]

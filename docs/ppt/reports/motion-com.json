@@ -1,0 +1,467 @@
+{
+  "powerPointVersion": "16.0",
+  "slides": [
+    {
+      "slide": 1,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s01_title",
+          "shapeId": 11,
+          "effectId": 10,
+          "trigger": 2,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s01_subtitle",
+          "shapeId": 12,
+          "effectId": 10,
+          "trigger": 3,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s01_product",
+          "shapeId": 13,
+          "effectId": 10,
+          "trigger": 3,
+          "duration": 0.45,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 2,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s02_intervention",
+          "shapeId": 10,
+          "effectId": 10,
+          "trigger": 2,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s02_category_1",
+          "shapeId": 15,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s02_category_2",
+          "shapeId": 20,
+          "effectId": 10,
+          "trigger": 3,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s02_category_3",
+          "shapeId": 25,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s02_category_4",
+          "shapeId": 30,
+          "effectId": 10,
+          "trigger": 3,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 3,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s03_row_1",
+          "shapeId": 7,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s03_row_2",
+          "shapeId": 9,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s03_row_3",
+          "shapeId": 11,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s03_value",
+          "shapeId": 14,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 4,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s04_stage_1",
+          "shapeId": 7,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s04_link_1",
+          "shapeId": 9,
+          "effectId": 22,
+          "trigger": 3,
+          "duration": 0.5,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s04_stage_2",
+          "shapeId": 12,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s04_link_2",
+          "shapeId": 14,
+          "effectId": 22,
+          "trigger": 3,
+          "duration": 0.5,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s04_stage_3",
+          "shapeId": 17,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 5,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s05_product",
+          "shapeId": 5,
+          "effectId": 10,
+          "trigger": 2,
+          "duration": 0.45,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s05_step_1",
+          "shapeId": 12,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s05_step_2",
+          "shapeId": 15,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s05_step_3",
+          "shapeId": 18,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s06_frontend",
+          "shapeId": 9,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s06_backend",
+          "shapeId": 13,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s06_link_backend",
+          "shapeId": 15,
+          "effectId": 22,
+          "trigger": 3,
+          "duration": 0.5,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s06_sim",
+          "shapeId": 19,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s06_link_sim",
+          "shapeId": 21,
+          "effectId": 22,
+          "trigger": 3,
+          "duration": 0.5,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s06_ai_future",
+          "shapeId": 27,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 7,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s07_customer",
+          "shapeId": 14,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s07_price",
+          "shapeId": 15,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s07_value",
+          "shapeId": 16,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 8,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s08_first_case",
+          "shapeId": 12,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s08_outreach",
+          "shapeId": 13,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s08_commercial",
+          "shapeId": 14,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 9,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s09_member_1",
+          "shapeId": 9,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s09_member_2",
+          "shapeId": 13,
+          "effectId": 10,
+          "trigger": 3,
+          "duration": 0.4,
+          "delay": 0.06
+        },
+        {
+          "shape": "reveal:s09_member_3",
+          "shapeId": 17,
+          "effectId": 10,
+          "trigger": 3,
+          "duration": 0.4,
+          "delay": 0.06
+        }
+      ]
+    },
+    {
+      "slide": 10,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s10_priority_1",
+          "shapeId": 17,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s10_priority_2",
+          "shapeId": 18,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s10_priority_3",
+          "shapeId": 19,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        },
+        {
+          "shape": "reveal:s10_request",
+          "shapeId": 20,
+          "effectId": 10,
+          "trigger": 1,
+          "duration": 0.4,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 11,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s11_test_result",
+          "shapeId": 12,
+          "effectId": 10,
+          "trigger": 2,
+          "duration": 0.35,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 12,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s12_proposed_flow",
+          "shapeId": 21,
+          "effectId": 10,
+          "trigger": 2,
+          "duration": 0.35,
+          "delay": 0.0
+        }
+      ]
+    },
+    {
+      "slide": 13,
+      "transition": 3849,
+      "transitionDuration": 0.55,
+      "advanceOnClick": -1,
+      "advanceOnTime": 0,
+      "effects": [
+        {
+          "shape": "reveal:s13_method",
+          "shapeId": 9,
+          "effectId": 10,
+          "trigger": 2,
+          "duration": 0.35,
+          "delay": 0.0
+        }
+      ]
+    }
+  ],
+  "visualPlaybackVerified": false
+}
