@@ -17,15 +17,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: windows-latest
-            sumo: required
-          - os: macos-15
-            sumo: required
-          - os: macos-15-intel
-            sumo: optional
+        os:
+          - windows-latest
+          - macos-15
     steps:
       - uses: actions/checkout@v7
+      - name: Verify Windows x64 runner
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Write-Host "RUNNER_OS=$env:RUNNER_OS RUNNER_ARCH=$env:RUNNER_ARCH"
+          if ($env:RUNNER_OS -ne 'Windows' -or $env:RUNNER_ARCH -ne 'X64') {
+              throw "Expected Windows x64; got $env:RUNNER_OS $env:RUNNER_ARCH."
+          }
+      - name: Verify macOS Apple Silicon runner
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          printf 'RUNNER_OS=%s RUNNER_ARCH=%s machine=%s\n' "$RUNNER_OS" "$RUNNER_ARCH" "$(uname -m)"
+          test "$RUNNER_OS" = "macOS"
+          test "$RUNNER_ARCH" = "ARM64"
+          test "$(uname -m)" = "arm64"
       - uses: actions/setup-node@v7
         with:
           node-version-file: .nvmrc
@@ -38,9 +50,5 @@ jobs:
         if: runner.os == 'macOS'
         shell: bash
         run: bash scripts/setup.sh
-      - name: Report and verify optional SUMO
-        if: matrix.sumo == 'required'
-        run: uv run --locked python -m sim.sumo_support --smoke
-      - name: Report optional SUMO fallback
-        if: matrix.sumo == 'optional'
+      - name: Report and verify SUMO
         run: uv run --locked python -m sim.sumo_support --smoke

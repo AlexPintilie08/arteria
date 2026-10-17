@@ -19,7 +19,7 @@ if [[ "$node_major" != "24" ]]; then
 fi
 
 printf 'Running Python backend and spatial smoke tests...\n'
-uv run --locked pytest -q
+uv run --locked pytest -q tests sim/test_engine.py
 uv run --locked python scripts/health_smoke.py
 
 printf 'Running frontend TypeScript and production build checks...\n'
