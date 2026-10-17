@@ -9,8 +9,8 @@ No cloud API key or SUMO installation is needed for the demo.
 From the repository root:
 
 ```sh
-python3 -m uv sync --locked
-python3 -m uv run --locked uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+uv sync --locked
+uv run --locked uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Open http://127.0.0.1:8000/docs. The authoritative app is `backend.main:app`.
@@ -18,9 +18,9 @@ The legacy `python -m backend.server` command now launches the same FastAPI app,
 instead of a separate server with conflicting behavior.
 
 ```sh
-python3 -m uv run --locked pytest -q
-python3 -m uv run --locked python scripts/health_smoke.py
-python3 -m uv run --locked python -m backend.demo_client
+uv run --locked pytest -q
+uv run --locked python scripts/health_smoke.py
+uv run --locked python -m backend.demo_client
 ```
 
 The final command runs a complete flow against the running API and prints all
