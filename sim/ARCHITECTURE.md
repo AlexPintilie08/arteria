@@ -323,6 +323,29 @@ This inventory covers the tracked files in `sim/`. There are no tracked nested s
 
 `sumo_engine.py` converts caller-provided directed OSM drive graphs into projected node/edge XML and reproducible synthetic route inputs, retains an ID map and EPSG:4326 GeoJSON, and optionally runs a bounded headless simulation. Its cache loader is read-only. It does not download OSM, calibrate demand, create physical interventions, or claim measured traffic.
 
+In v4, the baseline runner also requests SUMO `vehroute-output`; completed route GeoJSON is generated from the simulator-reported edge sequence and mapped back to source OSM edge geometry. It is not a timestep GPS track. Missing/unreadable route output is surfaced in warnings; planned demand routes are not substituted into the actual-route GeoJSON.
+
+### `driving_scenarios.py`
+
+- **Purpose:** separate versioned driving interventions from the existing pedestrian graph catalog and run one bounded paired SUMO baseline/scenario comparison.
+- **Public API:** `get_driving_intervention_catalog(data: OSMData | None = None)` and `evaluate_driving_scenario(data, intervention, output_dir, *, vehicle_count=20, seed=4092, duration_seconds=180.0, execution_timeout_seconds=60.0, installation=None)`; both are lazily available from `sim`.
+- **Supported operation:** only `set_drive_edge_speed_limit`, bound to the current stable SUMO edge ID, exact OSM way identity, and network revision; 1–55 m/s. It edits one deep-copied directed source edge. It does not establish feasibility, legality, safety, or recommendation.
+- **Paired execution:** a single deterministic synthetic OSM shortest-path demand plan is generated and validated against both networks. Baseline and scenario SUMO executions use the same vehicle IDs, ODs, route edge IDs, departures, seed and horizon. Pair deltas require actual completed TripInfo in both runs and valid matching simulator-reported routes. Failed/incomplete one-sided runs have no comparison metrics. Output is `arteria.sumo-comparison.v1` with explicit run, source-area, demand, status, accounting, provenance, and GeoJSON paths.
+- **Bounds/side effects:** at most 15,000 graph nodes, 50,000 edges, 200 vehicles, 600 simulated seconds, and 180 seconds per run. The evaluator accepts an already acquired `OSMData` and makes no OSM request. It refuses a nonempty output directory. SUMO and netconvert remain optional local tools.
+- **Tests:** deterministic fixture tests cover stale revision rejection, source graph immutability, exact demand reuse, only-one-edge editing, successful mocked pair, actual route matching, invalid route exclusion, unavailable tools, one-side failure, and timeout. Native SUMO verification is reported separately in `STATUS.md`.
+
+### `mvp_demo.py`
+
+- **Purpose:** produce a JSON study report, candidate/issue/route GeoJSON evidence, and concise Markdown summary without requiring the backend/frontend.
+- **Public API:** `run_mvp_demo(*, source, output_dir, cache_dir=None, area_json=None, acquire=False, feature_categories=("buildings", "schools", "healthcare", "services"), sumo_baseline=False, paired_sumo_edge_id=None, paired_speed_mps=5.0)`; CLI: `python -m sim.mvp_demo`.
+- **Source modes:** deterministic `fixture`; explicitly selected local `cache`; or validated `area` input. Area mode is validation-only unless `acquire=True`/CLI `--acquire` is supplied. A cache miss never falls back or downloads. Optional SUMO uses only a driving graph from the selected snapshot.
+- **Outputs:** ignored `sim/.cache/mvp-demo/<UTC timestamp>/report.json`, `candidate-evidence.geojson`, and `summary.md` by default. The GeoJSON preserves issue geometry, conditional candidate lines/endpoints, shared sample routes, and separately labeled targeted diagnostics.
+- **Limits:** offline unit tests cover fixture determinism and area validation without acquisition; real acquired data and native SUMO runs are separate demonstrations, not implicit test fixtures.
+
+### V4 machine-readable contract
+
+[INTEGRATION_CONTRACT_V4.md](INTEGRATION_CONTRACT_V4.md) is the authoritative handoff for exact category selectors, status/metadata fields, paired SUMO signatures and output schema, demo modes, error behavior, source attribution, and honest interpretation. The API is Python-only; the backend must continue owning HTTP auth, persistence, stable external IDs, job management, and error mapping.
+
 ### `sumo_support.py`
 
 - **Purpose:** discovers optional SUMO executables and reports or runs a temporary synthetic TraCI smoke scenario.

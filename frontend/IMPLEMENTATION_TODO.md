@@ -343,3 +343,14 @@ The current automated suite uses Node’s built-in test runner and includes `fro
 - [ ] AI, SIM, synthetic estimate and SUMO states match actual API responses; no fake AI activity or SUMO progress appears.
 - [ ] Existing five bookmarks, marketing `/`, Three.js controls and route navigation still work.
 - [ ] No blocking browser console/page errors occur in a stable run; OSM raster tile abort noise during rapid pan should be distinguished from application errors.
+
+## SIM v4 contract integration addendum (branch pending merge)
+
+The SIM-owned changes on `feat/sim-v4-mvp` define [the v4 Python/result contract](../sim/INTEGRATION_CONTRACT_V4.md). This is not yet part of `main`; consume it only after the SIM PR is merged and the backend exposes the fields.
+
+- Render candidate, issue, endpoint, shared-sample route, and separately labeled targeted-diagnostic GeoJSON only as calculated map evidence. Shared-sample impact is the ranking evidence; a local diagnostic improvement alone must be labeled `candidate_local_diagnostic_improvement_only`.
+- Use `shared_sample_outcome_status`, `impact_evidence_status`, and `geographic_evidence_status` to distinguish no common-sample benefit, local-only diagnostic improvement, common-sample improvement/regression, mixed effects, and incomplete obstacle data. Do not convert zero, unknown, or unverified values to positive recommendation language.
+- Feature-layer UI may request only `buildings`, `schools`, `healthcare`, `services`, `public_transport`, `parking`, `green_space`, and `crossings` via the backend. Preserve category availability states and OSM attribution/ODbL.
+- Show SUMO data only when a paired result is `completed`; display run IDs, source/network revision, seed, synthetic demand, finished/unfinished/not-departed/unreported counts, actual TripInfo metrics, and returned network/changed-edge/vehroute GeoJSON. Mark vehroute geometry as SUMO edge-route geometry, never GPS telemetry. Keep synthetic-demand outputs separate from measured traffic.
+
+Frontend acceptance and browser checks above remain required after backend wiring; SIM's Python implementation does not complete them.

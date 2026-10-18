@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import math
 import re
 from collections.abc import Iterable, Mapping, Sequence
 from typing import Any
 
-from shapely.geometry import LineString, Point
+from shapely.geometry import LineString, Point, shape
 
-from .geo import OSMData
+from .geo import OSMData, _source_area_geometry_hash
 from .proposal_catalog import get_intervention_catalog
 
 
@@ -102,7 +103,7 @@ def _set_status(result: dict[str, Any]) -> None:
     schema_valid = not bool(codes & _SCHEMA_FAILURES)
     action_failures = _SCHEMA_FAILURES | {
         "unsupported_intervention_type", "candidate_not_found", "candidate_intervention_mismatch",
-        "invalid_geometry", "geometry_outside_study_area", "modeled_connection_not_evaluated",
+        "invalid_geometry", "geometry_outside_study_area", "modeled_connection_not_evaluated", "stale_source_evidence",
     }
     support = result["intervention_type"] in {item["type_id"] for item in get_intervention_catalog()["supported_interventions"]} and not bool(codes & action_failures)
     has_errors = bool(result["findings"])
@@ -149,6 +150,31 @@ def validate_proposal(
         source_area_verification = "verified"
     else:
         source_area_verification = "unknown"
+
+    evaluation = candidate_evaluation if isinstance(candidate_evaluation, Mapping) else {}
+    evaluation_area_id = evaluation.get("area_id")
+    if evaluation_area_id and str(evaluation_area_id) != data.area.area_id:
+        add("stale_source_evidence", "Candidate evaluation belongs to a different study area than the supplied source snapshot.", "candidate_evaluation.area_id")
+    evaluation_geometry_hash = evaluation.get("study_area_geometry_sha256")
+    if not evaluation_geometry_hash:
+        baseline = evaluation.get("baseline_analysis", {})
+        area_record = baseline.get("area", {}) if isinstance(baseline, Mapping) else {}
+        boundary = area_record.get("boundary") if isinstance(area_record, Mapping) else None
+        if boundary:
+            try:
+                evaluation_geometry_hash = hashlib.sha256(shape(boundary).normalize().wkb).hexdigest()
+            except Exception:
+                evaluation_geometry_hash = None
+    if evaluation_geometry_hash and evaluation_geometry_hash != _source_area_geometry_hash(data.area):
+        add("stale_source_evidence", "Candidate evaluation source polygon does not match the supplied source snapshot.", "candidate_evaluation.study_area_geometry_sha256")
+    baseline_source = evaluation.get("baseline_analysis", {})
+    evaluated_provenance = baseline_source.get("provenance", {}) if isinstance(baseline_source, Mapping) else {}
+    if isinstance(evaluated_provenance, Mapping):
+        for key in ("source", "source_version", "retrieved_at"):
+            evaluated_value = evaluated_provenance.get(key)
+            current_value = data.metadata.get(key)
+            if evaluated_value is not None and current_value is not None and evaluated_value != current_value:
+                add("stale_source_evidence", f"Candidate evaluation {key} does not match the supplied source snapshot.", f"candidate_evaluation.baseline_analysis.provenance.{key}")
     if not isinstance(candidate_id, str) or not candidate_id:
         add("missing_candidate_id", "A candidate ID from a completed SIM evaluation is required.", "candidate_id")
         candidate_id = None

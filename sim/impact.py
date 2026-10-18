@@ -14,7 +14,7 @@ import networkx as nx
 from shapely.geometry import Point
 
 from .analysis import _node_sort_key, _nodes_inside_area, project_graph, route_between
-from .geo import OSMData, geojson_geometry
+from .geo import OSMData, _source_area_geometry_hash, geojson_geometry
 from .scenario import (
     WALK_SPEED_MPS,
     _prepare_scenario_graph,
@@ -425,6 +425,7 @@ def evaluate_candidates(
         return {
             "schema_version": 1,
             "area_id": data.area.area_id,
+            "study_area_geometry_sha256": _source_area_geometry_hash(data.area),
             "analysis_id": baseline_analysis.get("analysis_id"),
             "baseline_analysis": baseline_summary,
             "ranking_rule": "No graph-valid candidate was discovered; no recommendation is returned.",
@@ -457,6 +458,7 @@ def evaluate_candidates(
         return {
             "schema_version": 1,
             "area_id": data.area.area_id,
+            "study_area_geometry_sha256": _source_area_geometry_hash(data.area),
             "analysis_id": baseline_analysis.get("analysis_id"),
             "baseline_analysis": baseline_summary,
             "candidate_generation_method_version": discovery["method_version"],
@@ -513,10 +515,49 @@ def evaluate_candidates(
             for layer in ("mapped_buildings", "mapped_water_or_barriers")
         )
         total_savings = aggregate["total_distance_savings_m"]
+        sampled_benefits = aggregate["improved_count"] + aggregate["newly_reachable_count"]
+        sampled_harms = aggregate["regressed_count"] + aggregate["newly_unreachable_count"]
+        if sampled_benefits and sampled_harms:
+            shared_sample_outcome = "candidate_mixed_shared_sample_effect"
+        elif sampled_harms:
+            shared_sample_outcome = "candidate_shared_sample_regression"
+        elif sampled_benefits:
+            shared_sample_outcome = "candidate_shared_sample_benefit"
+        else:
+            shared_sample_outcome = "candidate_no_shared_sample_benefit"
+        targeted_aggregate = targeted_impact.get("aggregate") or {}
+        targeted_benefits = int(targeted_aggregate.get("improved_count", 0)) + int(targeted_aggregate.get("newly_reachable_count", 0))
+        evidence_status = (
+            "candidate_local_diagnostic_improvement_only"
+            if sampled_benefits == 0 and sampled_harms == 0 and targeted_benefits > 0
+            else "candidate_positive_common_sample_improvement"
+            if sampled_benefits > 0 and sampled_harms == 0
+            else "candidate_mixed_common_sample_effect"
+            if sampled_benefits > 0 and sampled_harms > 0
+            else "candidate_common_sample_regression"
+            if sampled_harms > 0
+            else "candidate_no_measurable_sample_effect"
+        )
+        obstacle_evidence_status = (
+            "incomplete_or_unverified_geographic_evidence"
+            if any(str(candidate["screening"][layer].get("status", "unknown")).startswith("unknown") for layer in ("mapped_buildings", "mapped_water_or_barriers"))
+            else "mapped_obstacle_layers_available"
+        )
         candidate["impact"] = impact
+        candidate["shared_sample_outcome_status"] = shared_sample_outcome
+        candidate["impact_evidence_status"] = evidence_status
+        candidate["geographic_evidence_status"] = obstacle_evidence_status
+        candidate["shared_sample_outcome_counts"] = {
+            "improved": aggregate["improved_count"],
+            "newly_reachable": aggregate["newly_reachable_count"],
+            "regressed": aggregate["regressed_count"],
+            "newly_unreachable": aggregate["newly_unreachable_count"],
+            "reachable_both_comparable": aggregate["reachable_both_comparable_pair_count"],
+        }
         candidate["evaluation_rationale"] = [
             f"Evaluated {aggregate['evaluated_pair_count']} sampled graph-node pairs against the shared baseline sample.",
             f"{aggregate['improved_count']} improved and {aggregate['newly_reachable_count']} became reachable; {aggregate['regressed_count']} regressed and {aggregate['newly_unreachable_count']} became unreachable.",
+            "No benefit was detected in the shared sample." if shared_sample_outcome == "candidate_no_shared_sample_benefit" else "Shared-sample effects are mixed; inspect both improvements and regressions." if shared_sample_outcome == "candidate_mixed_shared_sample_effect" else "Shared-sample outcome counts are bounded graph-node evidence, not a population or observed-travel estimate.",
             "Impact metrics describe the sampled graph only and do not estimate residents or observed trips.",
         ]
         candidate["ranking_metrics"] = {
@@ -549,6 +590,7 @@ def evaluate_candidates(
     return {
         "schema_version": 1,
         "area_id": data.area.area_id,
+        "study_area_geometry_sha256": _source_area_geometry_hash(data.area),
         "analysis_id": baseline_analysis.get("analysis_id"),
         "baseline_analysis": baseline_summary,
         "candidate_generation_method_version": discovery["method_version"],

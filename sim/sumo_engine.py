@@ -103,19 +103,40 @@ def _parse_lanes(attrs: Mapping[str, Any], has_reverse: bool, default_lanes: int
 def _source_provenance(data: OSMData) -> dict[str, Any]:
     metadata = data.metadata
     source_area = metadata.get("source_area", {})
+    if not isinstance(source_area, Mapping):
+        source_area = {}
     cache = metadata.get("cache", {})
+    if not isinstance(cache, Mapping):
+        cache = {}
+    source_geometry_hash = source_area.get("source_geometry_sha256") or metadata.get("source_area_geometry_sha256")
+    stored_verification = cache.get("area_equivalence_verified")
+    if stored_verification is None:
+        stored_verification = source_area.get("equivalence_verified")
+    exact_geometry_match = source_geometry_hash == _source_area_geometry_hash(data.area) if source_geometry_hash else False
+    area_verified = bool(stored_verification is True or exact_geometry_match)
+    if exact_geometry_match:
+        verification_method = "source_geometry_sha256"
+    elif stored_verification is True:
+        verification_method = "verified_cache_metadata"
+    else:
+        verification_method = "unverified"
     return {
         "source": str(metadata.get("source", "unknown")),
         "source_version": str(metadata.get("source_version", "unknown")),
         "retrieved_at": metadata.get("retrieved_at"),
         "city_id": data.area.city_id,
         "area_id": data.area.area_id,
+        "study_area": {"city_id": data.area.city_id, "area_id": data.area.area_id, "boundary_source": data.area.boundary_source},
         "boundary_source": data.area.boundary_source,
         "source_area": {
-            "source_area_id": source_area.get("source_area_id") if isinstance(source_area, Mapping) else None,
-            "source_geometry_sha256": source_area.get("source_geometry_sha256") if isinstance(source_area, Mapping) else None,
-            "area_equivalence_verified": cache.get("area_equivalence_verified") if isinstance(cache, Mapping) else None,
+            "source_area_id": source_area.get("source_area_id") or metadata.get("area_id"),
+            "source_city_id": source_area.get("source_city_id") or metadata.get("city_id"),
+            "source_boundary_source": source_area.get("source_boundary_source") or metadata.get("boundary_source"),
+            "source_geometry_sha256": source_geometry_hash,
+            "area_equivalence_verified": area_verified,
+            "verification_method": verification_method,
         },
+        "source_area_verification": {"status": "verified" if area_verified else "unverified", "method": verification_method},
         "working_crs": data.area.working_crs,
         "attribution": "© OpenStreetMap contributors" if metadata.get("source") == "OpenStreetMap" else "Synthetic or caller-provided source; verify its attribution.",
         "license": "ODbL-1.0" if metadata.get("source") == "OpenStreetMap" else None,
@@ -374,6 +395,58 @@ def _select_demand(
     return accepted, attempts
 
 
+def _validate_demand_plan(
+    demand_plan: Mapping[str, Any],
+    edge_records: list[dict[str, Any]],
+    *,
+    vehicle_count: int,
+    duration_seconds: float,
+) -> tuple[list[dict[str, Any]], int]:
+    routes = demand_plan.get("routes")
+    attempts = demand_plan.get("route_search_attempts", 0)
+    if not isinstance(routes, list) or len(routes) > vehicle_count:
+        raise ValueError("demand_plan.routes must be a list no longer than vehicle_count.")
+    if isinstance(attempts, bool) or not isinstance(attempts, int) or attempts < 0:
+        raise ValueError("demand_plan.route_search_attempts must be a non-negative integer.")
+    by_id = {edge["sumo_edge_id"]: edge for edge in edge_records}
+    normalized: list[dict[str, Any]] = []
+    seen_ids: set[str] = set()
+    for index, item in enumerate(routes):
+        if not isinstance(item, Mapping):
+            raise ValueError(f"demand_plan route {index} must be a mapping.")
+        vehicle_id = item.get("vehicle_id")
+        origin = item.get("origin_osm_node_id")
+        destination = item.get("destination_osm_node_id")
+        edge_ids = item.get("sumo_edges")
+        depart = _finite_number(item.get("depart_seconds"))
+        route_length = _finite_number(item.get("route_length_m_from_osm_graph"))
+        if not isinstance(vehicle_id, str) or not vehicle_id or vehicle_id in seen_ids:
+            raise ValueError(f"demand_plan route {index} has a missing or duplicate vehicle_id.")
+        if not isinstance(origin, str) or not origin or not isinstance(destination, str) or not destination:
+            raise ValueError(f"demand_plan route {index} must identify its origin and destination graph nodes.")
+        if not isinstance(edge_ids, list) or not edge_ids or any(not isinstance(edge_id, str) or edge_id not in by_id for edge_id in edge_ids):
+            raise ValueError(f"demand_plan route {index} references a missing or invalid SUMO network edge.")
+        if depart is None or not 0 <= depart < duration_seconds:
+            raise ValueError(f"demand_plan route {index} has a departure outside the simulation horizon.")
+        if route_length is None or route_length <= 0:
+            raise ValueError(f"demand_plan route {index} must include a finite positive source-graph route length.")
+        path_edges = [by_id[edge_id] for edge_id in edge_ids]
+        if str(path_edges[0]["from_node"]) != origin or str(path_edges[-1]["to_node"]) != destination:
+            raise ValueError(f"demand_plan route {index} origin/destination do not match its selected network edges.")
+        if any(str(left["to_node"]) != str(right["from_node"]) for left, right in zip(path_edges, path_edges[1:])):
+            raise ValueError(f"demand_plan route {index} contains disconnected network edges.")
+        seen_ids.add(vehicle_id)
+        normalized.append({
+            "vehicle_id": vehicle_id,
+            "origin_osm_node_id": origin,
+            "destination_osm_node_id": destination,
+            "sumo_edges": list(edge_ids),
+            "depart_seconds": depart,
+            "route_length_m_from_osm_graph": route_length,
+        })
+    return normalized, attempts
+
+
 def _network_geojson(edge_records: list[dict[str, Any]], provenance: Mapping[str, Any]) -> dict[str, Any]:
     features = []
     for edge in edge_records:
@@ -392,7 +465,19 @@ def _network_geojson(edge_records: list[dict[str, Any]], provenance: Mapping[str
                 "geometry_source": edge["geometry_source"],
             },
         })
-    return {"type": "FeatureCollection", "metadata": {"crs": "EPSG:4326", "source": provenance["source"], "retrieved_at": provenance["retrieved_at"], "attribution": provenance["attribution"], "license": provenance["license"]}, "features": features}
+    return {
+        "type": "FeatureCollection",
+        "metadata": {
+            "crs": "EPSG:4326",
+            "source": provenance["source"],
+            "retrieved_at": provenance["retrieved_at"],
+            "attribution": provenance["attribution"],
+            "license": provenance["license"],
+            "study_area": provenance["study_area"],
+            "source_area_verification": provenance["source_area_verification"],
+        },
+        "features": features,
+    }
 
 
 def prepare_sumo_network(
@@ -406,9 +491,15 @@ def prepare_sumo_network(
     default_speed_mps: float = DEFAULT_SPEED_MPS,
     max_nodes: int = DEFAULT_MAX_NODES,
     max_edges: int = DEFAULT_MAX_EDGES,
+    demand_plan: Mapping[str, Any] | None = None,
     installation: SumoInstallation | None = None,
 ) -> dict[str, Any]:
-    """Write bounded SUMO plain-XML inputs and deterministic synthetic routes."""
+    """Write bounded SUMO inputs, optionally reusing a validated route plan.
+
+    ``demand_plan`` is used by paired comparisons to carry one generated demand
+    plan unchanged into both network preparations. The supplied routes are
+    validated against this graph's stable SUMO edge identities.
+    """
     if isinstance(vehicle_count, bool) or not isinstance(vehicle_count, int) or not 0 <= vehicle_count <= MAX_VEHICLES:
         raise ValueError(f"vehicle_count must be between 0 and {MAX_VEHICLES}.")
     if isinstance(seed, bool) or not isinstance(seed, int):
@@ -438,13 +529,23 @@ def prepare_sumo_network(
     edge_records, route_graph, details = _edge_records(data, graph, default_lanes, speed_default)
     if not edge_records:
         raise SumoPreparationError("No directed driving edges with valid positive lengths and coordinates could be converted.")
-    demand, attempts = _select_demand(
-        route_graph,
-        details["edge_pair_ids"],
-        vehicle_count=vehicle_count,
-        duration_seconds=duration,
-        seed=seed,
-    )
+    if demand_plan is None:
+        demand, attempts = _select_demand(
+            route_graph,
+            details["edge_pair_ids"],
+            vehicle_count=vehicle_count,
+            duration_seconds=duration,
+            seed=seed,
+        )
+    elif not isinstance(demand_plan, Mapping):
+        raise ValueError("demand_plan must be a mapping returned by a prior deterministic demand preparation.")
+    else:
+        demand, attempts = _validate_demand_plan(
+            demand_plan,
+            edge_records,
+            vehicle_count=vehicle_count,
+            duration_seconds=duration,
+        )
 
     folder = Path(output_dir)
     folder.mkdir(parents=True, exist_ok=True)
@@ -640,6 +741,83 @@ def _trip_features(tripinfo_path: Path, demand: list[dict[str, Any]], edge_recor
     return features, metrics
 
 
+def _finished_vehicle_ids(tripinfo_path: Path) -> set[str]:
+    if not tripinfo_path.is_file():
+        return set()
+    root = ET.parse(tripinfo_path).getroot()
+    finished = set()
+    for item in root.findall("tripinfo"):
+        vehicle_id = item.get("id")
+        depart = _finite_number(item.get("depart"))
+        arrival = _finite_number(item.get("arrival"))
+        duration = _finite_number(item.get("duration"))
+        route_length = _finite_number(item.get("routeLength"))
+        if (
+            vehicle_id
+            and depart is not None and depart >= 0
+            and arrival is not None and arrival >= 0
+            and duration is not None and duration > 0
+            and route_length is not None and route_length > 0
+            and item.get("vaporized", "false").casefold() != "true"
+        ):
+            finished.add(vehicle_id)
+    return finished
+
+
+def _vehroute_features(
+    vehroute_path: Path,
+    demand: list[dict[str, Any]],
+    edge_records: list[dict[str, Any]],
+    finished_vehicle_ids: set[str],
+) -> tuple[list[dict[str, Any]], list[str]]:
+    if not vehroute_path.is_file():
+        return [], ["SUMO did not produce vehroute output; no executed-route GeoJSON is available."]
+    root = ET.parse(vehroute_path).getroot()
+    demand_ids = {item["vehicle_id"] for item in demand}
+    edge_by_id = {edge["sumo_edge_id"]: edge for edge in edge_records}
+    features: list[dict[str, Any]] = []
+    warnings: list[str] = []
+    for vehicle in root.findall("vehicle"):
+        vehicle_id = vehicle.get("id")
+        if vehicle_id not in demand_ids or vehicle_id not in finished_vehicle_ids:
+            continue
+        route = vehicle.find("route")
+        edge_ids = route.get("edges", "").split() if route is not None else []
+        if not edge_ids or any(edge_id not in edge_by_id for edge_id in edge_ids):
+            warnings.append(f"Skipped SUMO-reported route geometry for {vehicle_id}: route edges are missing from the source ID map.")
+            continue
+        route_edges = [edge_by_id[edge_id] for edge_id in edge_ids]
+        if any(str(left["to_node"]) != str(right["from_node"]) for left, right in zip(route_edges, route_edges[1:])):
+            warnings.append(f"Skipped SUMO-reported route geometry for {vehicle_id}: edge sequence is disconnected in the source ID map.")
+            continue
+        parts: list[list[list[float]]] = []
+        for edge in route_edges:
+            line = [[float(x), float(y)] for x, y in edge["geometry_wgs84"]]
+            if len(line) < 2:
+                continue
+            if parts and parts[-1][-1] == line[0]:
+                parts[-1].extend(line[1:])
+            else:
+                parts.append(line)
+        if not parts:
+            warnings.append(f"Skipped SUMO-reported route geometry for {vehicle_id}: no source edge geometry is available.")
+            continue
+        geometry = {"type": "LineString", "coordinates": parts[0]} if len(parts) == 1 else {"type": "MultiLineString", "coordinates": parts}
+        features.append({
+            "type": "Feature",
+            "id": vehicle_id,
+            "geometry": geometry,
+            "properties": {
+                "vehicle_id": vehicle_id,
+                "simulated_route_edge_count": len(edge_ids),
+                "route_geometry_source": "SUMO vehroute-output edge sequence mapped to source OSM edge geometry",
+                "route_geometry_is_timestep_gps": False,
+                "synthetic_demand": True,
+            },
+        })
+    return features, warnings
+
+
 def run_real_area_simulation(
     data: OSMData,
     output_dir: str | Path,
@@ -691,8 +869,9 @@ def run_real_area_simulation(
     network_path = folder / prepared["files"]["network"]
     routes_path = folder / prepared["files"]["routes"]
     tripinfo_path = folder / "iasi.tripinfo.xml"
+    vehroute_path = folder / "iasi.vehroute.xml"
     geojson_path = folder / "iasi.simulation.geojson"
-    expected_outputs = (tripinfo_path, geojson_path, folder / "iasi.simulation.json")
+    expected_outputs = (tripinfo_path, vehroute_path, geojson_path, folder / "iasi.simulation.json")
     existing = [path.name for path in expected_outputs if path.exists()]
     if existing:
         raise FileExistsError("Refusing to overwrite existing SUMO results: " + ", ".join(existing))
@@ -706,6 +885,10 @@ def run_real_area_simulation(
                 "--tripinfo-output", str(tripinfo_path),
                 "--tripinfo-output.write-unfinished", "true",
                 "--tripinfo-output.write-undeparted", "true",
+                "--vehroute-output", str(vehroute_path),
+                "--vehroute-output.write-unfinished", "true",
+                "--vehroute-output.exit-times", "true",
+                "--vehroute-output.route-length", "true",
                 "--seed", str(seed),
                 "--step-length", "1.0",
                 "--end", f"{duration_seconds:.2f}",
@@ -726,14 +909,21 @@ def run_real_area_simulation(
         if run_result.returncode != 0:
             result.update({"status": "failed", "failure_stage": "simulation_execution", "reason": (run_result.stderr or run_result.stdout or f"SUMO exited {run_result.returncode}")[-2_000:]})
         else:
-            route_features, measurements = _trip_features(tripinfo_path, prepared["demand"]["routes"], _edge_records(data, data.graphs["drive"], DEFAULT_LANES_PER_DIRECTION, DEFAULT_SPEED_MPS)[0])
+            edge_records = _edge_records(data, data.graphs["drive"], DEFAULT_LANES_PER_DIRECTION, DEFAULT_SPEED_MPS)[0]
+            _, measurements = _trip_features(tripinfo_path, prepared["demand"]["routes"], edge_records)
+            route_features, route_warnings = _vehroute_features(
+                vehroute_path,
+                prepared["demand"]["routes"],
+                edge_records,
+                _finished_vehicle_ids(tripinfo_path),
+            )
             network_collection = json.loads((folder / prepared["files"]["network_geojson"]).read_text(encoding="utf-8"))
-            _write_new_json(geojson_path, {**network_collection, "features": route_features, "metadata": {**network_collection["metadata"], "layer": "completed_sumo_vehicle_routes", "demand_type": "synthetic"}})
+            _write_new_json(geojson_path, {**network_collection, "features": route_features, "metadata": {**network_collection["metadata"], "layer": "completed_sumo_vehicle_routes", "demand_type": "synthetic", "route_geometry_source": "SUMO vehroute-output edge sequence mapped to source OSM edge geometry", "route_geometry_is_timestep_gps": False}})
             result.update({
                 "status": "completed",
                 "measurements": measurements,
-                "outputs": {"tripinfo": tripinfo_path.name, "geojson": geojson_path.name},
-                "warnings": prepared["limitations"],
+                "outputs": {"tripinfo": tripinfo_path.name, "vehroute": vehroute_path.name if vehroute_path.is_file() else None, "geojson": geojson_path.name},
+                "warnings": [*prepared["limitations"], *route_warnings],
             })
     _write_new_json(folder / "iasi.simulation.json", result)
     return result

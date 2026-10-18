@@ -303,3 +303,14 @@ Run focused tests from the repository’s established Python environment; the do
 2. **SUMO scenario comparison:** define a versioned driving-intervention catalog and a paired baseline/scenario API bound to an explicit selected driving snapshot, with bounded demand, run status, trip accounting and actual GeoJSON outputs. Current `run_real_area_simulation` is baseline-only and has no intervention argument.
 
 These are requests to the SIM owner, not backend capabilities that may be assumed during implementation. Keep `sim/` unchanged until its owner accepts and delivers the API contract.
+
+## SIM v4 contract addendum (branch pending merge)
+
+The SIM owner has implemented both requested Python contracts on `feat/sim-v4-mvp`; they are not in `main` yet. Review [sim/INTEGRATION_CONTRACT_V4.md](../sim/INTEGRATION_CONTRACT_V4.md) after that branch's PR merges. This addendum supersedes the two “not available today” statements above only once that merge is complete.
+
+- `acquire_osm_data(..., feature_categories=...)` accepts a bounded set of eight fixed OSM category IDs, preserves default broad-query and `include_features=False` compatibility, and returns `metadata.feature_category_availability` per category. Keep category failure/unknown distinct from available-empty and pass OSM attribution/ODbL through storage and responses.
+- `get_driving_intervention_catalog(data)` and `evaluate_driving_scenario(data, intervention, output_dir, ...)` are separate from pedestrian graph edits. The only current driving operation is version-bound `set_drive_edge_speed_limit` (1–55 m/s). Paired runs share one deterministic synthetic OD plan and return `arteria.sumo-comparison.v1`; the SIM evaluator makes no OSM request and has no persistent job store or HTTP endpoint.
+- Backend should accept only a selected stored snapshot's drive graph, resolve catalog targets against its exact network revision, invoke SIM in a bounded worker, persist both run outputs/provenance, and map explicit `unavailable`, `preparation_failed`, `timeout`, `failed`, and `completed` states. `comparison` is `null` unless both runs complete. Stable public run IDs, authorization, concurrency limits, persistence, HTTP schemas, and safe artifact serving remain backend-owned.
+- Only actual TripInfo metrics from both runs and actual matching valid SUMO-reported routes can appear in paired deltas. Demand remains synthetic; simulation is uncalibrated; SUMO route GeoJSON is not GPS; feasibility/legal status is unknown. Keep pedestrian graph comparison marked as not SUMO-executed.
+
+Implement the adapter only after the contract branch merges and cross-check backend schemas against that document; this task does not change backend source.

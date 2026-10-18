@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+from importlib.metadata import PackageNotFoundError, version
 from collections.abc import Mapping, Sequence
 from typing import Any
 
@@ -16,6 +17,10 @@ from .proposal_catalog import get_intervention_catalog
 
 DEFAULT_MAX_PACKET_BYTES = 65_536
 _DEFAULT_LIMITS = {"issues": 24, "indicators": 64, "candidates": 8, "rejected_candidates": 12, "route_samples": 8, "evidence_items": 12}
+try:
+    SIM_ENGINE_VERSION = version("arteria")
+except PackageNotFoundError:
+    SIM_ENGINE_VERSION = "0.1.0"
 
 
 def _text(value: Any, limit: int = 2_000) -> str | None:
@@ -141,6 +146,10 @@ def _compact_candidate(candidate: Mapping[str, Any], route_limit: int) -> dict[s
         "ranking_explanation": _text(candidate.get("ranking_explanation")),
         "selection_rationale": _text(candidate.get("selection_rationale")),
         "shared_sample_impact": _compact_impact(candidate.get("impact"), route_limit),
+        "shared_sample_outcome_status": _text(candidate.get("shared_sample_outcome_status"), 100),
+        "impact_evidence_status": _text(candidate.get("impact_evidence_status"), 100),
+        "geographic_evidence_status": _text(candidate.get("geographic_evidence_status"), 100),
+        "shared_sample_outcome_counts": _json_copy(candidate.get("shared_sample_outcome_counts", {})),
         "targeted_diagnostic_impact": _compact_impact(candidate.get("targeted_diagnostic_impact"), route_limit),
         "provenance": _json_copy(candidate.get("provenance", [])),
         "assumptions": _json_copy(candidate.get("assumptions", [])),
@@ -216,6 +225,13 @@ def build_proposal_context(
     while True:
         packet = {
             "schema_version": "arteria.proposal-context.v1",
+            "sim_engine_version": SIM_ENGINE_VERSION,
+            "sim_method_versions": {
+                "shared_route_impact": "arteria-multi-route-impact-v2.1",
+                "osm_feature_categories": "arteria.osm-feature-categories.v1",
+                "driving_interventions": "arteria.driving-intervention-catalog.v1",
+                "sumo_comparison": "arteria.sumo-comparison.v1",
+            },
             "study_area": {
                 "city_id": str(data.area.city_id),
                 "area_id": area_id,
@@ -255,14 +271,17 @@ def build_proposal_context(
             "capabilities": {
                 "intervention_catalog_version": catalog["version"],
                 "supported_intervention_types": [item["type_id"] for item in catalog["supported_interventions"]],
-                "unsupported_simulation_capabilities": ["real_area_sumo_network_conversion", "traffic_demand_calibration", "observed_traffic_metrics", "construction_feasibility"],
+                "feature_category_schema_version": "arteria.osm-feature-categories.v1",
+                "supported_osm_feature_categories": ["buildings", "schools", "healthcare", "services", "public_transport", "parking", "green_space", "crossings"],
+                "driving_scenario_evaluation": "optional_local_sumo_baseline_and_paired_edge_speed_scenario",
+                "unsupported_simulation_capabilities": ["traffic_demand_calibration", "observed_traffic_metrics", "construction_feasibility"],
             },
             "model_limitations": [
                 "Graph-node route samples are calculated network probes, not observed journeys or population demand.",
                 "A hypothetical pedestrian connection is not verified for safety, accessibility, ownership, legal approval, or construction feasibility.",
                 "OSM mapping and tagged feature coverage can be incomplete; missing or empty layers do not establish real-world absence.",
                 "Targeted diagnostic routes are candidate-specific and are excluded from shared-sample ranking.",
-                "No real-area SUMO traffic simulation or calibrated traffic measurement is currently available from this engine.",
+                "Real-area SUMO requires locally installed netconvert and sumo binaries; any generated demand is synthetic and any outputs are uncalibrated simulation results, not observed traffic.",
             ],
             "truncation": {
                 "packet_byte_limit": max_packet_bytes,
