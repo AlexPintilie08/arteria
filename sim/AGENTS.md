@@ -5,7 +5,7 @@ These instructions apply to work owned by `sim/`. Repository-level instructions 
 ## Ownership and boundaries
 
 - SIM owns the version-controlled Python/geospatial component under `sim/`.
-- Do not modify frontend or backend code without authorization. Backend may import SIM, but currently exposes only `GET /health`; HTTP orchestration and persistence belong to backend owners.
+- Do not modify frontend or backend implementation code without authorization. Backend owners expose the graph study API under /api/v1/spatial/studies; HTTP orchestration and persistence belong to backend owners.
 - Coordinate before changing shared dependencies or root CI/configuration.
 - Keep changes within requested scope. Do not treat ignored cache data, browser previews, bytecode, or virtual environments as source to publish.
 
@@ -21,6 +21,8 @@ Import supported APIs from `sim`: existing acquisition/analysis/scenario functio
 
 ## Geographic and evidence conventions
 New package-root APIs include `get_intervention_catalog`, `build_proposal_context`, `prepare_candidate_options`, `validate_proposal`, `validate_proposal_set`, `load_cached_driving_snapshot`, `prepare_sumo_network`, `run_real_area_simulation`, `get_driving_intervention_catalog`, and `evaluate_driving_scenario`; `SumoPreparationError` is a package-root type. `acquire_osm_data` has a bounded `feature_categories` selector. See [INTEGRATION_CONTRACT_V4.md](INTEGRATION_CONTRACT_V4.md) for exact signatures and result fields. Proposal validation is not physical feasibility validation. SUMO demand is synthetic; real-area baseline/paired runners require local `netconvert` and `sumo` binaries and never download OSM.
+
+The urban planning APIs on `feat/sim-ai-planning-mvp` are `detect_urban_problems`, `problem_locations_geojson`, `build_solution_plan`, `build_ai_planning_packet`, `validate_ai_planning_response`, and `run_ai_planning`; they are package-root exports in that branch. They do not call a cloud model. The backend must store the bounded packet while the matching `OSMData` is still available, then use that immutable packet for provider calls.
 
 
 - Bbox values are `[west, south, east, north]`; GeoJSON uses `[longitude, latitude]` in EPSG:4326. Keep calculations in `StudyArea.working_crs` and serialize output back to WGS84.

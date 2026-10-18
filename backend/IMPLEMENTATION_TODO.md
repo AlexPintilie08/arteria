@@ -314,3 +314,95 @@ The SIM owner has implemented both requested Python contracts on `feat/sim-v4-mv
 - Only actual TripInfo metrics from both runs and actual matching valid SUMO-reported routes can appear in paired deltas. Demand remains synthetic; simulation is uncalibrated; SUMO route GeoJSON is not GPS; feasibility/legal status is unknown. Keep pedestrian graph comparison marked as not SUMO-executed.
 
 Implement the adapter only after the contract branch merges and cross-check backend schemas against that document; this task does not change backend source.
+
+## SIM AI Planning Contract — Integration Required
+
+**Status:** SIM v4 PR #5 was merged normally into `main` as `6760ded19a9985e4d61101b1432b3815e016d51e`. Its Windows x64 and macOS ARM64/Intel checks passed. The new AI planning APIs described here are available only in `feat/sim-ai-planning-mvp` until its PR is merged. Backend AI planning is not implemented, and no cloud LLM has been called by SIM.
+
+**Current storage limitation:** `backend/spatial_worker.py::calculate` acquires or creates an `OSMData`, calculates `analysis`, candidates, proposal validation and the existing `build_proposal_context` packet, then exits its subprocess. `backend/spatial_routes.py::create_study` stores an immutable `Study` with those JSON results. The raw `OSMData` graph is not persisted, and the current worker does not emit urban problems, the solution plan or the new AI planning packet. Build these records while the matching snapshot is still in the worker, then add them to the stored study contract. The recommendation request must use the stored packet unchanged and must not fetch a new snapshot.
+
+**SIM functions to call:**
+
+- `detect_urban_problems(snapshot, analysis=analysis, candidate_evaluation=evaluation, paired_sumo_result=optional_verified_pair)` creates localized problems, coverage gaps and separately labeled verified SUMO observations.
+- `build_solution_plan(snapshot, analysis, urban_issues, evaluation)` uses `prepare_candidate_options` and `validate_proposal_set` to connect actual evaluated candidates to problems; conceptual suggestions carry no executable geometry or impact.
+- `build_ai_planning_packet(snapshot, analysis, urban_issues, evaluation, solution_plan)` wraps `build_proposal_context`, preserves provenance and bounds the packet to 65,536 bytes by default. Store its `integrity.sha256` with the immutable study record; it is a checksum, not a signature.
+- `AI_SYSTEM_PROMPT` and `AI_OUTPUT_SCHEMA` define the provider-neutral model call. `run_ai_planning(packet, call_model, timeout_seconds=20)` invokes an injected callback and `validate_ai_planning_response(response, packet)` returns accepted references with authoritative SIM candidate geometry, intervention and impact attached.
+- `problem_locations_geojson(urban_issues)` exports problem markers and actual calculated geometry in EPSG:4326.
+
+**Study creation flow:**
+
+```python
+snapshot = acquire_osm_data(
+    neighborhood_area_input(get_neighborhood(neighborhood_id)),
+    modes=("walk",),
+    include_features=True,
+    feature_categories=("schools", "healthcare", "public_transport", "crossings"),
+)
+analysis = analyze_snapshot(snapshot)
+evaluation = evaluate_candidates(snapshot, analysis=analysis, sample_count=request.sample_count, seed=request.seed)
+urban_issues = detect_urban_problems(snapshot, analysis=analysis, candidate_evaluation=evaluation)
+solution_plan = build_solution_plan(snapshot, analysis, urban_issues, evaluation)
+ai_packet = build_ai_planning_packet(snapshot, analysis, urban_issues, evaluation, solution_plan)
+# Persist analysis, evaluation, solution_plan, and ai_packet in the same immutable Study.
+# Keep the packet available after this worker exits; do not persist or re-fetch the graph for LLM calls.
+```
+
+In the actual worker, retain the current area validation/error mapping and request bounds. Fixture studies must call `fixture_snapshot()` and remain labeled synthetic; never substitute a fixture for a failed OSM request. The selected feature categories are optional and bounded to four. Keep unknown and available-empty states distinct.
+
+**Recommendation request flow:**
+
+```python
+study = load_study(study_id)                       # existing study and its stored packet
+packet = study.ai_evidence_packet                  # immutable snapshot-bound JSON
+
+def call_model(*, packet, system_prompt, output_schema, timeout_seconds):
+    return configured_backend_provider.structured_json(
+        system_prompt=system_prompt,
+        input_json=packet,
+        schema=output_schema,
+        timeout_seconds=timeout_seconds,
+    )
+
+result = run_ai_planning(packet, call_model, timeout_seconds=20)
+# Persist a separate immutable planning result linked to study_id and packet SHA-256.
+# Return result.validation; it already contains only accepted model references and attached SIM facts.
+```
+
+The `configured_backend_provider.structured_json` call is an adapter placeholder, not a current method or provider dependency. The backend must request schema-constrained output, keep provider credentials server-side, enforce provider-side deadlines, and map SIM statuses without exposing exception details. `provider_unavailable`, `timeout`, `provider_error`, `invalid_response`, `completed_with_rejections`, and `completed` are distinct states. Do not call deterministic demo output an AI result.
+
+**Illustrative model input and output:** IDs below are placeholders and must be copied verbatim from the stored packet; the model cannot create new ones.
+
+```json
+{
+  "schema_version": "arteria.ai-planning-packet.v1",
+  "study_area": {"area_id": "<stored-area-id>"},
+  "urban_intelligence": {
+    "problems": [{"problem_id": "prob_<packet-id>", "evidence": [{"evidence_id": "ev_<packet-id>"}]}]
+  },
+  "solution_plan": {
+    "solutions": [{"solution_id": "sol_<packet-id>", "candidate_id": "cand_<packet-id>", "status": "supported_evaluated"}]
+  },
+  "integrity": {"sha256": "<packet-sha256>"}
+}
+```
+
+```json
+{
+  "schema_version": "arteria.ai-planning-response.v1",
+  "area_id": "<stored-area-id>",
+  "evidence_packet_sha256": "<packet-sha256>",
+  "summary": "Dovezile mapate justifică verificarea problemei citate.",
+  "identified_problems": [{"problem_id": "prob_<packet-id>", "explanation": "Graful indică o posibilă întrerupere care trebuie verificată în teren.", "evidence_ids": ["ev_<packet-id>"]}],
+  "recommended_solutions": [{"solution_id": "sol_<packet-id>", "candidate_id": "cand_<packet-id>", "problem_ids": ["prob_<packet-id>"], "title": "Evaluarea conexiunii candidate", "explanation": "Opțiunea este legată de dovezile citate; verificarea fizică este necesară.", "expected_benefit_type": "graph_connectivity_or_sampled_route_access", "evidence_ids": ["ev_<packet-id>"], "field_verification_required": true}],
+  "supported_candidate_ids": ["cand_<packet-id>"],
+  "evidence_references": ["ev_<packet-id>"],
+  "limitations": ["Datele mapate pot fi incomplete."],
+  "requires_field_verification": true
+}
+```
+
+After validation, SIM returns the canonical `solution_id` and attaches the matching `authoritative_sim_solution` from the packet, including candidate geometry, exact intervention, shared-sample impact and separate targeted diagnostics. Persist that validated structure; never merge model-authored metrics or geometry into it. Unknown problem/candidate/evidence IDs, extra action/geometry/metric/cost/citation/SUMO fields, non-finite or oversized JSON, area/hash mismatch, feasibility claims and numeric prose are rejected. Invalid entries can be rejected individually while unrelated valid entries survive; an area/hash mismatch rejects the whole response.
+
+**Proposed API addition (not implemented):** `POST /api/v1/spatial/studies/{study_id}/planning` with an empty or bounded preferences-only request; it must load the study's immutable stored packet, make no acquisition, and return an immutable planning-result ID, study/baseline IDs, packet hash, provider status and validated response. Update `Study` persistence/schema first to include `urban_issues`, `solution_plan` and `ai_evidence_packet`. Store each provider result separately because `Store.put` treats IDs as immutable. The current API has no AI planning route, provider integration, or provider credentials.
+
+Before the product says “AI connected,” the backend owner must run one authenticated cloud-provider smoke test with server-side credentials, validate the returned packet-bound response, and verify that timeout/provider failures remain explicit. SIM's deterministic mock demo and tests do not satisfy this check. This handoff adds no backend implementation or endpoint.

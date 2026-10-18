@@ -7,7 +7,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Mapping
 
 from .analysis import analyze_snapshot
 from .demo import fixture_snapshot, load_cached_snapshot
@@ -18,6 +18,9 @@ from .proposal_context import build_proposal_context
 from .proposal_validation import validate_proposal_set
 from .proposals import prepare_candidate_options
 from .sumo_engine import load_cached_driving_snapshot, run_real_area_simulation
+from .urban_intelligence import detect_urban_problems, problem_locations_geojson
+from .solution_planner import build_solution_plan
+from .ai_planning_contract import AI_OUTPUT_SCHEMA, AI_SYSTEM_PROMPT, build_ai_planning_packet, run_ai_planning
 
 
 def _read_area(path: Path) -> Any:
@@ -137,8 +140,99 @@ def _markdown_report(result: dict[str, Any]) -> str:
         "",
     ]
     lines.extend(f"- {item}" for item in result["limitations"])
+    if isinstance(result.get("urban_issues"), dict):
+        urban = result["urban_issues"]
+        plan = result.get("solution_plan", {})
+        mock = result.get("mock_ai", {})
+        lines.extend([
+            "",
+            "## Urban planning preview",
+            "",
+            f"- Detected evidence-backed problems: `{len(urban.get('problems', []))}`",
+            f"- Problem types: `{', '.join(sorted({str(item.get('problem_type')) for item in urban.get('problems', []) if isinstance(item, dict)})) or 'none'}`",
+            f"- Candidate-backed options: `{sum(item.get('status') in {'supported_evaluated', 'supported_not_yet_evaluated'} for item in plan.get('solutions', []) if isinstance(item, dict))}`",
+            f"- Conceptual options: `{sum(item.get('status') == 'concept_only_not_evaluated' for item in plan.get('solutions', []) if isinstance(item, dict))}`",
+            f"- AI contract example: `{mock.get('status', 'not_run')}` (`{mock.get('provider', 'none')}`; no live cloud inference)",
+            f"- AI evidence packet: `{result.get('ai_packet_bytes', 0)}` bytes",
+        ])
     lines.append("")
     return "\n".join(lines)
+
+
+def _mock_ai_response(packet: dict[str, Any]) -> dict[str, Any]:
+    urban = packet["urban_intelligence"]
+    plan = packet["solution_plan"]
+    problems = urban.get("problems", [])
+    available_solutions = plan.get("solutions", [])
+    selected_solutions = available_solutions[:8]
+    available_problem_ids = {
+        item.get("problem_id") for item in problems if isinstance(item, dict)
+    }
+    available_evidence_ids = {
+        evidence.get("evidence_id")
+        for problem in problems if isinstance(problem, dict)
+        for evidence in (problem.get("evidence", []) if isinstance(problem.get("evidence"), list) else [])
+        if isinstance(evidence, dict) and isinstance(evidence.get("evidence_id"), str)
+    }
+    available_evidence_ids.update(
+        item.get("gap_id") for item in urban.get("coverage_gaps", [])
+        if isinstance(item, dict) and isinstance(item.get("gap_id"), str)
+    )
+    available_evidence_ids.update(
+        item.get("observation_id") for item in urban.get("simulation_observations", [])
+        if isinstance(item, dict) and isinstance(item.get("observation_id"), str)
+    )
+    identified = []
+    for problem in problems[:12]:
+        evidence = problem.get("evidence", [])
+        evidence_ids = [item["evidence_id"] for item in evidence if isinstance(item, dict) and isinstance(item.get("evidence_id"), str)]
+        if evidence_ids:
+            identified.append({
+                "problem_id": problem["problem_id"],
+                "explanation": "Dovezile SIM indică o posibilă problemă în rețeaua mapată; verificarea în teren rămâne necesară.",
+                "evidence_ids": evidence_ids[:8],
+            })
+    recommendations = []
+    candidate_ids = []
+    refs = {evidence_id for item in identified for evidence_id in item["evidence_ids"]}
+    for solution in selected_solutions:
+        evidence_ids = [value for value in solution.get("evidence_ids", []) if isinstance(value, str)]
+        problem_ids = solution.get("problem_ids", [])
+        if (
+            not evidence_ids
+            or not all(isinstance(value, str) for value in evidence_ids)
+            or not set(evidence_ids).issubset(available_evidence_ids)
+            or not isinstance(problem_ids, list)
+            or not all(isinstance(value, str) for value in problem_ids)
+            or not set(problem_ids).issubset(available_problem_ids)
+        ):
+            continue
+        refs.update(evidence_ids)
+        candidate_id = solution.get("candidate_id")
+        if candidate_id:
+            candidate_ids.append(candidate_id)
+        recommendations.append({
+            "solution_id": solution["solution_id"],
+            "candidate_id": candidate_id,
+            "problem_ids": solution.get("problem_ids", []),
+            "title": solution["title"],
+            "explanation": "Opțiunea este legată de dovezile citate; geometria și orice impact calculat sunt atașate din rezultatul autoritativ SIM.",
+            "expected_benefit_type": solution["expected_benefit_type"],
+            "evidence_ids": evidence_ids[:8],
+            "field_verification_required": True,
+        })
+    return {
+        "schema_version": "arteria.ai-planning-response.v1",
+        "area_id": packet["study_area"]["area_id"],
+        "evidence_packet_sha256": packet["integrity"]["sha256"],
+        "summary": "Previzualizare deterministă a contractului AI, construită numai din dovezile SIM furnizate.",
+        "identified_problems": identified,
+        "recommended_solutions": recommendations,
+        "supported_candidate_ids": sorted(set(candidate_ids)),
+        "evidence_references": sorted(refs),
+        "limitations": ["Eșantionul de rețea este calculat, iar datele mapate pot fi incomplete."],
+        "requires_field_verification": True,
+    }
 
 
 def run_mvp_demo(
@@ -152,6 +246,7 @@ def run_mvp_demo(
     sumo_baseline: bool = False,
     paired_sumo_edge_id: str | None = None,
     paired_speed_mps: float = 5.0,
+    planning: bool = False,
 ) -> dict[str, Any]:
     """Run only the selected source mode; no cache miss silently downloads or falls back."""
     if source not in {"fixture", "cache", "area"}:
@@ -197,7 +292,24 @@ def run_mvp_demo(
             source_mode = {"mode": "area", "source_name": "not acquired", "retrieved_at": None, "network_requests_made": False, "area_equivalence": "not_acquired"}
         else:
             data = acquire_osm_data(area, modes=("walk", "drive"), feature_categories=feature_categories)
-            source_mode = {"mode": "area", "source_name": data.metadata.get("source"), "retrieved_at": data.metadata.get("retrieved_at"), "network_requests_made": True, "area_equivalence": "verified_by_requested_geometry"}
+            cache_metadata = data.metadata.get("cache", {})
+            requested_modes = data.metadata.get("requested_network_modes", [])
+            cached_modes = cache_metadata.get("cached_network_modes", []) if isinstance(cache_metadata, Mapping) else []
+            feature_query_requested = data.metadata.get("feature_query_requested", True)
+            features_cached = cache_metadata.get("features_cache_hit", False) if isinstance(cache_metadata, Mapping) else False
+            all_requested_data_cached = (
+                isinstance(requested_modes, list)
+                and bool(requested_modes)
+                and set(requested_modes).issubset(cached_modes if isinstance(cached_modes, list) else [])
+                and (not feature_query_requested or features_cached)
+            )
+            source_mode = {
+                "mode": "area",
+                "source_name": data.metadata.get("source"),
+                "retrieved_at": data.metadata.get("retrieved_at"),
+                "network_requests_made": not all_requested_data_cached,
+                "area_equivalence": "verified_by_requested_geometry",
+            }
     else:
         if acquire or area_json is not None:
             raise ValueError("fixture mode is deterministic and does not accept --acquire or --area-json.")
@@ -254,6 +366,34 @@ def run_mvp_demo(
             "SUMO demand is synthetic and SUMO metrics are simulated outputs, not real measured urban traffic.",
         ],
     }
+    if planning:
+        urban_issues = detect_urban_problems(data, analysis=analysis, candidate_evaluation=evaluation)
+        solution_plan = build_solution_plan(data, analysis, urban_issues, evaluation)
+        ai_packet = build_ai_planning_packet(data, analysis, urban_issues, evaluation, solution_plan)
+        mock_ai = run_ai_planning(ai_packet, lambda **_: _mock_ai_response(ai_packet))
+        result.update({
+            "urban_issues": urban_issues,
+            "solution_plan": solution_plan,
+            "ai_packet_bytes": ai_packet["integrity"]["serialized_bytes"],
+            "ai_packet_sha256": ai_packet["integrity"]["sha256"],
+            "mock_ai": {"provider": "deterministic_mock", "live_cloud_inference": False, **mock_ai},
+        })
+        (output / "analysis.json").write_text(json.dumps(analysis, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+        (output / "urban_problems.json").write_text(json.dumps(urban_issues, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+        (output / "solutions.json").write_text(json.dumps(solution_plan, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+        (output / "ai_evidence_packet.json").write_text(json.dumps(ai_packet, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False), encoding="utf-8", newline="\n")
+        (output / "ai_input_example.json").write_text(json.dumps({"system_prompt": AI_SYSTEM_PROMPT, "output_schema": AI_OUTPUT_SCHEMA, "evidence_packet": ai_packet}, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+        (output / "ai_output_schema.json").write_text(json.dumps(AI_OUTPUT_SCHEMA, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+        (output / "candidate_evidence.geojson").write_text(json.dumps(geojson, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+        (output / "problem_locations.geojson").write_text(json.dumps(problem_locations_geojson(urban_issues), ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
+        (output / "validation_report.json").write_text(json.dumps({
+            "schema_version": "arteria.mvp-planning-validation-report.v1",
+            "candidate_validation": solution_plan["candidate_validation"],
+            "ai_provider": "deterministic_mock",
+            "live_cloud_inference": False,
+            "ai_run": result["mock_ai"],
+            "ai_response_validation": result["mock_ai"].get("validation"),
+        }, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
     (output / "report.json").write_text(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
     (output / "candidate-evidence.geojson").write_text(json.dumps(geojson, ensure_ascii=False, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
     (output / "summary.md").write_text(_markdown_report(result), encoding="utf-8", newline="\n")
@@ -270,6 +410,7 @@ def main() -> int:
     parser.add_argument("--sumo-baseline", action="store_true", help="request optional bounded SUMO baseline execution when a drive graph is present")
     parser.add_argument("--paired-sumo-edge-id", help="exact current edge ID from get_driving_intervention_catalog(data)")
     parser.add_argument("--paired-speed-mps", type=float, default=5.0)
+    parser.add_argument("--planning", action="store_true", help="write bounded urban issue, solution, and mock AI contract artifacts")
     parser.add_argument("--output-dir", help="ignored local output directory; defaults to sim/.cache/mvp-demo/<UTC timestamp>")
     args = parser.parse_args()
     timestamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
@@ -278,7 +419,7 @@ def main() -> int:
     result = run_mvp_demo(
         source=args.source, output_dir=output, cache_dir=args.cache_dir, area_json=args.area_json,
         acquire=args.acquire, feature_categories=categories, sumo_baseline=args.sumo_baseline,
-        paired_sumo_edge_id=args.paired_sumo_edge_id, paired_speed_mps=args.paired_speed_mps,
+        paired_sumo_edge_id=args.paired_sumo_edge_id, paired_speed_mps=args.paired_speed_mps, planning=args.planning,
     )
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
@@ -286,6 +427,11 @@ def main() -> int:
     print(f"Report JSON: {output / 'report.json'}")
     print(f"Candidate GeoJSON: {output / 'candidate-evidence.geojson'}")
     print(f"Summary Markdown: {output / 'summary.md'}")
+    if args.planning:
+        print(f"Urban problems: {output / 'urban_problems.json'}")
+        print(f"Solutions: {output / 'solutions.json'}")
+        print(f"AI evidence packet: {output / 'ai_evidence_packet.json'} ({result['ai_packet_bytes']} bytes)")
+        print(f"Problem GeoJSON: {output / 'problem_locations.geojson'}")
     return 0
 
 

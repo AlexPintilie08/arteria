@@ -204,3 +204,21 @@ Run the integrated deterministic demo:
 The CLI does not silently fall back between sources. `cache` requires an explicit local cache path and remains offline. `area` validates an explicit bounded input without acquiring data unless `--acquire` is supplied. Outputs default to an ignored timestamped directory under `sim/.cache/mvp-demo/` with a JSON report, candidate/issue/route GeoJSON evidence, and short Markdown summary. Optional SUMO flags use only the selected snapshot's existing drive graph.
 
 The successful native verification recorded in [STATUS.md](STATUS.md) uses a newly acquired, geometry-hash-verified bounded Iași OSM driving graph; its old legacy-cache caveat above applies only when that historical cache is selected.
+
+## Urban problem and AI planning demo
+
+Planning mode layers localized issue detection and evidence-linked solutions over the existing analysis and candidate evaluation. Run its deterministic offline contract example:
+
+~~~powershell
+.\.venv\Scripts\python.exe -m sim.mvp_demo --source fixture --planning --output-dir sim/.cache/mvp-demo/ai-planning-fixture
+~~~
+
+The fixture remains synthetic and is not an Iași observation. Its mock model call only exercises the provider-neutral schema and validator; no cloud inference occurs. To use a real bounded catalog area, prepare a GeoJSON/area input and explicitly permit acquisition:
+
+~~~powershell
+.\.venv\Scripts\python.exe -m sim.mvp_demo --source area --area-json area.json --acquire --planning --feature-categories schools,healthcare,services,public_transport --output-dir sim/.cache/mvp-demo/ai-planning-area
+~~~
+
+Planning mode writes analysis, urban problems, solutions, the bounded AI evidence packet, a model input/schema example, candidate/problem GeoJSON, a Markdown summary and validation report under the ignored output directory. Acquisition failure remains explicit and never falls back to fixture data.
+
+Package-root APIs are detect_urban_problems, problem_locations_geojson, build_solution_plan, build_ai_planning_packet, validate_ai_planning_response and run_ai_planning. The backend should build and persist the immutable packet while its study worker still holds the matching OSMData graph. Later provider requests consume that packet and do not acquire another snapshot. See INTEGRATION_CONTRACT_V4.md and the backend/frontend implementation handoffs for exact status, schema, evidence and visualization rules. SIM itself has no cloud provider, credentials, or AI HTTP endpoint.
