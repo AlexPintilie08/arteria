@@ -81,7 +81,7 @@ def refine(slides,copy,api):
 
     # Balanced, equally styled team; no inferred ownership of particular files.
     s=slides[8];b.base(s,9,'O / ECHIPA','ARION',True,'Responsabilități confirmate de echipă · Cerința V2, 18 octombrie 2026')
-    profiles=[('Iustin Fagateanu','Frontend and\nweb experience'),('Alex Pintilie','Bootstrap and\nsimulation foundation'),('Fagateanu Eusebiu','Backend')]
+    profiles=[('Iustin Făgăteanu','Frontend and\nweb experience'),('Alex Pintilie','Bootstrap and\nsimulation foundation'),('Făgăteanu Eusebiu','Backend')]
     for j,(name,role) in enumerate(profiles):
         with beat(s,f's09_member_{j+1}','auto' if j==0 else 'after','fade',.42,0 if j==0 else .12):
             x=.65+j*4.14

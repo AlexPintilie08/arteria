@@ -1,11 +1,11 @@
 {
-  "published_at": "2026-10-18 09:53:34 +03:00",
+  "published_at": "2026-10-18 10:52:33 +03:00",
   "authoritative_pptx": "docs/ppt/ARTERIA.pptx",
   "slides": 10,
   "duration_seconds": 180,
-  "sha256": "B8AD994515D09022F9753B76B9961136AB990CDE838D1A7EEBC68BBFAF541283",
+  "sha256": "0A15768937D1CAAB67FE9E07BFBC41998EF3645E9E9D806518C661917E1CB037",
   "synchronized_pdf": "docs/ppt/ARTERIA-Submission.pdf",
-  "pdf_sha256": "A146E8830091466C9ACC6EAB2D5EFDAE93DB87705B884140A2D51FC97264B219",
+  "pdf_sha256": "4F2447D2D1FEAC8689D623ADB9F2A9C8B8873474ECC26755586F2C777FA38F12",
   "archived": [
     "D:\\Olipiade\\Hackathon_AI_IASI_2026\\docs\\ppt\\archive\\premium-motion-20261018\\ARTERIA-Submission-premium-motion-click-reveals.pdf",
     "D:\\Olipiade\\Hackathon_AI_IASI_2026\\docs\\ppt\\archive\\premium-motion-20261018\\preview-pre-motion-13-slides-20261018-095334",

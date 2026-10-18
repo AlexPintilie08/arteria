@@ -164,8 +164,8 @@ NOTES = {
     'cumpărători, preț acceptat și un an întreg; nu este dimensiune de piață sau venit realizat. '
     'De aceea nu mai domină slide-ul. Continuarea comercială presupune utilitate, disponibilitate '
     'de plată și cost de livrare validate. Instituțiile locale sunt potențiali interlocutori, nu parteneri confirmați.'),
-9: ('Echipa a furnizat numele și responsabilitățile: Iustin Fagateanu — interfață/frontend; '
-    'Alex Pintilie — inițializarea proiectului și baza de simulare; Fagateanu Eusebiu — backend. '
+9: ('Echipa a furnizat numele și responsabilitățile: Iustin Făgăteanu — interfață/frontend; '
+    'Alex Pintilie — inițializarea proiectului și baza de simulare; Făgăteanu Eusebiu — backend. '
     'Traducerea păstrează aceste roluri, fără atribuirea unor endpoint-uri, algoritmi sau rezultate '
     'individuale pe care dovezile nu le stabilesc. Continuitatea după eveniment, rolurile de scenă '
     'și experiența profesională nu sunt confirmate.'),

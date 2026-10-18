@@ -22,7 +22,7 @@ for i,s in enumerate(p.slides,1):
   if sh.left<0 or sh.top<0 or sh.left+sh.width>p.slide_width+10 or sh.top+sh.height>p.slide_height+10:out.append([i,sh.name])
  manifest.append({'slide':i,'text':texts})
 assert len(p.slides)==10 and counts['notes']==10
-for n in ['Iustin Fagateanu','Alex Pintilie','Fagateanu Eusebiu','Dezvoltare backend']:assert n in '\n'.join(manifest[8]['text'])
+for n in ['Iustin Făgăteanu','Alex Pintilie','Făgăteanu Eusebiu','Dezvoltare backend']:assert n in '\n'.join(manifest[8]['text'])
 assert len([s for s in p.slides[8].shapes if s.name.startswith('reveal:s09_member')])==3
 ns={'p':'http://schemas.openxmlformats.org/presentationml/2006/main'};motion=[]
 with zipfile.ZipFile(deck) as z:
