@@ -1,65 +1,56 @@
 # ARTERIA frontend
 
-## Baza implementată
+This npm workspace contains the Next.js web application, Android app, shared API
+client and contracts, design tokens, and frontend tests. The web app serves the
+presentation at `/` and the connected workspace at `/app`.
 
-Două aplicații separate: `web` pentru prezentare și produsul în browser, `mobile` pentru Android. `shared` conține doar codul reutilizat de ambele. O singură instalare npm și un singur lockfile în acest director.
+## Web application
 
-```text
-frontend/
-  web/          React + Next.js: prezentare la /, produs la /app
-  mobile/       aplicație Android React Native + Expo
-  shared/       contracte API, client HTTP, tokenuri și teste
-```
+Requires Node.js 24.x. Install dependencies from this directory:
 
-Vezi și instrucțiunile separate pentru [site](web/README.md) și [Android](mobile/README.md).
-
-Din `frontend`, cu Node 22.12+ sau Node 24:
-
-```powershell
+```bash
 npm ci
-npm run dev
 ```
 
-Prezentare: `http://localhost:3000`. Produs web: `http://localhost:3000/app`. Pentru Expo: `npm run mobile`; pentru emulator/dispozitiv Android disponibil: `npm run android`. Comenzile se rulează din `frontend`.
+Start Next.js with `npm run dev`; it serves `http://localhost:3000`. Start the
+FastAPI backend separately from the repository root:
 
-```powershell
-npm run check
-npm run export:android --workspace @arteria/mobile
+```bash
+uv run --locked uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-- [Prompt complet pentru AI](../docs/frontend/AI_INTERFACE_PROMPT.md) — gata de copiat pentru implementarea întregii interfețe.
-- [Brief vizual premium](../docs/frontend/DESIGN_BRIEF.md) — direcție, tokenuri, referințe și criterii de calitate.
-- [Structură și integrare](../docs/frontend/IMPLEMENTATION.md) — setup, API, hartă, Android și limitări.
+The frontend defaults to `NEXT_PUBLIC_API_BASE_URL=http://localhost:8000` and
+`NEXT_PUBLIC_DEMO_MODE=false`. These defaults work with the backend's local CORS
+settings. Optional local configuration belongs in the ignored
+`frontend/web/.env.local`; a blank `NEXT_PUBLIC_MAP_STYLE_URL` uses the neutral
+canvas, while the bundled Iași catalog remains visible.
 
-Aceasta este o structură inițială cu ecrane de bază. Harta web necesită un stil configurat în `.env`; harta Android este un placeholder explicit. Preview-ul nu inventează rezultate. Propunerile și comparațiile sunt puncte de extindere, fără integrare backend. Vezi [STATUS](STATUS.md).
+The workspace keeps five demo bookmarks and synthetic signal-timing flows
+separate from the SIM v3 pedestrian graph panel. The OSM catalog is bundled, but
+live graph acquisition requires internet access and a fresh clone has no OSM
+cache. OSM place extents are not official administrative boundaries. Graph
+comparisons do not run SUMO or establish physical feasibility. Cloud AI is not
+connected. See the [spatial API contract](../backend/SPATIAL_API.md) and the
+[MacBook handoff](../docs/MACBOOK_HANDOFF.md).
 
-## Current foundation
+Run frontend checks from this directory:
 
-The app starts with a React/TypeScript shell, a MapLibre 2.5D map centered on Iași, a backend liveness indicator, and a clear fallback if the public map style cannot load. The style is `https://tiles.openfreemap.org/styles/dark`; OpenFreeMap identifies its project license as MIT, allows commercial use, and requires map attribution, which MapLibre displays automatically. The service is provided as-is without an SLA. Urban layers, neighborhood selection, and analysis are not implemented.
+```bash
+npm run typecheck
+npm test
+npm run build
+```
 
-Install with `npm ci` from this directory, then run `npm run dev`. Root `scripts/setup.*` and `scripts/dev.*` commands coordinate the full project.
+The root project checks run these alongside Python tests and the backend health
+smoke test: `bash scripts/check.sh` from the repository root.
 
-## Responsibilities
+## Android application
 
-Present the map-focused urban planning experience: neighborhood selection, spatial indicators and heatmaps, AI proposal review, intervention controls, Before/After comparison, and SUMO simulation visualization or replay.
+The `mobile/` workspace contains the Expo/React Native Android application. To
+start Expo, run `npm run mobile` from this directory; an Android SDK and emulator
+or device are required to launch it. Shared API contracts and tests live in
+`shared/`.
 
-## Technology
-
-Web: React, TypeScript, Next.js, MapLibre GL JS, WebGL and CSS tokens. Android: Expo and React Native with native-stack navigation. The direction is premium, dark, restrained and map-focused. See the design brief for concrete decisions.
-
-## Inputs and outputs
-
-- **Inputs:** geographic area identifiers, analysis responses, provenance and uncertainty metadata, validated intervention proposals, and evaluation results from the backend API.
-- **Outputs:** user-selected areas, analysis parameters, proposal requests, intervention selections, and evaluation requests. The frontend must label data as observed, calculated, estimated, or unknown and must not imply that a replay is a live simulation.
-
-## Integration interfaces
-
-Use the JSON interfaces in `docs/API_CONTRACT.md`: `POST /analyze`, `POST /propose`, and `POST /evaluate`. Keep backend communication behind typed client functions so UI state is not coupled to transport details.
-
-## Implementation objectives
-
-Build one coherent end-to-end scenario on a reusable map and geographic selection model. Show the source and status of each indicator, make assumptions inspectable, and support baseline-versus-scenario comparison. Preserve usable behavior when an optional data layer is unavailable.
-
-## Technical risks
-
-Large vector layers and 3D rendering can hurt performance; use bounded areas and progressive layer loading. Map projections and geometry validity can cause selection and display errors. Data gaps must not be presented as zero values. API uncertainty and provenance need consistent visual treatment. Simulation replay must be distinguished from newly computed simulation results.
+Design and implementation references: [design brief](../docs/frontend/DESIGN_BRIEF.md),
+[implementation plan](../docs/frontend/IMPLEMENTATION.md), and
+[API contract](../docs/API_CONTRACT.md).

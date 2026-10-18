@@ -26,7 +26,7 @@ export function emptyIndicators(): Indicator[] {
   } }));
 }
 export function createDemoAnalysis(area: Area): AnalyzeResponse {
-  return { analysis_id: 'fixture-no-analysis', area, created_at: new Date().toISOString(),
+  return { analysis_id: 'fixture-no-analysis', baseline_id: 'fixture-no-baseline', area, created_at: new Date().toISOString(),
     indicators: emptyIndicators(), issues: [],
     layer_availability: layers.map(({ id }) => ({ layer: id, status: 'unknown', reason: 'Strat analitic neconectat.' })),
     warnings: ['Previzualizare de interfață. Nu s-a executat nicio analiză sau simulare.'],

@@ -8,10 +8,13 @@ import {
   demoIssuesByNeighborhood, type DemoStudyIssue
 } from '@arteria/shared/fixtures';
 import type { AnalyzeResponse, LayerId, Area, AlternativeLevel } from '@arteria/shared/contracts';
+import { ConnectedWorkspace } from './ConnectedWorkspace';
 import { api, demoMode } from '../../lib/api';
 import { AnalysisPanel } from '../analysis/AnalysisPanel';
 import { ScenarioPanel, type ScenarioTuningParams } from '../scenarios/ScenarioPanel';
 import { ComparisonPanel } from '../comparison/ComparisonPanel';
+import { NeighborhoodExplorer } from '../neighborhoods/NeighborhoodExplorer';
+import { controlledAnalysisMessage, placeCenter, type SourcedPlace } from '../neighborhoods/sim-geography';
 
 const MapViewport = dynamic(() => import('../map/MapViewport'), {
   ssr: false,
@@ -27,9 +30,15 @@ const sections = [
 type Section = typeof sections[number]['id'];
 
 export function App() {
+  return demoMode ? <PreviewApp /> : <ConnectedWorkspace />;
+}
+
+function PreviewApp() {
   const [section, setSection] = useState<Section>('analysis');
   const [selectedId, setSelectedId] = useState('copou');
   const selected = neighborhoods.find((item) => item.id === selectedId) ?? neighborhoods[0]!;
+  const [selectedSourcedPlace, setSelectedSourcedPlace] = useState<SourcedPlace | null>(null);
+  const [fillSourcedArea, setFillSourcedArea] = useState(false);
   const [requestedLayers, setRequestedLayers] = useState<LayerId[]>(['walking']);
   const [result, setResult] = useState<AnalyzeResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,6 +61,8 @@ export function App() {
     controller.current?.abort();
     setLoading(false);
     setSelectedId(id);
+    setSelectedSourcedPlace(null);
+    setFillSourcedArea(false);
     setResult(null);
     setError('');
     setSelectedIssue(null);
@@ -70,6 +81,7 @@ export function App() {
   }
 
   async function analyze() {
+    if (selectedSourcedPlace) return;
     controller.current?.abort();
     const active = new AbortController();
     controller.current = active;
@@ -120,6 +132,23 @@ export function App() {
     }
   }
 
+  function handleSelectSourcedPlace(place: SourcedPlace) {
+    controller.current?.abort();
+    setLoading(false);
+    setResult(null);
+    setError('');
+    setSelectedIssue(null);
+    setHasAppliedScenario(false);
+    setSelectedSourcedPlace(place);
+    setFillSourcedArea(false);
+    setSection('analysis');
+  }
+
+  function clearSourcedPlace() {
+    setSelectedSourcedPlace(null);
+    setFillSourcedArea(false);
+  }
+
   return (
     <div className="app-shell">
       <a className="skip-link" href="#workspace">
@@ -165,13 +194,13 @@ export function App() {
               <div className="inspector-heading" style={{ marginBottom: '16px' }}>
                 <div>
                   <p style={{ margin: 0, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#a8bac9', fontWeight: 600 }}>Zona de studiu</p>
-                  <h2 style={{ margin: '4px 0 0', fontSize: '22px' }}>{selected.name}</h2>
+                  <h2 style={{ margin: '4px 0 0', fontSize: '22px' }}>{selectedSourcedPlace?.name ?? selected.name}</h2>
                 </div>
                 <MapPinned aria-hidden="true" size={24} style={{ color: '#8bc9ed' }} />
               </div>
 
               <label htmlFor="area" style={{ fontSize: '12px', color: '#a8bac9', marginBottom: '6px', fontWeight: 600 }}>
-                Cartier / reper de navigare
+                Repere demo salvate
               </label>
               <select id="area" value={selectedId} onChange={(event) => changeArea(event.target.value)} style={{ marginBottom: '8px' }}>
                 {neighborhoods.map((item) => (
@@ -181,8 +210,16 @@ export function App() {
                 ))}
               </select>
               <p className="supporting" style={{ marginTop: 0, marginBottom: '16px', fontSize: '11px' }}>
-                Repere orientative. Limitele și identificatorii vor fi validați de backend.
+                Cele cinci repere demo existente. Catalogul OSM este separat mai jos.
               </p>
+
+              <NeighborhoodExplorer
+                selectedPlace={selectedSourcedPlace}
+                onSelect={handleSelectSourcedPlace}
+                onClear={clearSourcedPlace}
+                fillEnabled={fillSourcedArea}
+                onFillChange={setFillSourcedArea}
+              />
 
               <details className="layer-settings" style={{ margin: '0 0 16px', padding: '12px 0' }}>
                 <summary style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
@@ -214,19 +251,25 @@ export function App() {
                 </div>
               </details>
 
-              <button
-                className="primary-button"
-                onClick={analyze}
-                disabled={loading || requestedLayers.length === 0}
-                style={{ width: '100%', marginBottom: '12px' }}
-              >
-                <ScanLine size={18} aria-hidden="true" />
-                {loading
-                  ? 'Se analizează…'
-                  : demoMode
-                  ? 'Explorează previzualizarea'
-                  : 'Lansează Diagnoza Teritorială'}
-              </button>
+              {selectedSourcedPlace ? (
+                <p className="notice" role="status">
+                  Selecția OSM este disponibilă numai pentru navigare pe hartă. Alege un reper demo pentru previzualizarea existentă.
+                </p>
+              ) : (
+                <button
+                  className="primary-button"
+                  onClick={analyze}
+                  disabled={loading || requestedLayers.length === 0}
+                  style={{ width: '100%', marginBottom: '12px' }}
+                >
+                  <ScanLine size={18} aria-hidden="true" />
+                  {loading
+                    ? 'Se analizează…'
+                    : demoMode
+                    ? 'Explorează previzualizarea'
+                    : 'Lansează Diagnoza Teritorială'}
+                </button>
+              )}
 
               {!demoMode && (
                 <p className="notice" style={{ fontSize: '11px', margin: 0 }}>
@@ -250,8 +293,10 @@ export function App() {
               <div className="map-region" style={{ flex: 1, minHeight: '380px', position: 'relative' }}>
                 <MapViewport
                   neighborhoodId={selected.id}
-                  center={selected.center}
+                  center={selectedSourcedPlace ? placeCenter(selectedSourcedPlace) ?? selected.center : selected.center}
                   selectedIssueId={selectedIssue?.id ?? null}
+                  sourcedPlace={selectedSourcedPlace}
+                  fillSourcedArea={fillSourcedArea}
                   onSelectIssue={(issue) => {
                     setSelectedIssue(issue);
                     if (!result) analyze();
@@ -260,10 +305,10 @@ export function App() {
                 />
                 <div className="map-heading" style={{ top: '20px', left: '20px', padding: '14px 18px', background: 'rgba(24, 35, 46, 0.94)', backdropFilter: 'blur(8px)', border: '1px solid #42596a' }}>
                   <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.8px', color: '#8bc9ed', fontWeight: 600 }}>
-                    Digital Twin Mobilitate Iași
+                    {selectedSourcedPlace ? 'Catalog geografic SIM · OpenStreetMap' : 'Digital Twin Mobilitate Iași'}
                   </span>
                   <h1 style={{ fontSize: '22px', margin: '4px 0 0', fontFamily: 'Space Grotesk' }}>
-                    Înțelege locul. Modelează viitorul.
+                    {selectedSourcedPlace ? `${selectedSourcedPlace.name} · previzualizare geografică` : 'Înțelege locul. Modelează viitorul.'}
                   </h1>
                 </div>
               </div>
@@ -271,13 +316,20 @@ export function App() {
               {/* PANOU ORIZONTAL DE DIRECȚIE ȘI TELEMETRIE (FULL-WIDTH SUB HARTĂ) */}
               <div style={{ background: '#101820', borderTop: '1px solid #42596a', maxHeight: '350px', overflowY: 'auto', padding: '16px 24px' }}>
                 <div className="panel-content" aria-live="polite" aria-busy={loading} style={{ padding: 0 }}>
-                  <AnalysisPanel
-                    result={result}
-                    selectedNeighborhoodId={selected.id}
-                    selectedIssueId={selectedIssue?.id ?? null}
-                    onSelectIssue={handleSelectIssue}
-                    onGoToScenarios={() => setSection('scenarios')}
-                  />
+                  {selectedSourcedPlace ? (
+                    <div className="empty-state sourced-analysis-state" role="status">
+                      <h3>Analiza nu este conectată</h3>
+                      <p>Harta arată geometria sursă pentru navigare. Nu s-a calculat accesibilitate, trafic sau alt rezultat pentru {selectedSourcedPlace.name}.</p>
+                    </div>
+                  ) : (
+                    <AnalysisPanel
+                      result={result}
+                      selectedNeighborhoodId={selected.id}
+                      selectedIssueId={selectedIssue?.id ?? null}
+                      onSelectIssue={handleSelectIssue}
+                      onGoToScenarios={() => setSection('scenarios')}
+                    />
+                  )}
                 </div>
               </div>
             </div>
@@ -285,7 +337,30 @@ export function App() {
         )}
 
         {/* VIEW 2: SCENARII (Editor dedicat cu previzualizare focalizată pe intervenție și panou larg de alternative) */}
-        {section === 'scenarios' && (
+        {section === 'scenarios' && selectedSourcedPlace && (
+          <section className="sourced-section-gate" aria-label="Previzualizare geografică fără scenarii">
+            <div className="sourced-gate-map">
+              <MapViewport
+                neighborhoodId={selected.id}
+                center={placeCenter(selectedSourcedPlace) ?? selected.center}
+                selectedIssueId={null}
+                sourcedPlace={selectedSourcedPlace}
+                fillSourcedArea={fillSourcedArea}
+              />
+            </div>
+            <div className="sourced-gate-copy">
+              <span>Scenarii · catalog OSM</span>
+              <h2>Previzualizare geografică numai</h2>
+              <p>Geometria pentru {selectedSourcedPlace.name} poate fi explorată pe hartă. Catalogul geografic nu este conectat la motorul de analiză sau la scenarii, deci nu afișăm rezultate simulate pentru această zonă.</p>
+              {selectedSourcedPlace.validation.status === 'requires_controlled_analysis' && (
+                <p className="notice">{controlledAnalysisMessage(selectedSourcedPlace)}</p>
+              )}
+              <button className="primary-button" type="button" onClick={() => setSection('analysis')}>Înapoi la harta și catalogul geografic</button>
+            </div>
+          </section>
+        )}
+
+        {section === 'scenarios' && !selectedSourcedPlace && (
           <>
             <div className="map-region" style={{ background: '#141d26' }}>
               <MapViewport
@@ -350,7 +425,30 @@ export function App() {
         )}
 
         {/* VIEW 3: COMPARĂ (Ecran tehnic amplu: Matricea de Performanță Înainte / După, fără aglomerare în sidebar) */}
-        {section === 'comparison' && (
+        {section === 'comparison' && selectedSourcedPlace && (
+          <section className="sourced-section-gate" aria-label="Comparație indisponibilă pentru catalogul OSM">
+            <div className="sourced-gate-map">
+              <MapViewport
+                neighborhoodId={selected.id}
+                center={placeCenter(selectedSourcedPlace) ?? selected.center}
+                selectedIssueId={null}
+                sourcedPlace={selectedSourcedPlace}
+                fillSourcedArea={fillSourcedArea}
+              />
+            </div>
+            <div className="sourced-gate-copy">
+              <span>Comparație · catalog OSM</span>
+              <h2>Nu există rezultate de comparat</h2>
+              <p>Selecția {selectedSourcedPlace.name} oferă doar navigare geografică. Niciun baseline, scenariu sau efect nu a fost calculat pentru acest loc.</p>
+              {selectedSourcedPlace.validation.status === 'requires_controlled_analysis' && (
+                <p className="notice">{controlledAnalysisMessage(selectedSourcedPlace)}</p>
+              )}
+              <button className="primary-button" type="button" onClick={() => setSection('analysis')}>Înapoi la harta și catalogul geografic</button>
+            </div>
+          </section>
+        )}
+
+        {section === 'comparison' && !selectedSourcedPlace && (
           <div style={{ display: 'flex', flexDirection: 'column', padding: '32px 48px', overflowY: 'auto', background: '#101820' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', borderBottom: '1px solid #42596a', paddingBottom: '20px' }}>
               <div>

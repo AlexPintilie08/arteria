@@ -1,3 +1,5 @@
+> **Stare implementare:** exemplele de mai jos descriu contractul extins dorit, nu date reale sau capabilități disponibile. Backend-ul implementat și limitările sale sunt documentate în [README.md](README.md), [FRONTEND_HANDOFF.md](FRONTEND_HANDOFF.md) și [contractul v0.3](../docs/DEMO_API.md). Valorile de senzori, modelele AI și intervențiile structurale din exemple nu sunt integrate.
+
 # Specificație Tehnică și Catalog Apeluri Backend (API Endpoints & Payloads)
 
 Acest document descrie lista completă a apelurilor HTTP/JSON pe care aplicația web/mobilă ARTERIA le transmite către backend-ul FastAPI, împreună cu structura exactă a payload-urilor (cerere și răspuns), contractul de date și regulile de validare conform `docs/API_CONTRACT.md` și `docs/ARCHITECTURE.md`.

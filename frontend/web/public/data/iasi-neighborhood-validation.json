@@ -1,0 +1,309 @@
+{
+  "source_catalog": "sim/iasi-neighborhoods.geojson",
+  "catalog_sha256": "4fdcffee19e60b47df9a5a4acec4091bf237e642347e8b828cddd985d0972bf7",
+  "coordinate_reference_system": "EPSG:4326",
+  "default_limits": {
+    "max_area_km2": 5.0,
+    "max_extent_km": 5.0
+  },
+  "records": {
+    "osm-w-1559137274": {
+      "id": "osm-w-1559137274",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.625715792986354,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-1559137274",
+      "source_object_id": "osm-w-1559137274"
+    },
+    "osm-w-669880045": {
+      "id": "osm-w-669880045",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.8896016205787662,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-669880045",
+      "source_object_id": "osm-w-669880045"
+    },
+    "osm-w-670357626": {
+      "id": "osm-w-670357626",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.4830445719861491,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670357626",
+      "source_object_id": "osm-w-670357626"
+    },
+    "osm-n-2468944287": {
+      "id": "osm-n-2468944287",
+      "status": "point_only",
+      "analysis_eligible": false,
+      "reason": "This record contains a named point only; no neighborhood boundary is inferred.",
+      "area_km2": null,
+      "source_object_id": "osm-n-2468944287"
+    },
+    "osm-n-2468944288": {
+      "id": "osm-n-2468944288",
+      "status": "point_only",
+      "analysis_eligible": false,
+      "reason": "This record contains a named point only; no neighborhood boundary is inferred.",
+      "area_km2": null,
+      "source_object_id": "osm-n-2468944288"
+    },
+    "osm-r-17773567": {
+      "id": "osm-r-17773567",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.0372857264754194,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-r-17773567",
+      "source_object_id": "osm-r-17773567"
+    },
+    "osm-n-5969963800": {
+      "id": "osm-n-5969963800",
+      "status": "point_only",
+      "analysis_eligible": false,
+      "reason": "This record contains a named point only; no neighborhood boundary is inferred.",
+      "area_km2": null,
+      "source_object_id": "osm-n-5969963800"
+    },
+    "osm-w-670144919": {
+      "id": "osm-w-670144919",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.3990012445446274,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670144919",
+      "source_object_id": "osm-w-670144919"
+    },
+    "osm-w-669881385": {
+      "id": "osm-w-669881385",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.3517495502837351,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-669881385",
+      "source_object_id": "osm-w-669881385"
+    },
+    "osm-w-670151036": {
+      "id": "osm-w-670151036",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.6867877903042972,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670151036",
+      "source_object_id": "osm-w-670151036"
+    },
+    "osm-n-5969949733": {
+      "id": "osm-n-5969949733",
+      "status": "point_only",
+      "analysis_eligible": false,
+      "reason": "This record contains a named point only; no neighborhood boundary is inferred.",
+      "area_km2": null,
+      "source_object_id": "osm-n-5969949733"
+    },
+    "osm-w-670147612": {
+      "id": "osm-w-670147612",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 3.3403018486462344,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670147612",
+      "source_object_id": "osm-w-670147612"
+    },
+    "osm-w-669880405": {
+      "id": "osm-w-669880405",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.0316256658480283,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-669880405",
+      "source_object_id": "osm-w-669880405"
+    },
+    "osm-w-75400220": {
+      "id": "osm-w-75400220",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.837797212960117,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-75400220",
+      "source_object_id": "osm-w-75400220"
+    },
+    "osm-n-2468944295": {
+      "id": "osm-n-2468944295",
+      "status": "point_only",
+      "analysis_eligible": false,
+      "reason": "This record contains a named point only; no neighborhood boundary is inferred.",
+      "area_km2": null,
+      "source_object_id": "osm-n-2468944295"
+    },
+    "osm-w-669884156": {
+      "id": "osm-w-669884156",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.2916377517527569,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-669884156",
+      "source_object_id": "osm-w-669884156"
+    },
+    "osm-w-670143836": {
+      "id": "osm-w-670143836",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.629387445219411,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670143836",
+      "source_object_id": "osm-w-670143836"
+    },
+    "osm-w-669880901": {
+      "id": "osm-w-669880901",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.24240627822885039,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-669880901",
+      "source_object_id": "osm-w-669880901"
+    },
+    "osm-w-670152373": {
+      "id": "osm-w-670152373",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.7076851444007741,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670152373",
+      "source_object_id": "osm-w-670152373"
+    },
+    "osm-w-669882818": {
+      "id": "osm-w-669882818",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.1431070711922742,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-669882818",
+      "source_object_id": "osm-w-669882818"
+    },
+    "osm-n-5964858917": {
+      "id": "osm-n-5964858917",
+      "status": "point_only",
+      "analysis_eligible": false,
+      "reason": "This record contains a named point only; no neighborhood boundary is inferred.",
+      "area_km2": null,
+      "source_object_id": "osm-n-5964858917"
+    },
+    "osm-w-670142323": {
+      "id": "osm-w-670142323",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.7614039520663346,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670142323",
+      "source_object_id": "osm-w-670142323"
+    },
+    "osm-w-670146320": {
+      "id": "osm-w-670146320",
+      "status": "requires_controlled_analysis",
+      "analysis_eligible": false,
+      "reason": "Study area extent must not exceed 5 km in either dimension.",
+      "area_km2": 2.9204184545054943,
+      "configured_limits": {
+        "max_area_km2": 5.0,
+        "max_extent_km": 5.0
+      }
+    },
+    "osm-w-670152751": {
+      "id": "osm-w-670152751",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.7453405020929557,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670152751",
+      "source_object_id": "osm-w-670152751"
+    },
+    "osm-n-2468944302": {
+      "id": "osm-n-2468944302",
+      "status": "point_only",
+      "analysis_eligible": false,
+      "reason": "This record contains a named point only; no neighborhood boundary is inferred.",
+      "area_km2": null,
+      "source_object_id": "osm-n-2468944302"
+    },
+    "osm-w-670153116": {
+      "id": "osm-w-670153116",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.5344063880298906,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670153116",
+      "source_object_id": "osm-w-670153116"
+    },
+    "osm-w-670356965": {
+      "id": "osm-w-670356965",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.0616280885110627,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670356965",
+      "source_object_id": "osm-w-670356965"
+    },
+    "osm-w-670142974": {
+      "id": "osm-w-670142974",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.7174419357399611,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670142974",
+      "source_object_id": "osm-w-670142974"
+    },
+    "osm-w-670357973": {
+      "id": "osm-w-670357973",
+      "status": "requires_controlled_analysis",
+      "analysis_eligible": false,
+      "reason": "Study area must be greater than zero and no larger than 5 km².",
+      "area_km2": 5.072037818202956,
+      "configured_limits": {
+        "max_area_km2": 5.0,
+        "max_extent_km": 5.0
+      }
+    },
+    "osm-w-670358216": {
+      "id": "osm-w-670358216",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 0.8036009373023001,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670358216",
+      "source_object_id": "osm-w-670358216"
+    },
+    "osm-w-670149962": {
+      "id": "osm-w-670149962",
+      "status": "valid",
+      "analysis_eligible": true,
+      "reason": null,
+      "area_km2": 1.2224568629579413,
+      "working_crs": "EPSG:32635",
+      "boundary_source": "catalog:OpenStreetMap:osm-w-670149962",
+      "source_object_id": "osm-w-670149962"
+    }
+  }
+}

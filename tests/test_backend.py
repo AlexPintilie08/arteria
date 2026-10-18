@@ -18,7 +18,7 @@ def test_health_endpoint_reports_api_liveness() -> None:
     assert response.json() == {"status": "ok", "service": "arteria-backend"}
 
 
-def test_planned_analysis_endpoints_are_not_faked() -> None:
+def test_analysis_endpoints_require_valid_requests() -> None:
     async def requests() -> list[httpx.Response]:
         async with httpx.AsyncClient(
             transport=httpx.ASGITransport(app=app),
@@ -30,7 +30,7 @@ def test_planned_analysis_endpoints_are_not_faked() -> None:
             ]
 
     responses = asyncio.run(requests())
-    assert [response.status_code for response in responses] == [404, 404, 404]
+    assert [response.status_code for response in responses] == [422, 422, 422]
 
 
 def test_configured_local_origin_receives_cors_header() -> None:

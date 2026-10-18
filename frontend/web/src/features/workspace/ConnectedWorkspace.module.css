@@ -1,0 +1,26 @@
+.root { min-height: 100dvh; background: #101820; color: #edf2f6; }
+.header { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 5%; border-bottom:1px solid #42596a; }
+.header a { color:#edf2f6; font:700 24px 'Space Grotesk',sans-serif; text-decoration:none; }
+.badge { color:#efc47c; font-size:13px; }
+.nav { display:flex; flex-wrap:wrap; gap:8px; padding:16px 5%; }
+.nav button, .card button { cursor:pointer; border:1px solid #42596a; background:#18232e; color:#edf2f6; padding:10px 16px; border-radius:8px; }
+.nav button[aria-current], .card button[aria-pressed=true] { border-color:#8bc9ed; background:#213a49; }
+.root button:disabled { opacity:.5; cursor:not-allowed; }
+.root :focus-visible { outline:3px solid #8bc9ed; outline-offset:3px; }
+.main { max-width:1200px; margin:auto; padding:16px 24px 64px; }
+.card { background:#18232e; border:1px solid #42596a; border-radius:12px; padding:24px; margin-bottom:20px; overflow-wrap:anywhere; }
+.card h1, .card h2 { font-family:'Space Grotesk',sans-serif; margin-top:0; }
+.card p, .card li { line-height:1.6; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr)); gap:16px; }
+.row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:16px 0; }
+.card label { display:flex; gap:8px; align-items:center; }
+.card select, .card input[type=number] { padding:10px; color:#edf2f6; background:#101820; border:1px solid #61798b; border-radius:6px; max-width:100%; }
+.card input[type=range] { width:min(100%,360px); }
+.muted { color:#a8bac9; font-size:13px; }
+.scroll { overflow-x:auto; }
+.table { width:100%; border-collapse:collapse; text-align:left; }
+.table th, .table td { padding:12px; border-bottom:1px solid #42596a; }
+.good { color:#a4d8bc; }
+.bad { color:#efc47c; }
+.error { border:1px solid #ed9b98; padding:16px; border-radius:8px; color:#ffd2ce; }
+@media(max-width:600px) { .main { padding:12px; } .card { padding:16px; } .header { align-items:flex-start; flex-direction:column; } .nav { padding:12px; } }

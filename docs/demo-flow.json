@@ -1,0 +1,850 @@
+[
+  {
+    "endpoint": "/analyze",
+    "request": {
+      "area": {
+        "city_id": "iasi-ro",
+        "area_id": "preview-podu-ros",
+        "boundary": null,
+        "boundary_source": "known_area",
+        "crs": "EPSG:4326"
+      },
+      "layers": [
+        "roads",
+        "walking",
+        "cycling",
+        "public_transport"
+      ],
+      "analysis": {
+        "network_modes": [
+          "walk",
+          "bike"
+        ],
+        "accessibility_thresholds": [
+          {
+            "value": 15,
+            "unit": "minute",
+            "mode": "walk"
+          }
+        ]
+      },
+      "data_as_of": null
+    },
+    "response": {
+      "analysis_id": "an_66ebaae3f93437f3196bb502",
+      "baseline_id": "baseline_66ebaae3f93437f3196bb502",
+      "area": {
+        "city_id": "iasi-ro",
+        "area_id": "preview-podu-ros",
+        "boundary": null,
+        "boundary_source": "known_area",
+        "crs": "EPSG:4326"
+      },
+      "created_at": "2026-10-17T19:25:18.383114Z",
+      "mode": "demo",
+      "inputs": {
+        "cycle_seconds": 90.0,
+        "ns_green_seconds": 40.0,
+        "lost_seconds": 10,
+        "ns_demand_vph": 700.0,
+        "ew_demand_vph": 500.0
+      },
+      "provenance": [
+        {
+          "source": "synthetic-demo",
+          "source_version": "demo-2",
+          "method": "uniform-arrival delay plus synthetic capacity penalty",
+          "retrieved_at": "2026-10-17T19:25:18.383166Z",
+          "crs": "EPSG:4326"
+        }
+      ],
+      "indicators": [
+        {
+          "value": 13.88888888888889,
+          "unit": "second/vehicle",
+          "status": "estimated",
+          "provenance": [
+            {
+              "source": "synthetic-demo",
+              "source_version": "demo-2",
+              "method": "uniform-arrival delay plus synthetic capacity penalty",
+              "retrieved_at": "2026-10-17T19:25:18.383145Z",
+              "crs": "EPSG:4326"
+            }
+          ],
+          "uncertainty": {
+            "kind": "synthetic_model",
+            "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+            "interval": null,
+            "confidence": null
+          },
+          "id": "ns_delay",
+          "label": "ns delay"
+        },
+        {
+          "value": 13.88888888888889,
+          "unit": "second/vehicle",
+          "status": "estimated",
+          "provenance": [
+            {
+              "source": "synthetic-demo",
+              "source_version": "demo-2",
+              "method": "uniform-arrival delay plus synthetic capacity penalty",
+              "retrieved_at": "2026-10-17T19:25:18.383149Z",
+              "crs": "EPSG:4326"
+            }
+          ],
+          "uncertainty": {
+            "kind": "synthetic_model",
+            "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+            "interval": null,
+            "confidence": null
+          },
+          "id": "ew_delay",
+          "label": "ew delay"
+        },
+        {
+          "value": 13.88888888888889,
+          "unit": "second/vehicle",
+          "status": "estimated",
+          "provenance": [
+            {
+              "source": "synthetic-demo",
+              "source_version": "demo-2",
+              "method": "uniform-arrival delay plus synthetic capacity penalty",
+              "retrieved_at": "2026-10-17T19:25:18.383151Z",
+              "crs": "EPSG:4326"
+            }
+          ],
+          "uncertainty": {
+            "kind": "synthetic_model",
+            "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+            "interval": null,
+            "confidence": null
+          },
+          "id": "mean_delay",
+          "label": "mean delay"
+        }
+      ],
+      "layer_availability": [
+        {
+          "layer": "roads",
+          "status": "unknown",
+          "reason": "No geographic layer acquired; this analysis uses synthetic intersection inputs only."
+        },
+        {
+          "layer": "walking",
+          "status": "unknown",
+          "reason": "No geographic layer acquired; this analysis uses synthetic intersection inputs only."
+        },
+        {
+          "layer": "cycling",
+          "status": "unknown",
+          "reason": "No geographic layer acquired; this analysis uses synthetic intersection inputs only."
+        },
+        {
+          "layer": "public_transport",
+          "status": "unknown",
+          "reason": "No geographic layer acquired; this analysis uses synthetic intersection inputs only."
+        }
+      ],
+      "issues": [
+        {
+          "id": "signal_balance",
+          "summary": "Explore green-time allocation at a synthetic two-phase intersection.",
+          "label": "DEMO — alocarea timpului verde",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              27.584,
+              47.153
+            ]
+          },
+          "provenance": [
+            {
+              "source": "synthetic-demo",
+              "source_version": "demo-2",
+              "method": "uniform-arrival delay plus synthetic capacity penalty",
+              "retrieved_at": "2026-10-17T19:25:18.383123Z",
+              "crs": "EPSG:4326"
+            }
+          ],
+          "uncertainty": {
+            "kind": "synthetic_model",
+            "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+            "interval": null,
+            "confidence": null
+          },
+          "indicator_ids": [
+            "ns_delay",
+            "ew_delay",
+            "mean_delay"
+          ],
+          "status": "estimated"
+        }
+      ],
+      "warnings": [
+        "DEMO: synthetic intersection inputs, not local traffic observations or a SUMO run.",
+        "Area names and supplied boundaries are display context only; no boundary certification or geographic analysis is performed.",
+        "Network modes and accessibility thresholds cannot be calculated without geographic data; requested layers are unknown."
+      ]
+    }
+  },
+  {
+    "endpoint": "/propose",
+    "request": {
+      "analysis_id": "an_66ebaae3f93437f3196bb502",
+      "area": {
+        "city_id": "iasi-ro",
+        "area_id": "preview-podu-ros"
+      },
+      "issue_id": "signal_balance",
+      "intervention_catalog_version": "catalog-1",
+      "constraints": {
+        "max_affected_area": {
+          "value": 3.5,
+          "unit": "hectare"
+        }
+      },
+      "requested_alternatives": [
+        "minimal",
+        "moderate",
+        "transformative"
+      ]
+    },
+    "response": {
+      "proposal_set_id": "ps_5801b6c617ce773095fe13e1",
+      "analysis_id": "an_66ebaae3f93437f3196bb502",
+      "baseline_id": "baseline_66ebaae3f93437f3196bb502",
+      "model": {
+        "provider": "deterministic",
+        "model_id": "signal-catalog-1",
+        "generated_at": "2026-10-17T19:25:18.388100Z"
+      },
+      "alternatives": [
+        {
+          "level": "minimal",
+          "summary": "Set north–south green to 41.67 seconds.",
+          "interventions": [
+            {
+              "type": "signal_timing",
+              "parameters": {
+                "ns_green_seconds": 41.666666666666664
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  27.584,
+                  47.153
+                ]
+              },
+              "parameter_units": {
+                "ns_green_seconds": "second"
+              },
+              "affected_feature_ids": [
+                "demo-signal"
+              ]
+            }
+          ],
+          "rationale": "Move toward demand-proportional green allocation; opposing traffic may experience more delay. Transformative denotes the full timing adjustment, not infrastructure works.",
+          "expected_impacts": [
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388012Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "ns_delay",
+              "direction": "decrease"
+            },
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388017Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "ew_delay",
+              "direction": "increase"
+            },
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388020Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "mean_delay",
+              "direction": "decrease"
+            }
+          ],
+          "validation": {
+            "status": "accepted",
+            "checks": [
+              "supported_demo_type",
+              "parameters_valid",
+              "fixed_cycle",
+              "minimum_green",
+              "no_land_take"
+            ]
+          },
+          "constraints": {
+            "minimum_green_seconds": 10,
+            "cycle_and_lost_time_fixed": true
+          },
+          "assumptions": [
+            "Two synthetic phases; demand, cycle and lost time remain fixed."
+          ]
+        },
+        {
+          "level": "moderate",
+          "summary": "Set north–south green to 43.33 seconds.",
+          "interventions": [
+            {
+              "type": "signal_timing",
+              "parameters": {
+                "ns_green_seconds": 43.33333333333333
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  27.584,
+                  47.153
+                ]
+              },
+              "parameter_units": {
+                "ns_green_seconds": "second"
+              },
+              "affected_feature_ids": [
+                "demo-signal"
+              ]
+            }
+          ],
+          "rationale": "Move toward demand-proportional green allocation; opposing traffic may experience more delay. Transformative denotes the full timing adjustment, not infrastructure works.",
+          "expected_impacts": [
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388047Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "ns_delay",
+              "direction": "decrease"
+            },
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388050Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "ew_delay",
+              "direction": "increase"
+            },
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388052Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "mean_delay",
+              "direction": "decrease"
+            }
+          ],
+          "validation": {
+            "status": "accepted",
+            "checks": [
+              "supported_demo_type",
+              "parameters_valid",
+              "fixed_cycle",
+              "minimum_green",
+              "no_land_take"
+            ]
+          },
+          "constraints": {
+            "minimum_green_seconds": 10,
+            "cycle_and_lost_time_fixed": true
+          },
+          "assumptions": [
+            "Two synthetic phases; demand, cycle and lost time remain fixed."
+          ]
+        },
+        {
+          "level": "transformative",
+          "summary": "Set north–south green to 46.67 seconds.",
+          "interventions": [
+            {
+              "type": "signal_timing",
+              "parameters": {
+                "ns_green_seconds": 46.666666666666664
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  27.584,
+                  47.153
+                ]
+              },
+              "parameter_units": {
+                "ns_green_seconds": "second"
+              },
+              "affected_feature_ids": [
+                "demo-signal"
+              ]
+            }
+          ],
+          "rationale": "Move toward demand-proportional green allocation; opposing traffic may experience more delay. Transformative denotes the full timing adjustment, not infrastructure works.",
+          "expected_impacts": [
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388066Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "ns_delay",
+              "direction": "decrease"
+            },
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388069Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "ew_delay",
+              "direction": "increase"
+            },
+            {
+              "value": null,
+              "unit": "second/vehicle",
+              "status": "estimated",
+              "provenance": [
+                {
+                  "source": "synthetic-demo",
+                  "source_version": "demo-2",
+                  "method": "uniform-arrival delay plus synthetic capacity penalty",
+                  "retrieved_at": "2026-10-17T19:25:18.388071Z",
+                  "crs": "EPSG:4326"
+                }
+              ],
+              "uncertainty": {
+                "kind": "qualitative_estimate",
+                "description": "Direction from the synthetic demo model; run evaluate for numeric comparison.",
+                "interval": null,
+                "confidence": null
+              },
+              "indicator_id": "mean_delay",
+              "direction": "decrease"
+            }
+          ],
+          "validation": {
+            "status": "accepted",
+            "checks": [
+              "supported_demo_type",
+              "parameters_valid",
+              "fixed_cycle",
+              "minimum_green",
+              "no_land_take"
+            ]
+          },
+          "constraints": {
+            "minimum_green_seconds": 10,
+            "cycle_and_lost_time_fixed": true
+          },
+          "assumptions": [
+            "Two synthetic phases; demand, cycle and lost time remain fixed."
+          ]
+        }
+      ],
+      "rejected_alternatives": [],
+      "warnings": [
+        "No LLM or simulation used. Feasibility applies only to the demo intersection."
+      ]
+    }
+  },
+  {
+    "endpoint": "/evaluate",
+    "request": {
+      "analysis_id": "an_66ebaae3f93437f3196bb502",
+      "area": {
+        "city_id": "iasi-ro",
+        "area_id": "preview-podu-ros"
+      },
+      "baseline_id": "baseline_66ebaae3f93437f3196bb502",
+      "proposal_set_id": "ps_5801b6c617ce773095fe13e1",
+      "alternative_level": "minimal",
+      "interventions": [
+        {
+          "type": "signal_timing",
+          "parameters": {
+            "ns_green_seconds": 41.666666666666664
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              27.584,
+              47.153
+            ]
+          },
+          "parameter_units": {
+            "ns_green_seconds": "second"
+          },
+          "affected_feature_ids": [
+            "demo-signal"
+          ]
+        }
+      ],
+      "evaluation": {
+        "indicators": [
+          "ns_delay",
+          "ew_delay",
+          "mean_delay"
+        ],
+        "traffic_simulation": {
+          "requested": false,
+          "mode": "none",
+          "replay_id": null
+        }
+      }
+    },
+    "response": {
+      "evaluation_id": "ev_6a57a2277b6d65f6b00bb251",
+      "scenario_id": "sc_6a57a2277b6d65f6b00bb251",
+      "created_at": "2026-10-17T19:25:18.390313Z",
+      "baseline": {
+        "id": "baseline_66ebaae3f93437f3196bb502",
+        "source_snapshot": "synthetic-demo-2",
+        "intervention_catalog_version": "catalog-1"
+      },
+      "scenario": {
+        "id": "sc_6a57a2277b6d65f6b00bb251",
+        "source_snapshot": "synthetic-demo-2",
+        "intervention_catalog_version": "catalog-1"
+      },
+      "baseline_inputs": {
+        "cycle_seconds": 90.0,
+        "ns_green_seconds": 40.0,
+        "lost_seconds": 10,
+        "ns_demand_vph": 700.0,
+        "ew_demand_vph": 500.0
+      },
+      "scenario_inputs": {
+        "cycle_seconds": 90.0,
+        "ns_green_seconds": 41.666666666666664,
+        "lost_seconds": 10,
+        "ns_demand_vph": 700.0,
+        "ew_demand_vph": 500.0
+      },
+      "comparisons": [
+        {
+          "indicator_id": "ns_delay",
+          "baseline": {
+            "value": 13.88888888888889,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.383145Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "scenario": {
+            "value": 12.978395061728396,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.390252Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "delta": {
+            "value": -0.9104938271604937,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.390255Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "percent_change": -6.5555555555555545,
+          "impact": "improved"
+        },
+        {
+          "indicator_id": "ew_delay",
+          "baseline": {
+            "value": 13.88888888888889,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.383149Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "scenario": {
+            "value": 14.830246913580247,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.390266Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "delta": {
+            "value": 0.9413580246913575,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.390268Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "percent_change": 6.777777777777774,
+          "impact": "worsened"
+        },
+        {
+          "indicator_id": "mean_delay",
+          "baseline": {
+            "value": 13.88888888888889,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.383151Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "scenario": {
+            "value": 13.75,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.390275Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "delta": {
+            "value": -0.13888888888888928,
+            "unit": "second/vehicle",
+            "status": "estimated",
+            "provenance": [
+              {
+                "source": "synthetic-demo",
+                "source_version": "demo-2",
+                "method": "uniform-arrival delay plus synthetic capacity penalty",
+                "retrieved_at": "2026-10-17T19:25:18.390277Z",
+                "crs": "EPSG:4326"
+              }
+            ],
+            "uncertainty": {
+              "kind": "synthetic_model",
+              "description": "Synthetic illustrative estimate; uncalibrated and not an Iași measurement.",
+              "interval": null,
+              "confidence": null
+            }
+          },
+          "percent_change": -1.0000000000000029,
+          "impact": "improved"
+        }
+      ],
+      "simulation": {
+        "status": "not_requested",
+        "mode": "none",
+        "run_id": null,
+        "simulator": null,
+        "started_at": null,
+        "completed_at": null,
+        "configuration": null,
+        "measurements": []
+      },
+      "warnings": [
+        "DEMO estimates only. Negative and positive impacts use unchanged synthetic demand."
+      ]
+    }
+  }
+]

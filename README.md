@@ -2,7 +2,7 @@
 
 **Understand the city. Shape its future.**
 
-ARTERIA is an AI-assisted urban planning and mobility analysis platform. It helps people examine neighborhoods, identify mobility and infrastructure problems, compare intervention options, and evaluate measurable effects before physical implementation. Iași, Romania is the first supported city; the product is intended to work across its neighborhoods rather than remain tied to one demonstration site.
+ARTERIA is a local urban-planning and mobility-analysis MVP for exploring neighborhoods, reviewing data provenance, comparing supported interventions, and examining calculated effects before physical implementation. Iași, Romania is the first supported city; the product is intended to work across its neighborhoods rather than remain tied to one demonstration site.
 
 ## Product workflow
 
@@ -20,10 +20,10 @@ Observed data, calculated results, estimates, and unknown information must remai
 ## Planned technology
 
 - **Frontend:** web with React, TypeScript, Next.js, MapLibre GL JS and WebGL; Android with Expo/React Native. Shared API contracts and visual tokens live inside `frontend/`.
-- **Backend:** Python, FastAPI, Pydantic, and a cloud LLM API. Local Qwen may be an optional fallback.
+- **Backend:** Python, FastAPI, Pydantic. Cloud LLM generation is planned but is not connected or required for the current demo.
 - **Simulation and spatial analysis:** Python, OSMnx, NetworkX, GeoPandas, Shapely, Eclipse SUMO, and TraCI/libsumo.
 
-The repository includes a runnable development foundation across frontend, backend, and simulation with cross-platform bootstrap scripts and comprehensive UI/UX capabilities.
+The repository combines a polished Next.js presentation and MapLibre workspace with a FastAPI demo backend, an optional pedestrian graph-study API, and the Python SIM library. The signal-timing API uses a deterministic synthetic model; the graph-study API evaluates pedestrian graph connectivity. They are separate capabilities. Neither represents synthetic values as observed city traffic, and the optional local SUMO runner does not provide calibrated traffic results.
 
 ## System architecture
 
@@ -31,9 +31,13 @@ The product has exactly three application components: `frontend/`, `backend/`, a
 
 ## Current status
 
-The repository has a runnable development foundation: a Next.js/React/MapLibre shell with an OpenFreeMap public style and resilient offline fallback, a FastAPI `GET /health` endpoint, an operational standard library backend server (`backend/server.py`), and deterministic NetworkX/geospatial import checks. Local Windows setup and Windows, macOS 15 ARM64, and macOS 15 Intel CI jobs passed. SUMO 1.28.0 passed a real smoke test on Windows and macOS ARM64; no SUMO binary is installed on Intel macOS, where the optional fallback is reported. SUMO is optional and not required to start either service. See each component's `STATUS.md` and the [roadmap](docs/ROADMAP.md).
+**Full-stack demo integration.** The frontend includes the marketing homepage, MapLibre workspace, connected analysis/scenario/comparison screens, and a pedestrian graph panel with the bundled Iași OSM neighborhood catalog. FastAPI exposes health, analysis, proposal, evaluation, persistence, and graph-study endpoints. SIM v3 supplies graph analysis, candidate options, proposal validation, and evidence packets through the graph API. Signal timing remains a separate synthetic model; graph evaluation reports a stored graph comparison and `sumo_executed: false`. Unknown evidence stays unknown. Cloud AI generation and calibrated traffic simulation are not connected.
+
+Cross-platform bootstrap scripts support Windows and macOS. CI covers Windows and macOS runners; SUMO remains optional for basic startup. See each component's `README.md` and `STATUS.md` and the [roadmap](docs/ROADMAP.md).
 
 ## Quick start
+
+For a fresh MacBook checkout, see the [MacBook handoff](docs/MACBOOK_HANDOFF.md) for exact install, run, test, and Git commands.
 
 Prerequisites: Node.js 24 LTS and `uv`. Setup acquires a project-local, uv-managed Python 3.12 runtime, installs locked dependencies, and runs validation. No AI key or SUMO installation is needed for basic app startup.
 
@@ -57,7 +61,6 @@ npm run mobile     # Starts Expo React Native for Android
 ### Optional SUMO
 
 The project pins the `eclipse-sumo` 1.28.0 package on Windows x64, Linux x64/ARM64, and macOS 15+ ARM64. That release does not publish a wheel for Intel Macs or older macOS versions. On those configurations, install SUMO using the [official platform instructions](https://sumo.dlr.de/docs/Installing/). SUMO discovery checks `PATH` and an optional `SUMO_HOME` value; it does not assume an installation directory. The check command runs a temporary one-step SUMO/TraCI scenario when a complete installation is found and reports unavailable or failed SUMO separately from the core app checks.
-
 ## Developer onboarding and collaboration
 
 Three developers collaborate through one shared GitHub repository. Use feature branches when working concurrently, integrate frequently, communicate in short messages, and update the relevant component `STATUS.md` when meaningful work is completed. There are no permanent component owners or required project-management systems.
