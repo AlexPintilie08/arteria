@@ -63,6 +63,13 @@
 .resultLabel { margin: 14px 0 7px; color: #afd5e2; font-size: 11px; font-weight: 700; }
 .resultList { display: grid; gap: 7px; margin: 7px 0 14px; padding: 0; list-style: none; }
 .resultList li { border: 1px solid #354a57; border-radius: 8px; background: #17242e; padding: 10px; }
+.solutionDetails { margin: 10px 0 14px; border-top: 1px solid #354652; padding-top: 9px; }
+.solutionDetails summary { color: #bdd1da; font-size: 10px; cursor: pointer; }
+.recommendationEvidence { margin: 8px 0; border-left: 2px solid #7197ab; padding: 2px 0 2px 8px; color: #a9bdc6; font-size: 9px; }
+.recommendationEvidence > strong { color: #c4d8e0; font-size: 9px; }
+.recommendationEvidence ul { display: grid; gap: 4px; margin: 5px 0; padding-left: 13px; }
+.recommendationEvidence li span { display: block; color: #a5b7bf; line-height: 1.45; }
+.recommendationEvidence p { margin: 5px 0; color: #93aab5; line-height: 1.45; }
 .resultList li strong { font-size: 11px; }
 .resultList li p { margin: 5px 0; color: #c6d4dc; font-size: 10px; line-height: 1.5; }
 .resultList li small { color: #91a7b3; font-size: 9px; overflow-wrap: anywhere; }

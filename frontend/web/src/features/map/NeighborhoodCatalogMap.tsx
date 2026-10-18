@@ -27,6 +27,7 @@ const mapStyle: StyleSpecification = {
 interface Props {
   places: SourcedPlace[];
   selectedId: string | null;
+  selectedProblemId: string | null;
   problems: unknown;
   candidateGeometry: unknown;
   fillPolygons: boolean;
@@ -34,7 +35,7 @@ interface Props {
 }
 const emptyCollection: GeoJSON.FeatureCollection = { type: 'FeatureCollection', features: [] };
 
-export default function NeighborhoodCatalogMap({ places, selectedId, problems, candidateGeometry, fillPolygons, onSelect }: Props) {
+export default function NeighborhoodCatalogMap({ places, selectedId, selectedProblemId, problems, candidateGeometry, fillPolygons, onSelect }: Props) {
   const container = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
   const onSelectRef = useRef(onSelect);
@@ -56,6 +57,12 @@ export default function NeighborhoodCatalogMap({ places, selectedId, problems, c
     })) as GeoJSON.Feature[],
   }), [places]);
   const problemData = useMemo(() => safeFeatureCollection(problems) as unknown as GeoJSON.FeatureCollection, [problems]);
+  const selectedProblemData = useMemo<GeoJSON.FeatureCollection>(() => ({
+    type: 'FeatureCollection',
+    features: selectedProblemId
+      ? problemData.features.filter((feature) => feature.properties?.problem_id === selectedProblemId)
+      : [],
+  }), [problemData, selectedProblemId]);
   const candidateData = useMemo(() => geometryFeatureCollection(candidateGeometry) as unknown as GeoJSON.FeatureCollection, [candidateGeometry]);
 
   useEffect(() => {
@@ -186,13 +193,19 @@ export default function NeighborhoodCatalogMap({ places, selectedId, problems, c
       instance.addLayer({ id: 'sim-problem-line', type: 'line', source: 'sim-problems', paint: { 'line-color': '#f27c7a', 'line-width': 2.2, 'line-dasharray': [2, 1] } });
       instance.addLayer({ id: 'sim-problem-points', type: 'circle', source: 'sim-problems', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-color': '#ff817b', 'circle-radius': 6, 'circle-stroke-color': '#fff0e8', 'circle-stroke-width': 2 } });
     } else (instance.getSource('sim-problems') as GeoJSONSource).setData(problemData);
+    if (!instance.getSource('sim-selected-problem')) {
+      instance.addSource('sim-selected-problem', { type: 'geojson', data: selectedProblemData });
+      instance.addLayer({ id: 'sim-selected-problem-fill', type: 'fill', source: 'sim-selected-problem', paint: { 'fill-color': '#f5c76d', 'fill-opacity': 0.22 } });
+      instance.addLayer({ id: 'sim-selected-problem-line', type: 'line', source: 'sim-selected-problem', paint: { 'line-color': '#ffe08c', 'line-width': 4, 'line-dasharray': [1, 1] } });
+      instance.addLayer({ id: 'sim-selected-problem-points', type: 'circle', source: 'sim-selected-problem', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-color': '#ffe08c', 'circle-radius': 9, 'circle-stroke-color': '#3a2b12', 'circle-stroke-width': 2 } });
+    } else (instance.getSource('sim-selected-problem') as GeoJSONSource).setData(selectedProblemData);
     if (!instance.getSource('sim-candidate')) {
       instance.addSource('sim-candidate', { type: 'geojson', data: candidateData });
       instance.addLayer({ id: 'sim-candidate-fill', type: 'fill', source: 'sim-candidate', paint: { 'fill-color': '#68d2ad', 'fill-opacity': 0.18 } });
       instance.addLayer({ id: 'sim-candidate-line', type: 'line', source: 'sim-candidate', paint: { 'line-color': '#73e0bb', 'line-width': 4, 'line-dasharray': [1, 1] } });
       instance.addLayer({ id: 'sim-candidate-points', type: 'circle', source: 'sim-candidate', filter: ['==', ['geometry-type'], 'Point'], paint: { 'circle-color': '#73e0bb', 'circle-radius': 8, 'circle-stroke-color': '#10231d', 'circle-stroke-width': 2 } });
     } else (instance.getSource('sim-candidate') as GeoJSONSource).setData(candidateData);
-  }, [problemData, candidateData, fillPolygons, ready]);
+  }, [problemData, selectedProblemData, candidateData, fillPolygons, ready]);
 
   return <div className="catalog-map" aria-label="Harta Iași și catalogul geografic SIM">
     <div ref={container} className="catalog-map-canvas" />
@@ -200,6 +213,7 @@ export default function NeighborhoodCatalogMap({ places, selectedId, problems, c
       <span><i className="legend-area" /> Zone mapate SIM</span>
       <span><i className="legend-point" /> Loc punctual fără contur</span>
       <span><i className="legend-problem" /> Probleme detectate de SIM</span>
+      {selectedProblemData.features.length > 0 && <span><i className="legend-problem-selected" /> Problemă selectată</span>}
       {candidateData.features.length > 0 && <span><i className="legend-candidate" /> Geometrie candidată SIM</span>}
     </div>
     {mapError && <p className="catalog-map-error" role="status">{mapError}</p>}

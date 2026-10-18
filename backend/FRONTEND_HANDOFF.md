@@ -67,3 +67,13 @@ evidence. `GET /api/v1/spatial/studies/{study_id}/planning/{planning_id}` reload
 the persisted result. The UI reports provider unavailable when cloud credentials
 are absent. The signal timing flow remains synthetic at `/app/demo`. Neither
 workflow runs SUMO or reports observed traffic or physical feasibility.
+
+The connected **Editor de intervenții** on `/app` follows problem, intervention
+type, intensity preference, SIM candidate, and graph evaluation. It offers the
+two graph operations present in the SIM catalog; a candidate is evaluable only
+when the study's SIM validation marks it `candidate_backed_evaluated`. Traffic
+signal timing, lanes, transit priority, road reconstruction, roundabouts, and
+underpasses stay explicitly conceptual or unavailable in real OSM studies.
+The Minimală / Moderată / Transformatoare choice is a local planning preference
+and is not sent as a numeric cost, physical scale, or impact. The older tuning
+controls remain isolated in the explicitly labeled `/app/demo` experience.

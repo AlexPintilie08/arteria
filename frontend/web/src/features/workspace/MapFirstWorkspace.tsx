@@ -3,9 +3,10 @@
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { SpatialEvaluation, SpatialPlanningResult, SpatialStudy } from '@arteria/shared/contracts';
+import type { AlternativeLevel, SpatialEvaluation, SpatialPlanningResult, SpatialStudy } from '@arteria/shared/contracts';
 import { spatialApi } from '../../lib/api';
 import { controlledAnalysisMessage, loadSimCatalog, searchSimPlaces, type LoadedSimCatalog, type SourcedPlace } from '../neighborhoods/sim-geography';
+import { ConnectedInterventionEditor, type ConnectedInterventionType, type ConnectedProblemOption, type ConnectedSolutionOption } from '../scenarios/ScenarioPanel';
 import { formatTimestamp, presentError, source, type PresentedError } from './presentation';
 import { geometryFeatureCollection, isJsonRecord, jsonArray, returnedAggregate, safeFeatureCollection, simSolutions, studyProblems, validatedRecommendations, type JsonRecord } from './map-first-data';
 import styles from './MapFirstWorkspace.module.css';
@@ -17,6 +18,11 @@ const CatalogMap = dynamic(() => import('../map/NeighborhoodCatalogMap'), {
 
 type BusyAction = 'study' | 'planning' | 'evaluation' | null;
 interface ActiveCandidate { candidateId: string; geometry: unknown }
+const interventionPreferenceKey = 'arteria.map-first-intervention-preferences.v1';
+const knownInterventionTypes: ConnectedInterventionType[] = [
+  'add_pedestrian_connection', 'set_connection_enabled', 'traffic_signal_retiming', 'new_lane',
+  'public_transport_priority', 'major_road_reconstruction', 'roundabout', 'underpass',
+];
 
 function stringValue(value: unknown, fallback: string): string {
   return typeof value === 'string' && value.trim() ? value : fallback;
@@ -85,10 +91,46 @@ export function MapFirstWorkspace() {
   const [planning, setPlanning] = useState<SpatialPlanningResult | null>(null);
   const [evaluation, setEvaluation] = useState<SpatialEvaluation | null>(null);
   const [activeCandidate, setActiveCandidate] = useState<ActiveCandidate | null>(null);
+  const [selectedProblemId, setSelectedProblemId] = useState<string | null>(null);
+  const [selectedInterventionType, setSelectedInterventionType] = useState<ConnectedInterventionType>('add_pedestrian_connection');
+  const [interventionIntensity, setInterventionIntensity] = useState<AlternativeLevel>('moderate');
+  const [selectedSolutionId, setSelectedSolutionId] = useState<string | null>(null);
+  const [preferencesLoaded, setPreferencesLoaded] = useState(false);
   const [busy, setBusy] = useState<BusyAction>(null);
   const [error, setError] = useState<PresentedError | null>(null);
   const requestController = useRef<AbortController | null>(null);
   const planningKey = useRef<{ studyId: string; key: string } | null>(null);
+
+  useEffect(() => {
+    try {
+      const stored = window.localStorage.getItem(interventionPreferenceKey);
+      const parsed: unknown = stored ? JSON.parse(stored) : null;
+      if (isJsonRecord(parsed)) {
+        if (parsed.intensity === 'minimal' || parsed.intensity === 'moderate' || parsed.intensity === 'transformative') {
+          setInterventionIntensity(parsed.intensity);
+        }
+        if (typeof parsed.type === 'string' && knownInterventionTypes.includes(parsed.type as ConnectedInterventionType)) {
+          setSelectedInterventionType(parsed.type as ConnectedInterventionType);
+        }
+      }
+    } catch {
+      // Preferences are optional; malformed local storage must not block the workspace.
+    } finally {
+      setPreferencesLoaded(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!preferencesLoaded) return;
+    try {
+      window.localStorage.setItem(interventionPreferenceKey, JSON.stringify({
+        intensity: interventionIntensity,
+        type: selectedInterventionType,
+      }));
+    } catch {
+      // The editor remains usable when browser storage is disabled.
+    }
+  }, [preferencesLoaded, interventionIntensity, selectedInterventionType]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -120,6 +162,71 @@ export function MapFirstWorkspace() {
     && selectedPlace.validation.status === 'valid'
     && selectedPlace.validation.analysis_eligible);
 
+  const resultProblems = useMemo(() => study ? studyProblems(study) : [], [study]);
+  const resultSolutions = useMemo(() => study ? simSolutions(study) : [], [study]);
+  const connectedProblems = useMemo<ConnectedProblemOption[]>(() => resultProblems.map((problem, index) => ({
+    id: stringValue(problem.problem_id, `problem-${index}`),
+    title: stringValue(problem.title, stringValue(problem.problem_type, 'Problemă SIM')),
+    description: stringValue(problem.description, 'SIM a identificat o problemă în rețeaua pietonală cartografiată.'),
+    severity: stringValue(problem.severity, 'necunoscută'),
+  })), [resultProblems]);
+  const knownProblemIds = useMemo(() => new Set(connectedProblems.map((problem) => problem.id)), [connectedProblems]);
+  const connectedSolutions = useMemo<ConnectedSolutionOption[]>(() => {
+    if (!study) return [];
+    const solutionByCandidate = new Map<string, JsonRecord>();
+    for (const solution of resultSolutions) {
+      if (typeof solution.candidate_id === 'string') solutionByCandidate.set(solution.candidate_id, solution);
+    }
+    const options: ConnectedSolutionOption[] = study.alternatives.ranked_candidates.map((candidate) => {
+      const candidateId = candidate.candidate_id;
+      const candidateRecord = candidate as unknown as JsonRecord;
+      const solution = solutionByCandidate.get(candidateId) ?? {};
+      const proposal = study.proposal_options.find((item) => item.candidate_id === candidateId) as unknown as JsonRecord | undefined;
+      const proposalRationale = proposal && isJsonRecord(proposal.rationale) ? proposal.rationale : {};
+      const intervention = isJsonRecord(candidate.intervention) ? candidate.intervention : {};
+      const typeId = stringValue(intervention.type, 'unknown');
+      const relationValues = [candidateRecord.related_issue_ids, proposalRationale.related_issue_ids, solution.related_issue_ids, solution.related_problem_ids, solution.problem_ids];
+      const relatedProblemIds = [...new Set(relationValues.flatMap((value) => Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && knownProblemIds.has(item)) : []))];
+      const hasExplicitProblemRelation = relatedProblemIds.length > 0;
+      const geometry = getMapCandidateGeometry(study, planning, candidateId) ?? candidateRecord.geometry ?? null;
+      const rationale = Array.isArray(candidate.evaluation_rationale)
+        ? candidate.evaluation_rationale.filter((item): item is string => typeof item === 'string').join(' ')
+        : '';
+      return {
+        id: candidateId,
+        candidateId,
+        typeId,
+        title: stringValue(solution.title, typeId === 'add_pedestrian_connection' ? 'Conexiune pietonală ipotetică' : 'Intervenție SIM'),
+        description: stringValue(solution.description, stringValue(solution.rationale, rationale || candidate.ranking_explanation || 'Candidat pregătit și evaluat de SIM pe graful pietonal.')),
+        geometry,
+        relatedProblemIds,
+        hasExplicitProblemRelation,
+        canEvaluate: validCandidateIds.has(candidateId),
+        hasGeometry: geometryFeatureCollection(geometry).features.length > 0,
+      };
+    });
+    for (const solution of resultSolutions) {
+      if (typeof solution.candidate_id === 'string') continue;
+      const typeId = stringValue(solution.intervention_type, stringValue(solution.solution_type, 'unknown'));
+      if (!knownInterventionTypes.includes(typeId as ConnectedInterventionType)) continue;
+      const relationValues = [solution.related_issue_ids, solution.related_problem_ids, solution.problem_ids];
+      const relatedProblemIds = [...new Set(relationValues.flatMap((value) => Array.isArray(value) ? value.filter((item): item is string => typeof item === 'string' && knownProblemIds.has(item)) : []))];
+      options.push({
+        id: stringValue(solution.solution_id, `concept-${options.length}`),
+        candidateId: null,
+        typeId,
+        title: stringValue(solution.title, stringValue(solution.solution_type, 'Concept SIM')),
+        description: stringValue(solution.description, stringValue(solution.rationale, 'Concept returnat de SIM fără candidat evaluabil.')),
+        geometry: geometryFromSolution(solution),
+        relatedProblemIds,
+        hasExplicitProblemRelation: relatedProblemIds.length > 0,
+        canEvaluate: false,
+        hasGeometry: geometryFeatureCollection(geometryFromSolution(solution)).features.length > 0,
+      });
+    }
+    return options;
+  }, [study, planning, resultSolutions, validCandidateIds, knownProblemIds]);
+
   function clearStudyState() {
     requestController.current?.abort();
     requestController.current = null;
@@ -134,7 +241,30 @@ export function MapFirstWorkspace() {
 
   function selectPlace(place: SourcedPlace) {
     clearStudyState();
+    setSelectedProblemId(null);
+    setSelectedSolutionId(null);
     setSelectedPlace(place);
+  }
+
+  function selectProblem(problemId: string) {
+    setSelectedProblemId(problemId);
+    setSelectedSolutionId(null);
+    setEvaluation(null);
+  }
+
+  function selectInterventionType(type: ConnectedInterventionType) {
+    setSelectedInterventionType(type);
+    setSelectedSolutionId(null);
+    setActiveCandidate(null);
+    setEvaluation(null);
+  }
+
+  function selectConnectedSolution(solution: ConnectedSolutionOption) {
+    setSelectedSolutionId(solution.id);
+    setActiveCandidate(solution.hasGeometry
+      ? { candidateId: solution.candidateId ?? solution.id, geometry: solution.geometry }
+      : null);
+    setEvaluation(null);
   }
 
   async function runRequest(action: BusyAction, run: (signal: AbortSignal) => Promise<void>) {
@@ -155,6 +285,7 @@ export function MapFirstWorkspace() {
   function createStudy() {
     if (!selectedCanRun || !selectedPlace) return;
     setStudy(null); setPlanning(null); setEvaluation(null); setActiveCandidate(null);
+    setSelectedProblemId(null); setSelectedSolutionId(null);
     void runRequest('study', async (signal) => {
       const result = await spatialApi.spatialNeighborhoodStudy(selectedPlace.id, signal);
       if (!signal.aborted) {
@@ -206,8 +337,6 @@ export function MapFirstWorkspace() {
     });
   }
 
-  const resultProblems = study ? studyProblems(study) : [];
-  const resultSolutions = study ? simSolutions(study) : [];
   const selectedProperties = selectedPlace ? properties(selectedPlace) : {};
   const attribution = stringValue(catalog?.metadata.attribution, '© OpenStreetMap contributors');
   const sourceSnapshot = stringValue(catalog?.metadata.source_snapshot_at, 'indisponibilă');
@@ -226,6 +355,7 @@ export function MapFirstWorkspace() {
         <CatalogMap
           places={places}
           selectedId={selectedPlace?.id ?? null}
+          selectedProblemId={selectedProblemId}
           problems={sourcedProblemCollection}
           candidateGeometry={activeCandidate?.geometry ?? null}
           fillPolygons={fillPolygons}
@@ -314,8 +444,28 @@ export function MapFirstWorkspace() {
           })}</ul> : <p className={styles.muted}>SIM nu a returnat probleme cu geometrie sau evidență pentru acest studiu.</p>}
           {sourcedProblemCollection.features.length > 0 && <p className={styles.legendNote}>Marcajele roșii de pe hartă provin din `problem_locations_geojson` al SIM.</p>}
 
-          <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>Soluții legate de dovezi</p><h2>Opțiuni SIM ({resultSolutions.length})</h2></div></div>
-          {resultSolutions.length ? <ul className={styles.resultList}>{resultSolutions.map((solution, index) => {
+          <ConnectedInterventionEditor
+            problems={connectedProblems}
+            solutions={connectedSolutions}
+            selectedProblemId={selectedProblemId}
+            onSelectProblem={selectProblem}
+            selectedType={selectedInterventionType}
+            onSelectType={selectInterventionType}
+            intensity={interventionIntensity}
+            onSelectIntensity={setInterventionIntensity}
+            selectedSolutionId={selectedSolutionId}
+            onSelectSolution={selectConnectedSolution}
+            onEvaluate={(candidateId) => {
+              const solution = connectedSolutions.find((item) => item.candidateId === candidateId);
+              if (solution) selectConnectedSolution(solution);
+              evaluateCandidate(candidateId);
+            }}
+            busy={busy !== null}
+          />
+
+          {resultSolutions.length > 0 && <details className={styles.solutionDetails}>
+            <summary>Detalii tehnice și impacturi SIM ({resultSolutions.length})</summary>
+            <ul className={styles.resultList}>{resultSolutions.map((solution, index) => {
             const id = stringValue(solution.solution_id, `solution-${index}`);
             const candidateId = typeof solution.candidate_id === 'string' ? solution.candidate_id : null;
             const status = stringValue(solution.status, 'necunoscut');
@@ -336,7 +486,9 @@ export function MapFirstWorkspace() {
               </>}
               {candidateId && !canEvaluate && <p className={styles.muted}>SIM nu a aprobat evaluarea acestui candidat pentru comparația de graf.</p>}
             </li>;
-          })}</ul> : <p className={styles.muted}>SIM nu a returnat soluții pentru problemele acestui studiu.</p>}
+          })}</ul>
+          </details>}
+          {resultSolutions.length === 0 && <p className={styles.muted}>SIM nu a returnat soluții pentru problemele acestui studiu.</p>}
 
           {evaluation && <section className={styles.evaluation} aria-label="Comparație calculată de SIM">
             <p className={styles.eyebrow}>Comparație Înainte / După · graf pietonal</p>
@@ -359,7 +511,7 @@ export function MapFirstWorkspace() {
           <section className={styles.aiPanel} aria-label="Planificare asistată de AI">
             <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>Interpretarea dovezilor</p><h2>Planificare AI</h2></div></div>
             <p className={styles.muted}>Modelul poate explica numai identificatorii și dovezile deja validate de SIM. Geometria și impactul rămân cele calculate de SIM.</p>
-            <button className={styles.secondary} type="button" disabled={busy !== null} onClick={requestPlanning}>{busy === 'planning' ? 'Se solicită…' : planning ? 'Reîncarcă rezultatul salvat' : 'Solicită interpretare AI'}</button>
+            <button className={styles.secondary} type="button" disabled={busy !== null} onClick={requestPlanning}>{busy === 'planning' ? 'Se solicită…' : planning ? 'Reîncarcă rezultatul salvat' : 'Generează soluții cu AI'}</button>
             {planning && <>
               <p className={planning.ai_generated ? styles.aiAvailable : styles.aiUnavailable} role="status">
                 {planning.ai_generated && ['completed', 'completed_with_rejections'].includes(planning.provider_status)
@@ -376,7 +528,21 @@ export function MapFirstWorkspace() {
                 return <li key={recommendation.solution_id}>
                   <strong>{recommendation.title ?? 'Recomandare AI validată'}</strong>
                   <p>{recommendation.explanation ?? 'Interpretare bazată pe dovezile legate de SIM.'}</p>
-                  <small>{recommendation.solution_id} · candidate: {candidateId} · dovezi: {(recommendation.evidence_ids ?? []).join(', ') || 'fără referințe returnate'}</small>
+                  <small>{recommendation.solution_id} · candidate: {candidateId}</small>
+                  {(() => {
+                    const problemIds = recommendation.problem_ids ?? [];
+                    const relatedProblems = resultProblems.filter((problem) => problemIds.includes(stringValue(problem.problem_id, '')));
+                    return <div className={styles.recommendationEvidence}>
+                      <strong>Probleme SIM asociate</strong>
+                      {relatedProblems.length > 0
+                        ? <ul>{relatedProblems.map((problem, index) => {
+                          const problemId = stringValue(problem.problem_id, `problem-${index}`);
+                          return <li key={problemId}><button type="button" className={styles.textButton} onClick={() => selectProblem(problemId)}>{stringValue(problem.title, stringValue(problem.problem_type, problemId))}</button><span>{stringValue(problem.description, 'Detaliile problemei provin din studiul SIM.')}</span></li>;
+                        })}</ul>
+                        : <p>SIM nu a returnat un identificator de problemă asociat acestei recomandări.</p>}
+                      <p>Referințe de evidență returnate de SIM: {(recommendation.evidence_ids ?? []).join(', ') || 'niciuna'}</p>
+                    </div>;
+                  })()}
                   <p className={styles.muted}>Geometria, intervenția și impactul provin din înregistrarea SIM atașată după validare.</p>
                   {authoritative.shared_sample_impact != null && <Aggregate value={authoritative.shared_sample_impact} />}
                   <div className={styles.buttonRow}><button type="button" className={styles.secondary} onClick={() => activateSolution(candidateId, geometry)}>Arată soluția pe hartă</button>{canEvaluate && <button type="button" className={styles.secondary} disabled={busy !== null} onClick={() => evaluateCandidate(candidateId)}>Compară candidatul SIM</button>}</div>

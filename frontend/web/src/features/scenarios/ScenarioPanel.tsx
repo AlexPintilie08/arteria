@@ -3,6 +3,7 @@ import { alternativeLabels, allDemoIssues, type DemoStudyIssue } from '@arteria/
 import type { AlternativeLevel } from '@arteria/shared/contracts';
 import { colors, radius, spacing } from '@arteria/shared/tokens';
 import { Check, ShieldAlert, ArrowRight, Layers, Sparkles, SlidersHorizontal, Bus, Clock } from 'lucide-react';
+import editorStyles from './ConnectedInterventionEditor.module.css';
 
 export interface ScenarioTuningParams {
   greenPhaseSec: number;
@@ -462,5 +463,237 @@ export function ScenarioPanel({
         </button>
       </div>
     </div>
+  );
+}
+
+export type ConnectedInterventionType =
+  | 'add_pedestrian_connection'
+  | 'set_connection_enabled'
+  | 'traffic_signal_retiming'
+  | 'new_lane'
+  | 'public_transport_priority'
+  | 'major_road_reconstruction'
+  | 'roundabout'
+  | 'underpass';
+
+export interface ConnectedProblemOption {
+  id: string;
+  title: string;
+  description: string;
+  severity: string;
+}
+
+export interface ConnectedSolutionOption {
+  id: string;
+  candidateId: string | null;
+  typeId: string;
+  title: string;
+  description: string;
+  geometry: unknown;
+  relatedProblemIds: string[];
+  hasExplicitProblemRelation: boolean;
+  canEvaluate: boolean;
+  hasGeometry: boolean;
+}
+
+interface ConnectedInterventionEditorProps {
+  problems: ConnectedProblemOption[];
+  solutions: ConnectedSolutionOption[];
+  selectedProblemId: string | null;
+  onSelectProblem: (problemId: string) => void;
+  selectedType: ConnectedInterventionType;
+  onSelectType: (type: ConnectedInterventionType) => void;
+  intensity: AlternativeLevel;
+  onSelectIntensity: (intensity: AlternativeLevel) => void;
+  selectedSolutionId: string | null;
+  onSelectSolution: (solution: ConnectedSolutionOption) => void;
+  onEvaluate: (candidateId: string) => void;
+  busy: boolean;
+}
+
+const connectedInterventionTypes: {
+  id: ConnectedInterventionType;
+  label: string;
+  capability: 'graph' | 'conceptual' | 'unavailable';
+  note: string;
+}[] = [
+  {
+    id: 'add_pedestrian_connection',
+    label: 'Legături pietonale și accesibilitate',
+    capability: 'graph',
+    note: 'SIM poate evalua candidați validați ca editări ipotetice ale grafului pietonal.',
+  },
+  {
+    id: 'set_connection_enabled',
+    label: 'Activarea unei conexiuni modelate',
+    capability: 'graph',
+    note: 'Necesită un ID ARTERIA al unei conexiuni din graful baseline.',
+  },
+  {
+    id: 'traffic_signal_retiming',
+    label: 'Reglarea timpilor la semafor',
+    capability: 'conceptual',
+    note: 'Disponibilă numai în demonstrația separată; nu se evaluează în studiul pietonal OSM.',
+  },
+  {
+    id: 'new_lane',
+    label: 'Benzi pietonale sau piste pentru biciclete',
+    capability: 'conceptual',
+    note: 'Concept de planificare; SIM nu modelează lățimea benzilor sau circulația velo.',
+  },
+  {
+    id: 'public_transport_priority',
+    label: 'Prioritate pentru transportul public',
+    capability: 'unavailable',
+    note: 'Indisponibilă pentru simulare reală: studiul curent nu modelează vehicule sau timpi de transport.',
+  },
+  {
+    id: 'major_road_reconstruction',
+    label: 'Reconstrucție majoră de drum',
+    capability: 'unavailable',
+    note: 'Indisponibilă: geometria rutieră, fezabilitatea și simularea traficului nu sunt evaluate de acest motor.',
+  },
+  {
+    id: 'roundabout',
+    label: 'Sens giratoriu',
+    capability: 'unavailable',
+    note: 'Indisponibil pentru simulare; nu există evaluare rutieră sau SUMO pentru această zonă.',
+  },
+  {
+    id: 'underpass',
+    label: 'Pasaj subteran',
+    capability: 'unavailable',
+    note: 'Indisponibil pentru simulare; SIM nu verifică proiecte de infrastructură sau condiții de teren.',
+  },
+];
+
+const intensityOptions: { id: AlternativeLevel; label: string }[] = [
+  { id: 'minimal', label: 'Minimală' },
+  { id: 'moderate', label: 'Moderată' },
+  { id: 'transformative', label: 'Transformatoare' },
+];
+
+function capabilityLabel(capability: 'graph' | 'conceptual' | 'unavailable', hasCandidate: boolean): string {
+  if (capability === 'unavailable') return 'Indisponibilă';
+  if (capability === 'conceptual') return 'Conceptuală';
+  return hasCandidate ? 'Candidat SIM' : 'Motor suportă · fără candidat validat';
+}
+
+export function ConnectedInterventionEditor({
+  problems,
+  solutions,
+  selectedProblemId,
+  onSelectProblem,
+  selectedType,
+  onSelectType,
+  intensity,
+  onSelectIntensity,
+  selectedSolutionId,
+  onSelectSolution,
+  onEvaluate,
+  busy,
+}: ConnectedInterventionEditorProps) {
+  const selectedTypeInfo = connectedInterventionTypes.find((type) => type.id === selectedType) ?? connectedInterventionTypes[0]!;
+  const matchingSolutions = solutions.filter((solution) => solution.typeId === selectedType);
+  const relatedSolutions = selectedProblemId
+    ? matchingSolutions.filter((solution) => !solution.hasExplicitProblemRelation || solution.relatedProblemIds.includes(selectedProblemId))
+    : matchingSolutions;
+  const selectedSolution = relatedSolutions.find((solution) => solution.id === selectedSolutionId) ?? null;
+  const selectedProblem = problems.find((problem) => problem.id === selectedProblemId) ?? null;
+
+  return (
+    <section className={editorStyles.editor} aria-label="Editor de intervenții">
+      <div className={editorStyles.heading}>
+        <div><p className={editorStyles.eyebrow}>Studiu SIM conectat</p><h2>Editor de intervenții</h2></div>
+        <span className={editorStyles.step}>Problemă → intervenție → evaluare</span>
+      </div>
+
+      <label className={editorStyles.label} htmlFor="connected-problem">1. Problemă detectată</label>
+      {problems.length ? (
+        <select id="connected-problem" className={editorStyles.select} value={selectedProblemId ?? ''} onChange={(event) => onSelectProblem(event.target.value)}>
+          <option value="" disabled>Alege o problemă din studiul SIM</option>
+          {problems.map((problem) => <option key={problem.id} value={problem.id}>{problem.title} · {problem.severity} · {problem.id}</option>)}
+        </select>
+      ) : <p className={editorStyles.empty}>Studiul nu a returnat probleme selectabile.</p>}
+      {problems.length > 0 && !selectedProblemId && <p className={editorStyles.note}>Selectează o problemă pentru a vedea soluțiile pe care SIM le-a legat explicit de ea.</p>}
+
+      {selectedProblem && (
+        <div className={editorStyles.problemSummary}>
+          <strong>{selectedProblem.title}</strong>
+          <small className={editorStyles.problemId}>{selectedProblem.id}</small>
+          <p>{selectedProblem.description}</p>
+        </div>
+      )}
+
+      <fieldset className={editorStyles.fieldset}>
+        <legend>2. Tipul intervenției</legend>
+        <div className={editorStyles.typeGrid}>
+          {connectedInterventionTypes.map((type) => {
+            const typeHasCandidate = solutions.some((solution) => solution.typeId === type.id && solution.candidateId !== null && solution.canEvaluate);
+            return (
+              <button key={type.id} type="button" className={type.id === selectedType ? editorStyles.typeSelected : editorStyles.typeButton} aria-pressed={type.id === selectedType} onClick={() => onSelectType(type.id)}>
+                <span>{type.label}</span>
+                <small>{capabilityLabel(type.capability, typeHasCandidate)}</small>
+              </button>
+            );
+          })}
+        </div>
+        <p className={editorStyles.note}>{selectedTypeInfo.note}</p>
+      </fieldset>
+
+      <fieldset className={editorStyles.fieldset}>
+        <legend>3. Preferința de intervenție</legend>
+        <div className={editorStyles.intensity} role="group" aria-label="Preferința de intensitate">
+          {intensityOptions.map((option) => (
+            <button key={option.id} type="button" aria-pressed={intensity === option.id} className={intensity === option.id ? editorStyles.intensitySelected : editorStyles.intensityButton} onClick={() => onSelectIntensity(option.id)}>
+              {option.label}
+            </button>
+          ))}
+        </div>
+        <p className={editorStyles.note}>Preferința se păstrează local între pagini. SIM nu o transformă în cost, amploare fizică sau impact numeric.</p>
+      </fieldset>
+
+      <div className={editorStyles.candidateSection}>
+        <h3>4. Soluție disponibilă în SIM</h3>
+        {relatedSolutions.length ? (
+          <div className={editorStyles.candidateList} role="radiogroup" aria-label="Candidați și concepte pentru intervenția selectată">
+            {relatedSolutions.map((solution) => (
+              <label key={solution.id} className={selectedSolutionId === solution.id ? editorStyles.solutionSelected : editorStyles.solution}>
+                <input type="radio" name="connected-sim-solution" checked={selectedSolutionId === solution.id} onChange={() => onSelectSolution(solution)} />
+                <span className={editorStyles.solutionBody}>
+                  <strong>{solution.title}</strong>
+                  <small>{solution.candidateId ? `Candidat ${solution.candidateId}` : 'Concept SIM fără candidat evaluabil'} · {solution.canEvaluate ? 'evaluare de graf disponibilă' : 'fără evaluare'}</small>
+                  <span>{solution.description}</span>
+                  {!solution.hasGeometry && <small>Geometria nu a fost returnată; harta nu va afișa o formă inventată.</small>}
+                </span>
+              </label>
+            ))}
+          </div>
+        ) : (
+          <p className={editorStyles.empty}>
+            {selectedProblemId && matchingSolutions.length > 0
+              ? 'SIM nu a legat explicit candidații acestui tip de problema selectată; nu presupunem că sunt înrudite.'
+              : selectedTypeInfo.capability === 'graph'
+              ? 'Nu există candidat SIM pentru acest tip în studiul curent. SIM nu va crea automat o propunere.'
+              : 'Poți inspecta această idee conceptual, dar motorul curent nu o poate simula sau evalua.'}
+          </p>
+        )}
+        {selectedProblemId && relatedSolutions.some((solution) => !solution.hasExplicitProblemRelation) && (
+          <p className={editorStyles.note}>SIM nu a returnat o legătură directă pentru toți candidații cu problema selectată; relația nu este presupusă.</p>
+        )}
+        {selectedSolution && (
+          <div className={editorStyles.actions}>
+            <button type="button" className={editorStyles.secondary} onClick={() => onSelectSolution(selectedSolution)}>
+              {selectedSolution.hasGeometry ? 'Arată geometria pe hartă' : 'Inspectează soluția'}
+            </button>
+            {selectedSolution.candidateId && selectedSolution.canEvaluate && (
+              <button type="button" className={editorStyles.primary} disabled={busy} onClick={() => onEvaluate(selectedSolution.candidateId!)}>
+                {busy ? 'Se evaluează…' : 'Evaluează Înainte / După'}
+              </button>
+            )}
+          </div>
+        )}
+      </div>
+    </section>
   );
 }
