@@ -47,6 +47,25 @@ test('spatial study with an invalid calculation type fails runtime validation', 
   const client = createApiClient('https://backend.example', { fetch: async () => Response.json(invalid) });
   await assert.rejects(client.spatialNeighborhoodStudy('copou'), ApiContractError);
 });
+test('stored spatial studies load by encoded ID without reacquiring OSM and retain contract validation', async () => {
+  const study = spatialStudy('osm');
+  const controller = new AbortController();
+  const client = createApiClient('https://backend.example/', { fetch: async (url, init) => {
+    assert.equal(url, 'https://backend.example/api/v1/spatial/studies/study%2Fwith%20spaces');
+    assert.equal(init?.method, 'GET');
+    assert.equal(init?.body, undefined);
+    assert.equal(init?.signal?.aborted, false);
+    return Response.json(study);
+  } });
+  assert.deepEqual(await client.getSpatialStudy('study/with spaces', controller.signal), study);
+  const invalidClient = createApiClient('https://backend.example', { fetch: async () => Response.json({ ...study, calculation: 'sumo_simulation' }) });
+  await assert.rejects(invalidClient.getSpatialStudy('study-osm'), ApiContractError);
+});
+test('missing stored spatial study preserves the API not-found response', async () => {
+  const body = { error: { code: 'study_not_found', message: 'Studiul nu există.', details: [], request_id: 'req_study' } };
+  const client = createApiClient('https://backend.example', { fetch: async () => Response.json(body, { status: 404 }) });
+  await assert.rejects(client.getSpatialStudy('unknown'), (error: unknown) => error instanceof ApiError && error.status === 404 && error.body?.error.code === 'study_not_found');
+});
 test('spatial evaluation validates its individual candidate validation result', async () => {
   const evaluation = { study_id: 'study-osm', baseline_id: 'base-1', candidate_id: 'candidate-1', source: 'osm', evaluated_at: '2026-10-18T10:00:00Z', execution: 'stored_graph_comparison', sumo_executed: false,
     impact: { aggregate: { evaluated_pair_count: 3, total_distance_savings_m: null }, routes: [] },

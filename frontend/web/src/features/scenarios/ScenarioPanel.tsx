@@ -202,7 +202,7 @@ export function ScenarioPanel({
     return (
       <div className="empty-state">
         <h3>O schimbare, trei perspective.</h3>
-        <p>După conectarea analizei, selectezi o problemă susținută de date și soliciți alternative.</p>
+        <p>Demo sintetic: selectează o problemă ilustrativă pentru a explora editorul și alternativele predefinite.</p>
         <ol className="alternatives">
           {Object.entries(alternativeLabels).map(([key, label]) => (
             <li key={key}>
@@ -211,12 +211,12 @@ export function ScenarioPanel({
             </li>
           ))}
         </ol>
-        <p>Propunerile sunt ipoteze. Efectele măsurabile apar numai după evaluare.</p>
+        <p>Valorile de exemplu și formulele locale nu reprezintă măsurători sau evaluări OSM, AI ori SUMO.</p>
 
         {/* Interactive Direct Corridor Selector */}
         <div style={{ marginTop: '24px', borderTop: `1px solid ${colors.border}`, paddingTop: '16px', textAlign: 'left' }}>
           <h4 style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.8px', color: colors.muted, marginBottom: '10px', fontWeight: 700 }}>
-            Sau alege direct un coridor pentru simulare:
+            Alege un coridor demonstrativ:
           </h4>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {allDemoIssues.map((issue) => (
@@ -262,6 +262,7 @@ export function ScenarioPanel({
 
   return (
     <div style={styles.view}>
+      <p className="notice" role="status" style={{ margin: 0 }}>Demo sintetic: propuneri predefinite și formule ilustrative. AI cloud indisponibil; nicio rulare SUMO.</p>
       {/* Switcher dropdown */}
       <div style={styles.selectorHeader}>
         <label htmlFor="corridor-select" style={{ fontSize: '11px', color: colors.muted, textTransform: 'uppercase', letterSpacing: '0.6px', fontWeight: 600 }}>
@@ -310,7 +311,7 @@ export function ScenarioPanel({
 
       <div style={styles.proposalCard}>
         <div style={styles.badgeRow}>
-          <span style={styles.modelBadge}><Sparkles size={14} /> Catalog catalog-1 · Validat</span>
+          <span style={styles.modelBadge}><Sparkles size={14} /> Catalog demonstrativ · sintetic</span>
           <span style={{ color: colors.muted, fontSize: '11px' }}>Orizont: {activeProp.timeframe}</span>
         </div>
 
@@ -342,7 +343,7 @@ export function ScenarioPanel({
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', borderBottom: `1px solid ${colors.border}`, paddingBottom: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <SlidersHorizontal size={16} style={{ color: colors.accent }} aria-hidden="true" />
-              <span style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>Parametri de reglaj simulare în timp real</span>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: colors.text }}>Parametri demonstrativi · formule locale</span>
             </div>
             <button
               type="button"
@@ -424,7 +425,7 @@ export function ScenarioPanel({
           </div>
 
           <div style={styles.liveFeedbackBox}>
-            <strong>Răspuns dinamic la reglaj:</strong>
+            <strong>Exemplu sintetic la reglaj:</strong>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
               <span>Reducere timp de așteptare:</span>
               <strong style={{ color: colors.observed }}>-{calculatedDelayChange}%</strong>
@@ -438,7 +439,7 @@ export function ScenarioPanel({
 
         <div style={styles.validationNote}>
           <ShieldAlert size={15} />
-          <span>Verificare reguli: geometrie compatibilă cu aria selectată, fără conflicte de rețea.</span>
+          <span>Geometria, fezabilitatea și impactul real nu sunt validate în acest demo sintetic.</span>
         </div>
 
         <button

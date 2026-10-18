@@ -54,6 +54,9 @@ export function createApiClient(baseUrl: string, options: { fetch?: typeof fetch
   }
   return {
     spatialStudy: (signal?: AbortSignal) => post<SpatialStudy>('/api/v1/spatial/studies', { source: 'fixture' }, signal),
+    getSpatialStudy: (studyId: string, signal?: AbortSignal) => get<SpatialStudy>(
+      `/api/v1/spatial/studies/${encodeURIComponent(studyId)}`, signal,
+    ),
     spatialNeighborhoodStudy: (neighborhoodId: string, signal?: AbortSignal) => post<SpatialStudy>(
       '/api/v1/spatial/studies', { source: 'osm', neighborhood_id: neighborhoodId }, signal,
     ),
