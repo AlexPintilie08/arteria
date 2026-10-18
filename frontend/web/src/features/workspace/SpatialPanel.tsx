@@ -8,7 +8,7 @@ import { placeCenter } from '../neighborhoods/sim-geography';
 import type { SpatialEvaluation, SpatialProposalOption, SpatialStudy } from '@arteria/shared/contracts';
 import { spatialApi } from '../../lib/api';
 import styles from './ConnectedWorkspace.module.css';
-import { label, source, formatNumber } from './presentation';
+import { label, source, formatNumber, formatTimestamp, presentError, type PresentedError } from './presentation';
 
 const SpatialMap = dynamic(() => import('../map/MapViewport'), {
   ssr: false,
@@ -24,27 +24,27 @@ export function SpatialPanel() {
   const [study, setStudy] = useState<SpatialStudy | null>(null);
   const [evaluation, setEvaluation] = useState<SpatialEvaluation | null>(null);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<PresentedError | null>(null);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
 
   async function request(action: (signal: AbortSignal) => Promise<void>) {
     controller.current?.abort();
     const active = new AbortController(); controller.current = active;
-    setBusy(true); setError(''); setEvaluation(null);
+    setBusy(true); setError(null); setEvaluation(null);
     try { await action(active.signal); }
-    catch (cause) { if (!active.signal.aborted) setError(cause instanceof Error ? cause.message : 'Motorul nu este disponibil.'); }
+    catch (cause) { if (!active.signal.aborted) setError(presentError(cause)); }
     finally { if (!active.signal.aborted) setBusy(false); }
   }
 
   function selectMode(next: Mode) {
     controller.current?.abort();
-    setBusy(false); setError(''); setStudy(null); setEvaluation(null); setMode(next);
+    setBusy(false); setError(null); setStudy(null); setEvaluation(null); setMode(next);
   }
 
   function selectPlace(place: SourcedPlace) {
     controller.current?.abort();
-    setBusy(false); setError(''); setStudy(null); setEvaluation(null); setSelectedPlace(place);
+    setBusy(false); setError(null); setStudy(null); setEvaluation(null); setSelectedPlace(place);
   }
 
   function runFixture() {
@@ -109,17 +109,28 @@ export function SpatialPanel() {
           disabled={busy || selectedPlace.geometryType === 'Point' || selectedPlace.validation.status !== 'valid'}
           onClick={runSourcedArea}
         >
-          Analizează cu SIM v3
+          Calculează pe graful pietonal OSM
         </button>
         <p className={styles.muted}>Se folosește geometria canonică din catalogul SIM de pe server. Cererea descarcă date OpenStreetMap pentru zona selectată; rezultatele rămân analiză de graf pietonal.</p>
       </>}
     </>}
 
     {busy && <p role="status">Pregătim analiza grafului pietonal…</p>}
-    {error && <div role="alert" className={styles.error}>Analiza nu a putut fi finalizată.<details><summary>Detalii despre problemă</summary>{error}</details></div>}
+    {error && <div role="alert" className={styles.error}><strong>{error.title}</strong><details><summary>Detalii despre problemă</summary><p>{error.detail}</p>{error.fields?.length ? <ul>{error.fields.map((item, i) => <li key={`${item.field}-${i}`}>{item.field}: {item.reason}</li>)}</ul> : null}{error.requestId && <p>Identificator cerere: <code>{error.requestId}</code></p>}</details></div>}
     {study && <>
-      <h2>Studiu SIM v3</h2>
-      <p>Sursă: {source(study.source)} · Revizie SIM: <code>{study.engine_revision}</code> · Alternative validate: {proposalOptions.length}</p>
+      <h2>Calcul pe graful pietonal</h2>
+      <p>Sursă: {source(study.source)} · Revizie motor returnată de backend: <code>{study.engine_revision}</code> · Alternative validate: {proposalOptions.length}</p>
+      <details><summary>Proveniență și versiunea rezultatului</summary>
+        <p>Sursă API: {source(study.source)} · tipul calculului: {study.calculation === 'pedestrian_graph' ? 'analiză de graf pietonal' : study.calculation} · creat la: {formatTimestamp(study.created_at)} · versiune rezultat: <code>{study.engine_revision}</code>.</p>
+        {study.analysis.provenance && <>
+          <p>Sursă de date: {source(study.analysis.provenance.source)} · versiune sursă: {study.analysis.provenance.source_version ?? 'Nedisponibilă în răspuns'} · captură date: {formatTimestamp(study.analysis.provenance.retrieved_at)}.</p>
+          {study.analysis.provenance.working_crs && <p>CRS de lucru: {study.analysis.provenance.working_crs}</p>}
+          {study.analysis.provenance.crs && <p>CRS sursă: {study.analysis.provenance.crs}</p>}
+          {study.analysis.provenance.limitations?.map((limitation, i) => <p key={i}>{limitation}</p>)}
+        </>}
+        {!study.analysis.provenance && <p>Metadatele detaliate de captură a sursei nu sunt furnizate de răspuns.</p>}
+        <p>Acesta este un calcul pe graf; nu a fost executată o simulare de trafic.</p>
+      </details>
       <details><summary>Dovezi și limite</summary>
         <ul>{study.warnings.map(w => <li key={w}>{w}</li>)}</ul>
         <p>Evaluarea propunerilor: {validation?.status ?? 'indisponibilă'} · Acceptate: {validation?.summary.accepted_count ?? 0} · Respinse: {validation?.summary.rejected_count ?? 0}</p>
@@ -155,7 +166,7 @@ export function SpatialPanel() {
         ['newly_unreachable_count', 'Perechi devenite inaccesibile'],
         ['total_distance_savings_m', 'Diferență agregată de distanță (metri)'],
       ].map(([key, title]) => <div key={key}><dt>{title}</dt><dd>{formatNumber(evaluation.impact.aggregate[key!] ?? null)}</dd></div>)}</dl>
-      <div className={styles.scroll}><table className={styles.table}><caption>Rute simulate în graful OpenStreetMap, nu trasee observate</caption><thead><tr><th>Rută</th><th>Efect</th><th>Diferență distanță (m)</th></tr></thead><tbody>{evaluation.impact.routes.map((route, index) => <tr key={index}><td>{route.origin_node_id} → {route.destination_node_id}</td><td>{label(route.outcome, 'Vezi detaliile analizei')}</td><td>{route.distance_delta_m === null ? 'Necomparabil' : route.distance_delta_m.toFixed(2)}</td></tr>)}</tbody></table></div>
+      <div className={styles.scroll}><table className={styles.table}><caption>Perechi calculate pe graful pietonal: {source(evaluation.source)}. Nu sunt trasee observate și nu reprezintă o simulare de trafic.</caption><thead><tr><th>Pereche de noduri</th><th>Efect calculat</th><th>Diferență distanță (m)</th></tr></thead><tbody>{evaluation.impact.routes.map((route, index) => <tr key={index}><td>{route.origin_node_id} → {route.destination_node_id}</td><td>{label(route.outcome, 'Vezi detaliile analizei')}</td><td>{route.distance_delta_m === null ? 'Necomparabil' : route.distance_delta_m.toFixed(2)}</td></tr>)}</tbody></table></div>
       <details><summary>Detalii și limitele comparației</summary><ul>{evaluation.warnings.map(warning => <li key={warning}>{warning}</li>)}</ul></details>
     </section>}
   </section>;
