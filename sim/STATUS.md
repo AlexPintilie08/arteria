@@ -4,6 +4,16 @@ Updated: 2026-10-18
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for SIM internals, [APPLICATION_INTEGRATION.md](APPLICATION_INTEGRATION.md) for the frontend/backend handoff, [README.md](README.md) for usage, and [AGENTS.md](AGENTS.md) for component instructions.
 
+## SIM intelligent urban planning MVP verification (2026-10-18)
+
+- Branch: `feat/sim-ai-planning-mvp`, based on `origin/main` at `6760ded19a9985e4d61101b1432b3815e016d51e`; no changes were made to `main` or other worktrees.
+- The implementation adds bounded deterministic urban problem evidence, candidate-linked and conceptual solution plans, a provider-neutral AI packet/response contract, and an opt-in `python -m sim.mvp_demo --planning` artifact export. No live LLM provider or credential is used.
+- Windows/Python 3.12.15 validation reused `F:\AI\arteria-fullstack\.venv`; no dependencies were installed. Full regression: **191 passed**, with one existing Starlette/httpx deprecation warning. Spatial smoke passed. Optional SUMO smoke was skipped because `sumo` and `netconvert` executables are absent (Python TraCI/sumolib 1.28.0 are present).
+- Real bounded area: Tătărași Nord, OSM place `osm-w-670153116`, 1.534406 km². The walk graph contains 557 nodes / 1,526 directed edges and the drive graph 135 nodes / 344 directed edges. Its requested polygon hash is verified. Six graph findings were emitted (five pedestrian disconnections and one sampled detour); three conditional candidate options gained 3 newly reachable pairs in the 32-pair shared sample, with 0 improved already-reachable pairs and 0 m comparable distance savings. Twelve evidence-backed conceptual review options have no executable geometry or impact.
+- The first explicit live OSM feature-category query returned an Overpass 502 capacity response; the affected categories remain `request_failed` in that original run and were not interpreted as absent. The final reproducibility export reused the verified local network cache and disabled feature requests, leaving categories explicitly `not_requested` in that replay.
+- Final deterministic mock response passed the AI contract validator. The bounded packet is 64,928 bytes. No cloud inference or analysis beyond SIM's graph evidence was claimed. The backend endpoint and frontend display integration remain handoff work.
+- Ignored local artifacts: `sim/.cache/mvp-demo/ai-planning-tatarasi-nord/report.json` records the original live acquisition and feature-query failure; `sim/.cache/mvp-demo/ai-planning-tatarasi-nord-final4/report.json` records the final cached replay with verified source geometry, no new network requests, and a validated AI mock response. Implementation commit `48319bab58025e424bc8e9dd4d4348d5c04487a1` passed both push and pull-request Actions runs (`39114735613` and `39114774818`) on Windows x64, macOS ARM64 and macOS Intel. PR #7 remains open for review.
+
 ## SIM v4 local verification (2026-10-18)
 
 - Branch: `feat/sim-v4-mvp`, based on `origin/main` at `e785649308923c0c91de40ebb1b0b85b5962962e`; this worktree does not update `main`.

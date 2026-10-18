@@ -37,6 +37,7 @@ sim/
 ├── analysis.py
 ├── candidates.py
 ├── demo.py
+├── mvp_demo.py
 ├── geo.py
 ├── impact.py
 ├── iasi-neighborhoods.geojson
@@ -47,15 +48,19 @@ sim/
 ├── proposal_validation.py
 ├── proposals.py
 ├── proposal_demo.py
+├── urban_intelligence.py
+├── solution_planner.py
+├── ai_planning_contract.py
 ├── smoke_test.py
 ├── sumo_engine.py
 ├── sumo_support.py
-└── test_engine.py
+├── test_engine.py
+└── test_urban_intelligence.py
 ~~~
 
 ## Module relationships
 
-Solid arrows are imports present in source. The backend is only a potential in-process consumer. The SUMO engine consumes a caller-supplied OSM driving graph and does not modify pedestrian analysis or scenario graphs.
+Solid arrows are imports present in source. The backend graph API invokes SIM in a bounded subprocess; it does not share an in-process graph object with the service. The SUMO engine consumes a caller-supplied OSM driving graph and does not modify pedestrian analysis or scenario graphs.
 
 ~~~mermaid
 flowchart TD
@@ -65,6 +70,12 @@ flowchart TD
     API --> CANDIDATES["candidates.py"]
     API --> IMPACT["impact.py"]
     API --> SCENARIO["scenario.py"]
+    API --> URBAN["urban_intelligence.py"]
+    API --> PLANNER["solution_planner.py"]
+    API --> AI["ai_planning_contract.py"]
+    PROPOSALS["proposals.py"]
+    PROPOSAL_CONTEXT["proposal_context.py"]
+    PROPOSAL_VALIDATION["proposal_validation.py"]
     ANALYSIS --> GEO
     CANDIDATES --> ANALYSIS
     CANDIDATES --> SCENARIO
@@ -72,8 +83,16 @@ flowchart TD
     IMPACT --> SCENARIO
     SCENARIO --> ANALYSIS
     SCENARIO --> GEO
+    URBAN --> ANALYSIS
+    URBAN --> IMPACT
+    PLANNER --> PROPOSALS
+    PLANNER --> PROPOSAL_VALIDATION
+    AI --> PROPOSAL_CONTEXT
     DEMO["demo.py"] --> ANALYSIS
     DEMO --> IMPACT
+    DEMO --> URBAN
+    DEMO --> PLANNER
+    DEMO --> AI
     TESTS["test_engine.py"] --> GEO
     TESTS --> ANALYSIS
     TESTS --> SCENARIO
@@ -92,6 +111,9 @@ flowchart TD
 - `neighborhoods` owns GeoJSON catalog ingestion, provenance-preserving search, boundary validation, and conversion to `normalize_area` input.
 - `candidates` consumes the existing walking graph, area, mapped building layer, and analysis issues; it uses a bounded metric STRtree search and emits only `add_pedestrian_connection`.
 - `impact` samples graph-node pairs deterministically, reuses the scenario graph-edit helper, calculates Before/After route outcomes, and independently evaluates/ranks alternatives.
+- `urban_intelligence` reuses analysis and route sampling to build bounded localized findings, mapped-access issues, coverage gaps, and verified paired SUMO observations.
+- `solution_planner` reuses the prepared candidate options and existing strict proposal validator; conceptual reviews remain non-executable.
+- `ai_planning_contract` wraps the existing bounded proposal context and validates a provider-neutral structured response without importing a provider SDK.
 - `scenario` consumes the geo types/serializer and imports graph/route helpers from `analysis`, including private `_nearest_nodes`.
 - `demo` reads a local cache without network access or uses a synthetic offline fixture; generated results are written under ignored `sim/.cache/`.
 - `test_engine.py` uses in-memory fixtures, temporary caches, and OSMnx mocks. SUMO support has a separate optional tool path.
@@ -462,9 +484,9 @@ ranked = evaluate_candidates(snapshot, sample_count=32, seed="iasi-demo-v1")
 
 Only `add_pedestrian_connection` is auto-discovered. Keep the analysis issue set, candidate screening, shared route sample, ranking rule, provenance, warnings, and unknown feasibility visible to downstream consumers. Do not translate graph-node route counts into residents or observed trips.
 
-Backend responsibilities include HTTP request/response validation and adaptation, stable `baseline_id` assignment, persistence of source snapshots and metadata, authorization, timeouts, and API error mapping. SIM has no baseline store, HTTP endpoint, LLM proposal API, or traffic simulation evaluation mode. The scenario functions return graph-route comparisons only.
+Backend responsibilities include HTTP request/response validation and adaptation, stable baseline_id assignment, persistence of source results, authorization, timeouts, and API error mapping. The current backend graph worker acquires an OSMData snapshot in a subprocess, stores analysis/candidate/evidence JSON, and discards the raw graph when the worker exits. It does not currently store the new urban issue/solution/AI packet or expose an AI planning endpoint. The new SIM contract is provider-neutral and does not call an LLM.
 
-The draft [API contract](../docs/API_CONTRACT.md) describes planned `/analyze`, `/propose`, and `/evaluate` routes; current `backend/main.py` only implements `GET /health`. The draft and SIM result schemas differ: SIM returns an indicators array, issues array, dictionary-valued `layer_availability`, and named `layers`/`networks` FeatureCollections. SIM does not persist `baseline_id`, return the draft availability array, generate AI proposals, or populate a `simulation` response. Backend code must map shapes and preserve unknown values, provenance, warnings, units, and uncertainty.
+The current graph-study API is implemented in backend/spatial_routes.py under /api/v1/spatial/studies; the separate traffic demo in backend/main.py exposes /analyze, /propose, and /evaluate. The graph API stores a Study with analysis, ranked alternatives, proposal validation and the existing proposal context, but not the raw OSMData graph. The docs/API_CONTRACT.md file remains a separate draft contract. Backend code must map shapes and preserve unknown values, provenance, warnings, units, uncertainty and the distinction between SIM calculations, synthetic estimates, AI calls and SUMO execution.
 
 ## Testing and verification
 
@@ -490,4 +512,14 @@ Standalone checks: `python -m sim.smoke_test` and, if SUMO/netconvert are availa
 
 **Experimental/local-only:** the ignored browser preview and neighborhood mapping/editor under `sim/.cache/local_demo/`, if present. It is absent from clones and is not a production SIM module. Its local-only notes are in `sim/.cache/local_demo/ARCHITECTURE.md`.
 
-**Planned or absent:** real-area OSM-to-SUMO conversion and synthetic vehicle demand; traffic calibration/live/offline simulation; water/elevation/slope/ownership/legal/safety feasibility screening; expanded POI sources; browser preview integration of the new result schema. These are not implemented.
+**Planned or absent:** traffic calibration/live measured data; water/elevation/slope/ownership/legal/safety feasibility screening; expanded POI sources; browser preview integration of the urban-problem/solution schema; backend storage and HTTP orchestration for the new AI planning packet. Real-area OSM-to-SUMO conversion and bounded synthetic-demand paired execution are implemented locally, but depend on installed SUMO binaries and are not calibrated traffic evidence.
+
+## Urban intelligence, solutions and AI planning
+
+urban_intelligence.detect_urban_problems(data, ...) reuses analyze_snapshot, project_graph, and sample_route_pairs. It emits stable, bounded EPSG:4326 problem objects for disconnected walking components, sampled excessive pedestrian detours, and the existing mapped-destination access issues. It also reports feature-category coverage gaps separately and admits paired SUMO observations only when both runs and the source-area hash verify; SUMO observations never become pedestrian-graph problems. Graph gaps near the selected boundary are marked as possible clipping artifacts, detour geometries use mapped graph edge paths only when every path segment has valid source geometry, and all network findings retain explicit uncertainty.
+
+solution_planner.build_solution_plan reuses prepare_candidate_options and validate_proposal_set. A supported candidate includes the exact SIM intervention and shared-sample impact; targeted candidate diagnostics remain separate and are explicitly excluded from ranking. Candidate options without a linked detected problem are omitted. Field/data review concepts cite actual problem or coverage evidence and carry no executable geometry or numerical impact. All physical feasibility remains unknown.
+
+ai_planning_contract.build_ai_planning_packet wraps the existing build_proposal_context, adds urban findings and solution references, preserves source attribution/ODbL and caps canonical JSON at 65,536 bytes. Its SHA-256 checksum binds a model response to the exact immutable packet but is not a signature. AI_SYSTEM_PROMPT and AI_OUTPUT_SCHEMA are provider-neutral. run_ai_planning accepts an injected callback only; the SIM package contains no provider SDK, credential, HTTP integration or live inference. validate_ai_planning_response whitelists problem, solution, candidate and evidence IDs, rejects model-authored geometry/metrics/cost/citations/SUMO IDs/feasibility claims, partially rejects invalid entries, and attaches authoritative SIM candidate data after validation.
+
+The backend must build and persist urban_issues, solution_plan and the immutable AI packet during study creation, before its current worker subprocess discards OSMData. A later model request must use the stored packet without reacquiring OSM. The backend AI endpoint and provider integration are still absent. See INTEGRATION_CONTRACT_V4.md and the append-only backend/frontend handoffs.

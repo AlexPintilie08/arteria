@@ -1,6 +1,6 @@
 # SIM v4 Integration Contract
 
-**Contract status:** implemented in this branch (`feat/sim-v4-mvp`). This is a Python integration contract; it does not add HTTP endpoints or persistence. Backend and frontend code must not assume this branch is deployed until it is merged.
+**Contract status:** SIM v4 was implemented on feat/sim-v4-mvp and merged into main by PR #5 at 6760ded19a9985e4d61101b1432b3815e016d51e. This is a Python integration contract; it does not add HTTP endpoints or persistence. The AI planning addendum below is implemented on feat/sim-ai-planning-mvp and is not available on main until that feature PR merges.
 
 ## Evidence and execution boundaries
 
@@ -287,5 +287,72 @@ The CLI defaults to a timestamped ignored directory under `sim/.cache/mvp-demo/`
 - Output overwrite attempts raise `FileExistsError`.
 
 Backend should expose these typed functions through its own authorization, request validation, persistence, run IDs, and HTTP error mapping; it must not treat local file paths as public URLs. Frontend should render only returned GeoJSON and actual status fields. Preserve OSM attribution/ODbL, the exact source area, nullable metrics, and all unknown/failure statuses. Do not forward SIM candidate line geometry as evidence of buildability.
+
+## SIM AI Planning Contract v1 — implemented on feature branch
+
+This contract is in feat/sim-ai-planning-mvp. It adds Python result generation and validation only; it does not add a provider integration, credentials, backend persistence, HTTP endpoint, or frontend rendering. The backend handoff is appended to ../backend/IMPLEMENTATION_TODO.md; the frontend display handoff is appended to ../frontend/IMPLEMENTATION_TODO.md.
+
+### Problem detection
+
+~~~python
+def detect_urban_problems(
+    data: OSMData,
+    *,
+    analysis: Mapping[str, Any] | None = None,
+    candidate_evaluation: Any = None,
+    paired_sumo_result: Any = None,
+    max_problems: int = 12,
+    route_pair_sample_count: int = 96,
+    detour_ratio_threshold: float = 2.0,
+    min_direct_distance_m: float = 75.0,
+    min_network_distance_m: float = 150.0,
+) -> dict[str, Any]: ...
+
+def problem_locations_geojson(urban_issues: Mapping[str, Any]) -> dict[str, Any]: ...
+~~~
+
+The result schema is arteria.urban-issues.v1. Supported localized types are pedestrian_disconnection, excessive_pedestrian_detour, excessive_detour_to_mapped_destination, and weak_access_to_mapped_destination. Feature-layer and crossing coverage uncertainty is reported in coverage_gaps, separately from detected infrastructure problems. Clipping and OSM incompleteness remain explicit limitations. IDs and ordering are stable; the output is bounded to 24 problems. Severity is an explained ordinal rule, not a safety or social-impact score. Route-pair calculations use a deterministic candidate-independent sample. Route geometry is included only when it can be assembled from valid mapped graph edge geometry; component gap geometry is a straight-line location cue and never a proposed road.
+
+Completed paired SUMO evidence, when supplied, appears in simulation_observations only after verification of both completed runs, matching area ID and source geometry hash, finite metrics, and run IDs. Generated demand remains synthetic, and these observations are not pedestrian findings or measured city traffic.
+
+### Solution plan
+
+~~~python
+def build_solution_plan(
+    data: OSMData,
+    analysis: Mapping[str, Any],
+    urban_issues: Mapping[str, Any],
+    candidate_evaluation: Mapping[str, Any],
+    *,
+    max_solutions: int = 32,
+) -> dict[str, Any]: ...
+~~~
+
+The planner reuses prepare_candidate_options and validate_proposal_set. It outputs supported_evaluated, supported_not_yet_evaluated, concept_only_not_evaluated, unsupported, or rejected records. Candidate geometry, exact graph intervention, shared sample impact and screening are copied from SIM; candidate-local diagnostics remain separately labeled and do not affect common-sample ranking. A candidate must link to a detected problem to become a supported proposal. Conceptual field/data reviews cite real evidence and contain no executable geometry, intervention or numerical benefit. Construction, safety, ownership and legal feasibility stay unknown.
+
+### AI packet and response
+
+~~~python
+def build_ai_planning_packet(data, analysis, urban_issues, candidate_evaluation, solution_plan, *, max_packet_bytes=65_536) -> dict: ...
+def validate_ai_planning_response(response, packet) -> dict: ...
+def run_ai_planning(packet, call_model, *, timeout_seconds=20.0) -> dict: ...
+~~~
+
+build_ai_planning_packet wraps the existing build_proposal_context, preserves source attribution and ODbL metadata, and uses deterministic bounds. Its integrity.sha256 covers the canonical packet body; the checksum detects stale/changed payloads but is not an authenticity signature. The default canonical packet ceiling is 65,536 UTF-8 bytes; model response JSON is capped at 16,384 bytes.
+
+AI_SYSTEM_PROMPT and AI_OUTPUT_SCHEMA define provider-neutral structured output. The model may reference only the supplied IDs. It cannot return authoritative geometry, numeric metrics, costs, citations, action documents, SUMO run IDs, or feasibility claims. validate_ai_planning_response rejects wrong area or packet hash, non-finite/malformed/oversized JSON, unknown or mismatched IDs, unrelated evidence, contradictions, and extra authoritative fields. Invalid individual recommendations are rejected while unrelated valid entries survive; an invalid packet or area/hash mismatch rejects the entire response. Accepted entries have authoritative_sim_solution attached from the stored SIM packet, including the corresponding candidate geometry, intervention, shared impact and separate targeted diagnostics.
+
+run_ai_planning accepts None or an injected synchronous call_model keyword callback receiving packet, system_prompt, output_schema, and timeout_seconds. It returns explicit provider_unavailable, timeout, provider_error, invalid_response, completed_with_rejections, or completed status. The callback should also configure its own provider-side timeout; Python cannot forcibly stop a provider request that ignores its deadline. SIM makes no cloud call by itself.
+
+### Reproducible planning demo
+
+~~~powershell
+python -m sim.mvp_demo --source fixture --planning --output-dir sim/.cache/mvp-demo/ai-planning-fixture
+python -m sim.mvp_demo --source area --area-json area.json --acquire --planning --feature-categories schools,healthcare,services,public_transport --output-dir sim/.cache/mvp-demo/ai-planning-area
+~~~
+
+The fixture is synthetic and explicitly labeled; it makes no network request and uses a deterministic mock provider only to exercise the response contract. It does not claim OSM observations or live AI. Planning mode writes analysis.json, urban_problems.json, solutions.json, ai_evidence_packet.json, ai_input_example.json, ai_output_schema.json, candidate_evidence.geojson, problem_locations.geojson, summary.md, and validation_report.json under ignored local output. Real area mode requires explicit --acquire; a failure remains a failure and is never replaced with the fixture.
+
+The current backend spatial_worker.py discards OSMData when its worker exits and stores only analysis/candidate/evidence JSON. Backend must add problem/solution/AI packet storage during study creation and use that immutable packet for the later model call. The proposed endpoint and storage steps are documented in the backend handoff; neither is implemented yet.
 
 Useful consumer tests include: all eight category filters and statuses; wrong/missing-hash category caches; unavailable native binaries; stale edge revisions; unchanged source graphs and reused demand; one-side failure/timeout with null comparison; partial/unreported trips; changed or invalid route exclusion; GeoJSON CRS and geometry validation; source-area mismatch; zero shared-sample effect versus local-only diagnostics; non-finite or fabricated proposal fields; and fixture/cache/area demo source-mode behavior.
