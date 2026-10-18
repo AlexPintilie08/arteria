@@ -142,6 +142,11 @@ def test_real_sim_engine_offline_flow(monkeypatch, tmp_path):
     assert s["proposal_options"]
     assert s["proposal_validation"]["summary"]["accepted_count"] == len(s["proposal_options"])
     assert s["evidence_packet"]["schema_version"] == "arteria.proposal-context.v1"
+    assert s["urban_issues"]["area_id"] == s["ai_evidence_packet"]["urban_intelligence"]["area_id"]
+    assert s["solution_plan"]["area_id"] == s["ai_evidence_packet"]["study_area"]["area_id"]
+    assert s["problem_locations_geojson"]["type"] == "FeatureCollection"
+    assert s["evidence_packet_sha256"] == s["ai_evidence_packet"]["integrity"]["sha256"]
+    assert len(s["evidence_packet_sha256"]) == 64
     assert len({candidate["candidate_id"] for candidate in s["alternatives"]["ranked_candidates"]}) == len(s["alternatives"]["ranked_candidates"])
     for candidate in s["alternatives"]["ranked_candidates"]:
         e = client.post(f"/api/v1/spatial/studies/{s['study_id']}/evaluate", json={

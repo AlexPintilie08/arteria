@@ -78,7 +78,10 @@ do not establish physical feasibility, and this API does not run SUMO or traffic
 simulation. Explicit SUMO live/offline/replay requests on the signal-timing API
 return `503 sumo_unavailable` without fallback, even if SUMO is installed.
 
-No LLM, city telemetry, certified boundaries, real-world construction feasibility,
-authentication, SUMO jobs/SSE, or cloud storage is implemented. API_ENDPOINTS.md
-contains aspirational examples; its numeric traffic figures and provider names
-are not observations or enabled integrations.
+The spatial study API now stores SIM urban issues, its evidence-linked solution
+plan, problem GeoJSON, and the immutable AI packet. Optional OpenAI Responses API
+planning is available through [AI_PLANNING_API.md](AI_PLANNING_API.md), disabled
+by default, and requires server-side credentials. It does not add traffic
+telemetry, calibrated simulation, certified boundaries, construction feasibility,
+authentication, SUMO jobs/SSE, or cloud storage. `API_ENDPOINTS.md` remains an
+aspirational legacy reference; its numeric traffic figures are not observations.

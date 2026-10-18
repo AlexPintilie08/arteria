@@ -1,5 +1,6 @@
 """Graph-only study flow, separate from the synthetic signal-timing API."""
 from datetime import datetime, timezone
+import json
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException
 from backend.spatial_adapter import SpatialAdapter
@@ -26,12 +27,22 @@ def load(study_id):
 @router.post("/studies", response_model=Study, status_code=201)
 def create_study(body: SpatialRequest):
     result, revision = engine.run(body)
+    # The subprocess boundary emits JSON arrays. Normalize here as well so
+    # strict response models behave identically when an adapter is substituted.
+    result = json.loads(json.dumps(result, ensure_ascii=False, allow_nan=False))
+    ai_packet = result.get("ai_evidence_packet") or {}
+    integrity = ai_packet.get("integrity", {}) if isinstance(ai_packet, dict) else {}
     study = Study(study_id="study_" + uuid4().hex, baseline_id="graph_" + uuid4().hex,
         created_at=datetime.now(timezone.utc), source=body.source, engine_revision=revision,
         analysis=result["analysis"], alternatives=result["alternatives"],
         proposal_options=result.get("proposal_options", []),
         proposal_validation=result.get("proposal_validation", {}),
         evidence_packet=result.get("evidence_packet", {}),
+        urban_issues=result.get("urban_issues", {}),
+        solution_plan=result.get("solution_plan", {}),
+        ai_evidence_packet=ai_packet,
+        problem_locations_geojson=result.get("problem_locations_geojson", {}),
+        evidence_packet_sha256=integrity.get("sha256") if isinstance(integrity, dict) else None,
         warnings=WARNINGS + (["Synthetic fixture, not an observation of Iași infrastructure."] if body.source == "fixture" else ["OpenStreetMap snapshot; coverage and feasibility limitations apply. Preserve ODbL attribution."]))
     return studies.put(study.study_id, study)
 

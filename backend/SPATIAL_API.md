@@ -1,6 +1,6 @@
-# SIM v3 pedestrian graph API
+# SIM pedestrian graph and AI planning API
 
-The spatial API runs the repository's in-tree SIM v3 library in a bounded worker
+The spatial API runs the repository's in-tree SIM library in a bounded worker
 process. It provides pedestrian-network analysis and graph comparisons. It does
 not run SUMO or traffic-signal simulation. The existing `/analyze`, `/propose`,
 and `/evaluate` endpoints remain the separate synthetic signal-timing API.
@@ -46,19 +46,20 @@ study areas. Polygon areas beyond SIM's standard 5 km² or 5 km extent limits ar
 reported as requiring controlled analysis. OSM place extents are mapped place
 boundaries, not official administrative boundaries.
 
-The worker requests the walking graph only. Feature layers it did not query remain
-`unknown`, and their accessibility indicators remain unknown. Live OSM requests
-need network access and preserve SIM's source provenance, coverage warnings, and
-OpenStreetMap attribution. An OSM failure never falls back to the synthetic
-fixture.
+The worker requests the walking graph and bounded feature categories for schools,
+healthcare, public transport, and crossings. Unqueried layers remain `unknown`,
+and their accessibility indicators remain unknown. Live OSM requests need network
+access and preserve SIM's source provenance, coverage warnings, and OpenStreetMap
+attribution. An OSM failure never falls back to the synthetic fixture.
 
 The 201 response includes `study_id`, `baseline_id`, `created_at`, `source`,
-`engine_revision`, `analysis`, and native `alternatives`, plus SIM v3
-`proposal_options`, `proposal_validation`, and `evidence_packet`. Native analysis
-and candidate payloads retain the SIM schema, geometry, source provenance,
-uncertainty, and warnings. Proposal validation reports graph evidence and
-evaluation status; it does not certify physical feasibility or safety. Results
-do not imply population impacts or observed journeys.
+`engine_revision`, `analysis`, native `alternatives`, `proposal_options`,
+`proposal_validation`, and `evidence_packet`. It also returns `urban_issues`,
+`solution_plan`, `ai_evidence_packet`, `problem_locations_geojson`, and the
+SIM-generated `evidence_packet_sha256`. Native payloads retain SIM geometry,
+source provenance, uncertainty, and warnings. Proposal validation reports graph
+evidence and evaluation status; it does not certify physical feasibility or
+safety. Results do not imply population impacts or observed journeys.
 
 ## Retrieve and compare candidates
 
@@ -76,7 +77,9 @@ study is created.
 
 The frontend labels fixture studies as synthetic and OSM studies as sourced
 pedestrian graph analysis. Unknown cost, physical feasibility, traffic effects,
-and missing feature coverage remain unknown. No cloud AI service is connected.
+and missing feature coverage remain unknown. Optional evidence-grounded cloud AI
+planning is documented in [AI_PLANNING_API.md](AI_PLANNING_API.md). It is disabled
+until a server-side provider is configured and never supplies simulated impacts.
 
 ## Limits and errors
 

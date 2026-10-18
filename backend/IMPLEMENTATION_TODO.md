@@ -304,7 +304,7 @@ Run focused tests from the repository’s established Python environment; the do
 
 These are requests to the SIM owner, not backend capabilities that may be assumed during implementation. Keep `sim/` unchanged until its owner accepts and delivers the API contract.
 
-## SIM v4 contract addendum (branch pending merge)
+## SIM v4 contract addendum
 
 The SIM owner has implemented both requested Python contracts on `feat/sim-v4-mvp`; they are not in `main` yet. Review [sim/INTEGRATION_CONTRACT_V4.md](../sim/INTEGRATION_CONTRACT_V4.md) after that branch's PR merges. This addendum supersedes the two “not available today” statements above only once that merge is complete.
 
@@ -317,7 +317,7 @@ Implement the adapter only after the contract branch merges and cross-check back
 
 ## SIM AI Planning Contract — Integration Required
 
-**Status:** SIM v4 PR #5 was merged normally into `main` as `6760ded19a9985e4d61101b1432b3815e016d51e`. Its Windows x64 and macOS ARM64/Intel checks passed. The new AI planning APIs described here are available only in `feat/sim-ai-planning-mvp` until its PR is merged. Backend AI planning is not implemented, and no cloud LLM has been called by SIM.
+**Status at backend integration start:** SIM v4 PR #5 was merged normally into `main` as `6760ded19a9985e4d61101b1432b3815e016d51e`. SIM AI planning PR #7 was subsequently merged into `main` as merge commit `ad6e6f8009112dcb56b47158f985baab5f6268a5`; Windows x64 and both macOS checks passed. SIM exposes provider-neutral validation but never calls a cloud model itself.
 
 **Current storage limitation:** `backend/spatial_worker.py::calculate` acquires or creates an `OSMData`, calculates `analysis`, candidates, proposal validation and the existing `build_proposal_context` packet, then exits its subprocess. `backend/spatial_routes.py::create_study` stores an immutable `Study` with those JSON results. The raw `OSMData` graph is not persisted, and the current worker does not emit urban problems, the solution plan or the new AI planning packet. Build these records while the matching snapshot is still in the worker, then add them to the stored study contract. The recommendation request must use the stored packet unchanged and must not fetch a new snapshot.
 
@@ -403,6 +403,27 @@ The `configured_backend_provider.structured_json` call is an adapter placeholder
 
 After validation, SIM returns the canonical `solution_id` and attaches the matching `authoritative_sim_solution` from the packet, including candidate geometry, exact intervention, shared-sample impact and separate targeted diagnostics. Persist that validated structure; never merge model-authored metrics or geometry into it. Unknown problem/candidate/evidence IDs, extra action/geometry/metric/cost/citation/SUMO fields, non-finite or oversized JSON, area/hash mismatch, feasibility claims and numeric prose are rejected. Invalid entries can be rejected individually while unrelated valid entries survive; an area/hash mismatch rejects the whole response.
 
-**Proposed API addition (not implemented):** `POST /api/v1/spatial/studies/{study_id}/planning` with an empty or bounded preferences-only request; it must load the study's immutable stored packet, make no acquisition, and return an immutable planning-result ID, study/baseline IDs, packet hash, provider status and validated response. Update `Study` persistence/schema first to include `urban_issues`, `solution_plan` and `ai_evidence_packet`. Store each provider result separately because `Store.put` treats IDs as immutable. The current API has no AI planning route, provider integration, or provider credentials.
+## Backend AI planning implementation status (2026-10-18)
 
-Before the product says “AI connected,” the backend owner must run one authenticated cloud-provider smoke test with server-side credentials, validate the returned packet-bound response, and verify that timeout/provider failures remain explicit. SIM's deterministic mock demo and tests do not satisfy this check. This handoff adds no backend implementation or endpoint.
+The implementation on `feat/backend-ai-planning-mvp` stores `urban_issues`,
+`solution_plan`, `ai_evidence_packet`, `problem_locations_geojson`, and the SIM
+packet hash on each new study. `POST /api/v1/spatial/studies/{study_id}/planning`
+uses that stored packet without reacquiring OSM, calls SIM's
+`run_ai_planning`/validator through a server-side OpenAI Responses API adapter,
+and stores immutable results. `GET /api/v1/spatial/studies/{study_id}/planning/{planning_id}`
+retrieves results. Optional `Idempotency-Key` claims avoid duplicate completed
+provider calls. See [AI_PLANNING_API.md](AI_PLANNING_API.md) for current request,
+response, configuration, and frontend integration details.
+
+The provider is disabled unless `ARTERIA_AI_ENABLED=true`; credentials are read
+from `ARTERIA_AI_API_KEY` or the conventional `OPENAI_API_KEY` environment
+variable and are never returned. SIM remains the authority for accepted evidence,
+candidate IDs, geometry, interventions, and impacts. A live cloud smoke test is
+still required before claiming live AI readiness.
+
+The optional SUMO bridge remains unimplemented. Spatial studies retain a
+pedestrian graph and do not contain a persistent driving snapshot; the backend
+must not pass that pedestrian graph to SIM's paired driving evaluator.
+The local-cache check found a structurally loadable driving graph, but its area
+equivalence was unverified and the current SIM driving intervention catalog was
+empty for that snapshot. It is not valid evidence for a paired SUMO endpoint.
