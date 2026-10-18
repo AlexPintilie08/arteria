@@ -126,11 +126,11 @@ export function AnalysisPanel({
       {/* TELEMETRIE DIRECTĂ CORIDOR IAȘI */}
       <div style={{ ...styles.sectionBlock, marginTop: '8px' }}>
         <div style={styles.headerRow}>
-          <h3 style={{ ...styles.sectionTitle, margin: 0 }}>Telemetrie & Senzori Rețea Iași</h3>
-          <span style={{ ...styles.badgePill, color: colors.observed, borderColor: 'rgba(164, 216, 188, 0.4)' }}>Date Observate</span>
+          <h3 style={{ ...styles.sectionTitle, margin: 0 }}>Telemetrie demonstrativă sintetică</h3>
+          <span style={{ ...styles.badgePill, color: colors.observed, borderColor: 'rgba(164, 216, 188, 0.4)' }}>Exemple sintetice</span>
         </div>
         <p className="supporting" style={{ marginTop: 0, marginBottom: '10px' }}>
-          Date extrase din rețeaua de senzori electromagnetici și recensământul de flux CTP Iași:
+          Valori ilustrative din fixture-uri; nu provin din senzori, recensăminte sau observații de trafic din Iași:
         </p>
         <div
           style={{
@@ -252,7 +252,7 @@ export function AnalysisPanel({
           <span style={styles.badgePill}>{localIssues.length} detectate</span>
         </div>
         <p className="supporting" style={{ marginTop: 0, marginBottom: '12px' }}>
-          Identificate pe baza rețelei OSM și a analizei de accesibilitate. Selectează o problemă pentru a genera scenarii de intervenție.
+          Probleme ilustrative din catalogul sintetic. Selectează un exemplu pentru a explora scenarii demonstrative; nu sunt constatări OSM validate.
         </p>
 
         <div style={styles.issuesList} role="list">

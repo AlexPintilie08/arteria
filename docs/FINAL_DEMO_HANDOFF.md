@@ -44,7 +44,9 @@ Use the project's required Node 24 runtime. The frontend API default is
    deterministic synthetic graph study through the real backend/SIM pipeline and
    never downloads OpenStreetMap data.
 2. Expand **Inspectează toate problemele detectate**, then inspect a problem and
-   the intervention editor. Select an eligible SIM candidate and evaluate it.
+   the intervention editor. Choose the second problem (`prob_503ed940c4b8f90d83e0`),
+   keep **Legături pietonale și accesibilitate**, select the first candidate radio
+   button, then click **Evaluează Înainte / După**.
    A conceptual recommendation without an approved candidate cannot be evaluated.
 3. Inspect **Comparație Înainte / După** and its route table. Values come from SIM;
    zero, negative and unknown results must retain their actual meaning.
@@ -70,6 +72,12 @@ area `osm-w-670153116`, sourced from an OpenStreetMap snapshot retrieved on
 2026-10-17. Loading by ID reuses stored results and does not reacquire OSM.
 Preserve OpenStreetMap attribution and ODbL information. Catalog extents are OSM
 place boundaries with uncertainty, not official administrative boundaries.
+
+Direct saved-study presentation link:
+`http://localhost:3000/app?study=study_0fe7895e38e548dcab78a18f89f90d32`.
+Choose the second detected issue (`issue_900024db0925cb`), select candidate
+`cand_78e83cee2b1775c04e9d`, then **Evaluează Înainte / După**. This entire
+browser sequence was verified against the stored graph without OSM acquisition.
 
 The approved saved candidate evaluates successfully with zero improved,
 sixteen unchanged and zero regressed shared sample pairs. This older study has
