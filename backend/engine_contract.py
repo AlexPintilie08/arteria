@@ -89,6 +89,10 @@ class Analysis(EngineModel):
 class EngineResult(EngineModel):
     analysis: Analysis
     alternatives: Alternatives
+    urban_issues: dict | None = None
+    solution_plan: dict | None = None
+    ai_evidence_packet: dict | None = None
+    problem_locations_geojson: dict | None = None
 
 
 def reject_nonfinite(value):

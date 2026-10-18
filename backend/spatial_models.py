@@ -33,6 +33,11 @@ class Study(Model):
     proposal_options: list[dict[str, JsonValue]] = Field(default_factory=list)
     proposal_validation: dict[str, JsonValue] = Field(default_factory=dict)
     evidence_packet: dict[str, JsonValue] = Field(default_factory=dict)
+    urban_issues: dict[str, JsonValue] = Field(default_factory=dict)
+    solution_plan: dict[str, JsonValue] = Field(default_factory=dict)
+    ai_evidence_packet: dict[str, JsonValue] = Field(default_factory=dict)
+    problem_locations_geojson: dict[str, JsonValue] = Field(default_factory=dict)
+    evidence_packet_sha256: str | None = None
     warnings: list[str]
 
 

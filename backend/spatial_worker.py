@@ -37,7 +37,8 @@ def calculate(request):
             raise WorkerRequestError("study_area_rejected", str(exc)) from exc
         data = sim.acquire_osm_data(area, modes=("walk",),
             cache_dir=os.environ["ARTERIA_SPATIAL_CACHE"], max_area_km2=5, max_extent_km=5,
-            include_features=False)
+            include_features=True,
+            feature_categories=("schools", "healthcare", "public_transport", "crossings"))
     analysis = sim.analyze_snapshot(data)
     alternatives = sim.evaluate_candidates(data, analysis=analysis,
         sample_count=request["sample_count"], seed=request["seed"],
@@ -46,8 +47,17 @@ def calculate(request):
     options = sim.prepare_candidate_options(analysis, alternatives)
     validation = sim.validate_proposal_set(options, data=data, candidate_evaluation=alternatives)
     evidence_packet = sim.build_proposal_context(data, analysis, alternatives)
+    urban_issues = sim.detect_urban_problems(
+        data, analysis=analysis, candidate_evaluation=alternatives)
+    solution_plan = sim.build_solution_plan(data, analysis, urban_issues, alternatives)
+    ai_evidence_packet = sim.build_ai_planning_packet(
+        data, analysis, urban_issues, alternatives, solution_plan)
+    problem_locations = sim.problem_locations_geojson(urban_issues)
     return {"analysis": analysis, "alternatives": alternatives, "proposal_options": options,
-            "proposal_validation": validation, "evidence_packet": evidence_packet}
+            "proposal_validation": validation, "evidence_packet": evidence_packet,
+            "urban_issues": urban_issues, "solution_plan": solution_plan,
+            "ai_evidence_packet": ai_evidence_packet,
+            "problem_locations_geojson": problem_locations}
 
 
 if __name__ == "__main__":

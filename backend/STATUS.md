@@ -2,39 +2,48 @@
 
 ## Implemented
 
-- FastAPI is the single authoritative server; legacy server.py launches it.
-- Health, analyze, propose, evaluate, OpenAPI and CORS for ports 3000/5173.
-- Frontend wire fields, structured uncertainty/provenance, geometry and constraints.
-- Explicit demo bookmark contexts and unknown geographic-layer availability.
-- Signal-timing catalog, exact optional tuning, adverse effects, immutable baseline.
-- SQLite persistence, immutable retry results, retrieval endpoints and capacity errors.
-- GET /api/v1/areas exposes demo bookmarks without fabricated boundary certification.
-- SUMO requests fail explicitly; no cloud AI provider is claimed.
+- FastAPI is the single authoritative server; legacy `server.py` launches it.
+- Health, analyze, propose, evaluate, OpenAPI, and CORS for the supported frontend origins.
+- Pydantic contracts, structured errors, provenance, uncertainty, geometry, and constraints.
+- SQLite persistence with immutable records, retrieval endpoints, capacity errors, and backward-compatible spatial studies.
+- Optional pedestrian graph studies from the SIM Iași catalog; failed OSM acquisition never falls back to a fixture.
+- Spatial studies persist urban problems, evidence-linked solution plans, problem GeoJSON, the immutable AI packet, and its SIM integrity hash.
+- Optional cloud AI planning through the OpenAI Responses API with strict structured output, SIM-owned response validation, bounded timeouts, result persistence, and optional idempotency keys. It is disabled by default and requires server-side credentials.
+- Existing synthetic signal-timing demo remains explicitly synthetic. It does not become an AI or SUMO result.
 
-## Verification
+## Verification — 2026-10-18
 
-`python3 -m uv run --locked pytest -q`: 60 tests passed, with one upstream
-Starlette/httpx deprecation warning. Includes full flow, frontend shapes, persistence
-across processes, concurrent retries, tuning, invalid geometry, CORS and provenance.
+Using the already provisioned Python 3.12 environment without installing
+dependencies:
 
-## Remaining integration
+```text
+python -m pytest -q tests sim/test_engine.py sim/test_urban_intelligence.py
+212 passed, including 21 backend AI planning tests; 1 upstream Starlette/httpx
+deprecation warning
+```
 
-Frontend connected mode now calls the three core endpoints and the optional spatial
-study/evaluation API. Browser checks passed for exact selection, tuning, resets,
-errors without fallback and responsive layouts; see FRONTEND_HANDOFF.md.
-Optional pedestrian graph API now runs the colleague's pinned engine snapshot through
-a bounded subprocess. It preserves source evidence and immutable candidate comparisons
-in SQLite. Offline fixture integration passed; actual OSM acquisition is implemented
-but has not been exercised against the network. See SPATIAL_API.md.
-No calibrated traffic engine, real city observations, auth, cloud AI or SUMO job/SSE API.
-No changes to frontend/ or sim/ are required by this backend implementation.
+A real OSM study for catalog area `osm-w-670153116` reused a locally cached,
+geometry-matching pedestrian graph and completed one bounded feature acquisition.
+It persisted 12 SIM problems, 17 evidence-linked solutions, 23 problem GeoJSON
+features, OpenStreetMap attribution, ODbL-1.0, verified area geometry, and a
+matching packet hash. Planning on that stored study returned
+`provider_unavailable` with `ai_generated: false`; the study remained retrievable.
 
-A live HTTP flow, /docs, Next.js CORS and structural TypeScript checks against
-frontend/shared/core/contracts.ts also passed. Request/response fixtures were
-regenerated from the live server in docs/demo-flow.json.
+**Live cloud smoke: `LIVE CLOUD AI BLOCKED — PROVIDER CREDENTIALS REQUIRED`.**
+The runtime has no configured AI API key and AI is disabled by default. Provider
+request behavior, failures, schema validation, and persistence were exercised
+with deterministic mocks; no cloud request was made.
 
-Verified graph engine revision: `752c92da9184effc9b87704e0868320f569454ea`.
-Tracked sim/ and frontend/ sources were not changed for this integration.
+## Remaining limits
 
-Current handoff and remaining work: [PREDARE_BACKEND.md](PREDARE_BACKEND.md).
-The map preview is enabled locally via ignored `.env.local`; map/backend integration remains pending.
+- The local cached driving graph found during verification was not equivalent to
+  the current Iași study area, and SIM produced no driving interventions for it.
+  No backend SUMO bridge was added.
+- No calibrated traffic model, city telemetry, certified boundaries, physical
+  feasibility validation, authentication/per-user isolation, SUMO jobs/SSE, or
+  cloud database is provided.
+- Real-area OSM coverage depends on the selected snapshot and is not a statement
+  of population or observed travel behavior.
+
+Frontend integration: [AI_PLANNING_API.md](AI_PLANNING_API.md) and
+[SPATIAL_API.md](SPATIAL_API.md).

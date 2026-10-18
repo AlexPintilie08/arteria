@@ -25,7 +25,7 @@ app = FastAPI(title="ARTERIA API", version="0.3.0", description="Explicit synthe
     responses={status: {"model": ErrorResponse} for status in (400, 404, 409, 422, 502, 503, 504)})
 app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins,
                    allow_credentials=False, allow_methods=["GET", "POST", "OPTIONS"],
-                   allow_headers=["Content-Type"])
+                   allow_headers=["Content-Type", "Idempotency-Key"])
 adapter = SimulationAdapter()
 analyses = Store("analyses-v3", AnalysisResponse)
 proposals = Store("proposals-v3", ProposalResponse)
@@ -223,6 +223,7 @@ from backend.spatial_adapter import (
     SpatialAreaRejected, SpatialNeighborhoodNotFound, SpatialUnavailable, SpatialTimeout, SpatialFailure,
 )
 from backend.spatial_routes import router as spatial_router
+from backend.ai_planning_routes import router as ai_planning_router
 
 
 @app.exception_handler(SpatialUnavailable)
@@ -251,3 +252,4 @@ async def spatial_neighborhood_not_found(request: Request, exc: SpatialNeighborh
 
 
 app.include_router(spatial_router)
+app.include_router(ai_planning_router)
