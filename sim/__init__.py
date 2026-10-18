@@ -29,6 +29,9 @@ def __getattr__(name: str):
     if name in {"SumoPreparationError", "load_cached_driving_snapshot", "prepare_sumo_network", "run_real_area_simulation"}:
         module = import_module(".sumo_engine", __name__)
         return getattr(module, name)
+    if name in {"get_driving_intervention_catalog", "evaluate_driving_scenario"}:
+        module = import_module(".driving_scenarios", __name__)
+        return getattr(module, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
@@ -47,6 +50,7 @@ __all__ = [
     "evaluate_pedestrian_connection",
     "evaluate_scenario",
     "evaluate_candidates",
+    "evaluate_driving_scenario",
     "evaluate_multi_route_impact",
     "discover_intervention_candidates",
     "feature_collection",
@@ -55,6 +59,7 @@ __all__ = [
     "load_neighborhood_catalog",
     "load_cached_driving_snapshot",
     "get_intervention_catalog",
+    "get_driving_intervention_catalog",
     "neighborhood_area_input",
     "neighborhoods_geojson",
     "network_metrics",

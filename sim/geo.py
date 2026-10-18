@@ -4,11 +4,12 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Sequence
 
 import geopandas as gpd
 import osmnx as ox
@@ -41,6 +42,39 @@ FEATURE_TAGS: dict[str, bool | str | list[str]] = {
     "landuse": ["grass", "forest", "recreation_ground", "allotments"],
     "natural": ["wood", "grassland", "scrub"],
     "parking": True,
+}
+
+FEATURE_CATEGORY_SCHEMA_VERSION = "arteria.osm-feature-categories.v1"
+FEATURE_CATEGORY_TAGS: dict[str, dict[str, bool | str | list[str]]] = {
+    "buildings": {"building": True},
+    "schools": {"amenity": ["kindergarten", "school", "university"]},
+    "healthcare": {"amenity": ["clinic", "doctors", "hospital", "pharmacy"], "healthcare": True},
+    "services": {
+        "amenity": [
+            "clinic", "community_centre", "doctors", "fire_station", "hospital",
+            "kindergarten", "library", "marketplace", "pharmacy", "police", "school", "university",
+        ],
+    },
+    "public_transport": {
+        "amenity": ["bus_station"],
+        "highway": ["bus_stop"],
+        "public_transport": True,
+        "railway": ["halt", "station", "subway_entrance", "tram_stop"],
+    },
+    "parking": {"amenity": ["parking"], "parking": True},
+    "green_space": {
+        "landuse": ["allotments", "forest", "grass", "recreation_ground"],
+        "leisure": ["garden", "nature_reserve", "park", "recreation_ground"],
+        "natural": ["grassland", "scrub", "wood"],
+    },
+    "crossings": {"crossing": True, "highway": ["crossing"]},
+}
+MAX_FEATURE_CATEGORIES = 4
+MAX_OSM_FEATURE_COUNT = 5_000
+MAX_OSM_FEATURE_JSON_BYTES = 4 * 1024 * 1024
+FEATURE_REQUEST_TIMEOUT_SECONDS = 60
+_SUPPORTED_FEATURE_GEOMETRIES = {
+    "Point", "MultiPoint", "LineString", "MultiLineString", "Polygon", "MultiPolygon",
 }
 
 LAYER_TAGS = {
@@ -211,6 +245,132 @@ def _source_area_metadata(area: StudyArea) -> dict[str, Any]:
     }
 
 
+def _normalize_feature_categories(
+    categories: Sequence[str] | None,
+    *,
+    include_features: bool,
+) -> tuple[str, ...] | None:
+    if categories is None:
+        return None
+    if isinstance(categories, str):
+        raise ValueError("feature_categories must be a sequence of supported category IDs, not a string.")
+    try:
+        values = tuple(categories)
+    except TypeError as error:
+        raise ValueError("feature_categories must be a sequence of supported category IDs.") from error
+    if any(not isinstance(value, str) or not value for value in values):
+        raise ValueError("feature_categories must contain non-empty string category IDs.")
+    if len(values) != len(set(values)):
+        raise ValueError("feature_categories must not contain duplicate category IDs.")
+    if len(values) > MAX_FEATURE_CATEGORIES:
+        raise ValueError(f"feature_categories may contain at most {MAX_FEATURE_CATEGORIES} categories.")
+    unsupported = sorted(set(values) - FEATURE_CATEGORY_TAGS.keys())
+    if unsupported:
+        raise ValueError(f"Unsupported OSM feature category IDs: {unsupported!r}. Supported categories are {tuple(FEATURE_CATEGORY_TAGS)}.")
+    if not include_features and values:
+        raise ValueError("include_features=False conflicts with a non-empty feature_categories selection.")
+    return tuple(sorted(values))
+
+
+def _feature_query_tags(categories: Sequence[str]) -> dict[str, bool | str | list[str]]:
+    merged: dict[str, bool | str | list[str]] = {}
+    for category in categories:
+        for key, value in FEATURE_CATEGORY_TAGS[category].items():
+            current = merged.get(key)
+            if value is True or current is True:
+                merged[key] = True
+                continue
+            values = set(current if isinstance(current, list) else ([current] if isinstance(current, str) else []))
+            values.update(value if isinstance(value, list) else [value])
+            merged[key] = sorted(values)
+    return {key: merged[key] for key in sorted(merged)}
+
+
+def _feature_cache_identity(
+    area: StudyArea,
+    area_key: str,
+    categories: Sequence[str] | None,
+    query_tags: dict[str, bool | str | list[str]],
+) -> str:
+    if categories is None:
+        # Preserve the historical filename and lookup path for the broad query.
+        return area_key
+    payload = {
+        "area_geometry_sha256": _source_area_geometry_hash(area),
+        "categories": list(categories),
+        "query_tags": query_tags,
+        "schema_version": FEATURE_CATEGORY_SCHEMA_VERSION,
+    }
+    encoded = json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()[:20]
+
+
+def _clean_feature_frame(raw: gpd.GeoDataFrame) -> tuple[gpd.GeoDataFrame, int]:
+    frame = _feature_frame(raw)
+    valid_rows = []
+    for index, geometry in frame.geometry.items():
+        try:
+            if geometry is None or geometry.is_empty or not geometry.is_valid or geometry.geom_type not in _SUPPORTED_FEATURE_GEOMETRIES:
+                continue
+            bounds = tuple(float(value) for value in geometry.bounds)
+            if len(bounds) != 4 or not all(math.isfinite(value) for value in bounds):
+                continue
+            if bounds[0] < -180 or bounds[2] > 180 or bounds[1] < -90 or bounds[3] > 90:
+                continue
+        except Exception:
+            continue
+        valid_rows.append(index)
+    rejected = len(frame) - len(valid_rows)
+    return frame.loc[valid_rows].copy().reset_index(drop=True), rejected
+
+
+def _serialized_feature_frame(frame: gpd.GeoDataFrame) -> str:
+    return frame.to_json(to_wgs84=True, drop_id=True, na="null", default=_json_default)
+
+
+def _load_verified_feature_cache(
+    path: Path,
+    *,
+    area: StudyArea,
+    area_key: str,
+    categories: Sequence[str] | None,
+    query_tags: dict[str, bool | str | list[str]],
+) -> tuple[gpd.GeoDataFrame, dict[str, Any], str]:
+    sidecar = _network_metadata_path(path)
+    if not sidecar.is_file():
+        raise ValueError("feature cache metadata is missing; source area cannot be verified")
+    metadata = json.loads(sidecar.read_text(encoding="utf-8"))
+    geometry_hash = _source_area_geometry_hash(area)
+    cached_hash = metadata.get("source_area_geometry_sha256")
+    if cached_hash:
+        if cached_hash != geometry_hash:
+            raise ValueError("feature cache source geometry hash does not match the requested area")
+        verification = "geometry_sha256"
+    elif categories is None and metadata.get("area_key") == area_key:
+        verification = "matching_legacy_area_key"
+    else:
+        raise ValueError("feature cache has no verifiable source geometry metadata")
+    if metadata.get("area_key") != area_key:
+        raise ValueError("feature cache area key does not match the requested area")
+    if categories is None:
+        if metadata.get("query", {}).get("tags") != FEATURE_TAGS:
+            raise ValueError("legacy feature cache tag query does not match the current broad query")
+    else:
+        if metadata.get("category_schema_version") != FEATURE_CATEGORY_SCHEMA_VERSION:
+            raise ValueError("feature cache category schema does not match")
+        if metadata.get("feature_categories") != list(categories) or metadata.get("query", {}).get("tags") != query_tags:
+            raise ValueError("feature cache category selection or tag query does not match")
+    frame = _load_cached_frame(path)
+    if len(frame) > MAX_OSM_FEATURE_COUNT:
+        raise ValueError("feature cache exceeds the configured feature-count bound")
+    cleaned, rejected = _clean_feature_frame(frame)
+    if rejected:
+        raise ValueError(f"feature cache contains {rejected} invalid or out-of-range geometries")
+    if len(_serialized_feature_frame(cleaned).encode("utf-8")) > MAX_OSM_FEATURE_JSON_BYTES:
+        raise ValueError("feature cache exceeds the configured serialized-output bound")
+    return cleaned, metadata, verification
+
+
 def _timestamp() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="seconds").replace("+00:00", "Z")
 
@@ -326,6 +486,7 @@ def acquire_osm_data(
     force_refresh: bool = False,
     overpass_url: str | None = None,
     include_features: bool = True,
+    feature_categories: Sequence[str] | None = None,
     max_area_km2: float = DEFAULT_MAX_AREA_KM2,
     max_extent_km: float = DEFAULT_MAX_EXTENT_KM,
 ) -> OSMData:
@@ -333,9 +494,13 @@ def acquire_osm_data(
 
     OSMnx's standard Overpass rate limiting remains enabled. Both OSMnx HTTP
     responses and normalized GraphML/GeoJSON snapshots are cached under sim/.cache
-    by default. Failed modes are reported when another requested graph succeeds;
-    an all-mode failure raises OSMDataError. Graph-only consumers can skip feature
-    queries; those layers remain unknown unless a local feature snapshot exists.
+    by default. ``feature_categories=None`` retains the legacy broad feature query
+    when ``include_features=True``. An explicit category sequence queries only
+    those supported categories; ``[]`` disables feature queries. A non-empty
+    category selection conflicts with ``include_features=False`` and is rejected.
+    Failed modes are reported when another requested graph succeeds; an all-mode
+    failure raises OSMDataError. Graph-only consumers may reuse a verified legacy
+    feature cache; otherwise feature layers remain unknown.
     """
     if isinstance(modes, str):
         raise ValueError(f"modes must be a non-empty iterable of mode names from {SUPPORTED_MODES}, not a string.")
@@ -350,6 +515,7 @@ def acquire_osm_data(
         raise ValueError(f"Unsupported OSM network mode(s): {unsupported!r}. Supported modes are {SUPPORTED_MODES}.")
     if not isinstance(include_features, bool):
         raise ValueError("include_features must be a boolean.")
+    categories = _normalize_feature_categories(feature_categories, include_features=include_features)
     requested_modes = tuple(dict.fromkeys(mode_values))
     normalized = normalize_area(area, max_area_km2=max_area_km2, max_extent_km=max_extent_km)
     base = Path(cache_dir) if cache_dir else Path(__file__).resolve().parent / ".cache" / "osm"
@@ -357,6 +523,9 @@ def acquire_osm_data(
     http_cache = base / "http"
     http_cache.mkdir(parents=True, exist_ok=True)
     key = _area_key(normalized)
+    query_tags = FEATURE_TAGS if categories is None else _feature_query_tags(categories)
+    feature_cache_key = _feature_cache_identity(normalized, key, categories, query_tags)
+    feature_query_requested = include_features if categories is None else bool(categories)
     graphs: dict[str, Any] = {}
     warnings: list[str] = []
     network_retrieved: dict[str, str] = {}
@@ -364,7 +533,13 @@ def acquire_osm_data(
     cache_hit_modes: list[str] = []
     feature_retrieved: str | None = None
     feature_cache_hit = False
-    features_path = base / f"{key}-features.geojson"
+    feature_cache_status = "disabled" if not use_cache else "miss"
+    feature_cache_verification = "not_checked"
+    feature_request_error: str | None = None
+    feature_raw_count: int | None = None
+    rejected_geometry_count = 0
+    feature_data_available = False
+    features_path = base / f"{feature_cache_key}-features.geojson"
 
     settings = ox.settings
     with _OSMNX_SETTINGS_LOCK:
@@ -456,22 +631,60 @@ def acquire_osm_data(
                 details = "; ".join(network_failures.values()) or "no requested network produced a routable graph"
                 raise OSMDataError(f"None of the requested OSM networks {requested_modes!r} is available: {details}")
 
-            if use_cache and not force_refresh and features_path.exists():
+            features = gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+            cache_eligible = categories is None or bool(categories)
+            if use_cache and not force_refresh and cache_eligible and features_path.exists():
                 try:
-                    features = _load_cached_frame(features_path)
-                    sidecar = _network_metadata_path(features_path)
-                    feature_retrieved = json.loads(sidecar.read_text(encoding="utf-8"))["retrieved_at"] if sidecar.exists() else "unknown"
+                    features, feature_sidecar, feature_cache_verification = _load_verified_feature_cache(
+                        features_path,
+                        area=normalized,
+                        area_key=key,
+                        categories=categories,
+                        query_tags=query_tags,
+                    )
+                    feature_retrieved = str(feature_sidecar.get("retrieved_at") or "unknown")
+                    feature_raw_count = int(feature_sidecar.get("raw_feature_count", feature_sidecar.get("feature_count", len(features))))
+                    rejected_geometry_count = int(feature_sidecar.get("rejected_geometry_count", 0))
                     feature_cache_hit = True
+                    feature_cache_status = "hit"
+                    feature_data_available = True
                 except Exception as error:
-                    warnings.append(f"Ignoring unreadable OSM feature cache: {error}")
-                    features = gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
-            else:
-                features = gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
-            if feature_retrieved is None and include_features:
+                    feature_cache_status = "rejected"
+                    if "source area" in str(error).casefold() or "geometry hash" in str(error).casefold() or "area key" in str(error).casefold():
+                        feature_cache_verification = "unverified"
+                    warnings.append(f"Ignoring unverified or incompatible OSM feature cache: {error}")
+            elif use_cache and force_refresh and cache_eligible:
+                feature_cache_status = "forced_refresh"
+
+            if not feature_data_available and feature_query_requested:
                 try:
-                    raw_features = ox.features_from_polygon(normalized.polygon, tags=FEATURE_TAGS)
-                    features = _feature_frame(raw_features)
+                    if categories is not None:
+                        settings.requests_timeout = FEATURE_REQUEST_TIMEOUT_SECONDS
+                    raw_features = ox.features_from_polygon(normalized.polygon, tags=query_tags)
+                    feature_raw_count = len(raw_features)
+                    if feature_raw_count > MAX_OSM_FEATURE_COUNT:
+                        raise ValueError(
+                            f"OpenStreetMap returned {feature_raw_count} features, exceeding the {MAX_OSM_FEATURE_COUNT}-feature limit."
+                        )
+                    features, rejected_geometry_count = _clean_feature_frame(raw_features)
+                    serialized = _serialized_feature_frame(features)
+                    if len(serialized.encode("utf-8")) > MAX_OSM_FEATURE_JSON_BYTES:
+                        raise ValueError(
+                            f"OpenStreetMap feature output exceeds the {MAX_OSM_FEATURE_JSON_BYTES}-byte serialized limit."
+                        )
                     feature_retrieved = _timestamp()
+                    feature_data_available = True
+                    feature_cache_verification = "verified_by_requested_geometry"
+                    if feature_cache_status == "rejected":
+                        feature_cache_status = "refreshed_after_rejection"
+                    elif not use_cache:
+                        feature_cache_status = "disabled"
+                    else:
+                        feature_cache_status = "miss"
+                    if rejected_geometry_count:
+                        warnings.append(
+                            f"Dropped {rejected_geometry_count} invalid, unsupported, or out-of-range OpenStreetMap feature geometries."
+                        )
                     if use_cache:
                         _cache_frame(features_path, features)
                         _network_metadata_path(features_path).write_text(
@@ -479,14 +692,23 @@ def acquire_osm_data(
                                 "area_key": key,
                                 "retrieved_at": feature_retrieved,
                                 "feature_count": len(features),
+                                "raw_feature_count": feature_raw_count,
+                                "rejected_geometry_count": rejected_geometry_count,
+                                "category_schema_version": FEATURE_CATEGORY_SCHEMA_VERSION if categories is not None else None,
+                                "feature_categories": list(categories) if categories is not None else None,
+                                "attribution": "© OpenStreetMap contributors",
+                                "license": "ODbL-1.0",
                                 **_source_area_metadata(normalized),
-                                "query": {"tags": FEATURE_TAGS},
+                                "query": {"tags": query_tags},
                             }, indent=2, ensure_ascii=False, allow_nan=False),
                             encoding="utf-8",
                         )
                 except Exception as error:
-                    warnings.append(f"OpenStreetMap feature request failed: {type(error).__name__}: {error}")
-            elif feature_retrieved is None:
+                    feature_request_error = f"{type(error).__name__}: {error}"
+                    feature_data_available = False
+                    features = gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+                    warnings.append(f"OpenStreetMap feature request failed: {feature_request_error}")
+            elif not feature_data_available and categories is None and not include_features:
                 warnings.append("OpenStreetMap feature layers were not requested for this graph-only study; their availability remains unknown.")
         finally:
             settings.cache_folder = previous["cache_folder"]
@@ -496,10 +718,64 @@ def acquire_osm_data(
             settings.http_user_agent = previous["http_user_agent"]
 
     layers = _layer_masks(features)
-    feature_status = "available" if feature_retrieved not in (None, "unknown") else "unknown"
+    if categories is not None:
+        allowed_layers = set(categories) if feature_data_available else set()
+        for name in layers:
+            if name not in allowed_layers:
+                layers[name] = gpd.GeoDataFrame(geometry=[], crs="EPSG:4326")
+
+    loaded_categories = (
+        tuple(FEATURE_CATEGORY_TAGS)
+        if categories is None and feature_data_available
+        else (categories or ()) if feature_data_available
+        else ()
+    )
+    attempted_categories = tuple(FEATURE_CATEGORY_TAGS) if categories is None and feature_query_requested else (categories or ())
+    category_availability: dict[str, dict[str, Any]] = {}
+    for category, tag_filter in FEATURE_CATEGORY_TAGS.items():
+        category_warnings = list(warnings) if category in attempted_categories or category in loaded_categories else []
+        layer = layers.get(category)
+        feature_count = int(len(layer)) if layer is not None else 0
+        if category in loaded_categories:
+            if feature_request_error and feature_count == 0:
+                category_status = "request_failed"
+            elif feature_raw_count and rejected_geometry_count == feature_raw_count and feature_count == 0:
+                category_status = "request_failed"
+            else:
+                category_status = "available" if feature_count else "available_but_empty"
+            count_value: int | None = feature_count
+            area_verification = feature_cache_verification
+        elif category in attempted_categories and feature_request_error:
+            category_status = "request_failed"
+            count_value = None
+            area_verification = feature_cache_verification
+        elif feature_cache_verification == "unverified" and not feature_query_requested:
+            category_status = "source_unverified"
+            count_value = None
+            area_verification = "unverified"
+        else:
+            category_status = "not_requested"
+            count_value = None
+            area_verification = "not_checked"
+        category_availability[category] = {
+            "category_id": category,
+            "status": category_status,
+            "feature_count": count_value,
+            "source_query": tag_filter,
+            "source": "OpenStreetMap",
+            "retrieved_at": feature_retrieved if category in loaded_categories else None,
+            "cache_status": feature_cache_status if category in attempted_categories or category in loaded_categories else "not_requested",
+            "area_verification": area_verification,
+            "warnings": category_warnings,
+        }
+
     availability: dict[str, dict[str, Any]] = {}
     for name, frame in layers.items():
-        status = "available" if len(frame) else ("no_features_returned" if feature_status == "available" else "unknown")
+        if name in category_availability:
+            category_status = category_availability[name]["status"]
+            status = "available" if category_status == "available" else "no_features_returned" if category_status == "available_but_empty" else "unknown"
+        else:
+            status = "available" if len(frame) else ("no_features_returned" if feature_data_available and categories is None else "unknown")
         availability[name] = {
             "status": status,
             "feature_count": int(len(frame)),
@@ -520,7 +796,12 @@ def acquire_osm_data(
         "source": "OpenStreetMap",
         "source_version": "live OSM snapshot",
         "requested_network_modes": list(requested_modes),
-        "feature_query_requested": include_features,
+        "feature_query_requested": feature_query_requested,
+        "feature_categories_requested": list(categories) if categories is not None else None,
+        "feature_query_mode": "legacy_broad" if categories is None and include_features else "selected_categories" if categories else "disabled",
+        "feature_category_schema_version": FEATURE_CATEGORY_SCHEMA_VERSION,
+        "feature_category_availability": category_availability,
+        "feature_query": {"tags": query_tags, "retrieved_at": feature_retrieved, "raw_feature_count": feature_raw_count, "rejected_geometry_count": rejected_geometry_count},
         "retrieved_at": max(retrieved_values) if retrieved_values else None,
         "extent_wgs84": normalized.extent,
         "area_key": key,
@@ -528,8 +809,8 @@ def acquire_osm_data(
         "working_crs": normalized.working_crs,
         "network_retrieved_at": network_retrieved,
         "features_retrieved_at": feature_retrieved,
-        "osm_tags": FEATURE_TAGS,
-        "cache": {"enabled": bool(use_cache), "directory": "sim/.cache/osm" if cache_dir is None else "configured local cache", "application_snapshot_hit": bool(cache_hit_modes or feature_cache_hit), "cached_network_modes": cache_hit_modes, "features_cache_hit": feature_cache_hit},
+        "osm_tags": query_tags,
+        "cache": {"enabled": bool(use_cache), "directory": "sim/.cache/osm" if cache_dir is None else "configured local cache", "application_snapshot_hit": bool(cache_hit_modes or feature_cache_hit), "cached_network_modes": cache_hit_modes, "features_cache_hit": feature_cache_hit, "features_status": feature_cache_status, "features_cache_key": feature_cache_key, "features_area_verification": feature_cache_verification},
         "limitations": [
             "OSM feature coverage and tags are incomplete and vary by area.",
             "An absent OSM feature is unknown, not evidence that infrastructure does not exist.",

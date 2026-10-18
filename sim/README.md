@@ -185,3 +185,22 @@ Run the cached Iași demonstration without network access:
     .\.venv\Scripts\python.exe -m sim.sumo_engine --output-dir sim/.cache/iasi-sumo-demo
 
 This reads the newest local cached drive graph and writes SUMO input files. If `netconvert` or `sumo` is missing, the result records the unavailable stage and contains no simulated traffic measurements. The current legacy cache cannot verify its source geometry against the selected area, so the demonstration is technical only. The separate portable discovery and one-step synthetic TraCI smoke check remains available with `python -m sim.sumo_support --smoke`.
+
+### SIM v4: selected feature layers and paired driving scenarios
+
+`acquire_osm_data(..., feature_categories=("schools", "healthcare"))` requests only those supported OSM categories. `None` preserves the legacy broad query when `include_features=True`; `[]` makes no feature request. Selection is limited to four categories and reports per-category status, count, tag filter, retrieval time, cache state, area verification, and warnings in `metadata["feature_category_availability"]`. Legacy `layer_availability` statuses remain compatible. The complete tag table and cache rules are in [INTEGRATION_CONTRACT_V4.md](INTEGRATION_CONTRACT_V4.md).
+
+`get_driving_intervention_catalog(data)` exposes only a version-bound directed-edge speed limit edit. `evaluate_driving_scenario(data, intervention, output_dir, ...)` creates baseline and scenario copies, reuses one deterministic synthetic demand plan, executes both locally with SUMO, and returns `arteria.sumo-comparison.v1`. The comparison contains numerical deltas only if both runs complete and actual finished vehicles have matching valid SUMO-reported edge sequences. No OSM download occurs inside this evaluator. Speed limits are modeled graph edits; feasibility and legal status remain unknown. SUMO metrics are not measured or calibrated traffic.
+
+Run the integrated deterministic demo:
+
+```powershell
+.\.venv\Scripts\python.exe -m sim.mvp_demo --source fixture
+.\.venv\Scripts\python.exe -m sim.mvp_demo --source cache --cache-dir sim/.cache/osm --sumo-baseline
+.\.venv\Scripts\python.exe -m sim.mvp_demo --source area --area-json area.json
+.\.venv\Scripts\python.exe -m sim.mvp_demo --source area --area-json area.json --acquire --feature-categories buildings,schools
+```
+
+The CLI does not silently fall back between sources. `cache` requires an explicit local cache path and remains offline. `area` validates an explicit bounded input without acquiring data unless `--acquire` is supplied. Outputs default to an ignored timestamped directory under `sim/.cache/mvp-demo/` with a JSON report, candidate/issue/route GeoJSON evidence, and short Markdown summary. Optional SUMO flags use only the selected snapshot's existing drive graph.
+
+The successful native verification recorded in [STATUS.md](STATUS.md) uses a newly acquired, geometry-hash-verified bounded Iași OSM driving graph; its old legacy-cache caveat above applies only when that historical cache is selected.

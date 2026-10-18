@@ -39,7 +39,14 @@ from sim.proposal_validation import validate_proposal, validate_proposal_set
 from sim.proposals import prepare_candidate_options
 from sim import sumo_engine as sumo_engine_module
 from sim.sumo_engine import SumoPreparationError, prepare_sumo_network, run_real_area_simulation
+from sim.driving_scenarios import (
+    DRIVING_INTERVENTION_SCHEMA,
+    SUPPORTED_DRIVING_ACTION,
+    evaluate_driving_scenario,
+    get_driving_intervention_catalog,
+)
 from sim.sumo_support import SumoInstallation
+from sim.mvp_demo import run_mvp_demo
 
 
 def _fixture_data(*, disconnected: bool = True, with_school: bool = True) -> OSMData:
@@ -1139,6 +1146,8 @@ def test_candidate_pipeline_uses_one_shared_non_discovery_sample_and_stable_rank
     assert all(candidate["targeted_diagnostic_impact"]["sample"]["kind"] == "targeted_diagnostic_routes" for candidate in ranked)
     assert all(candidate["targeted_diagnostic_impact"]["sample"]["evaluated_pair_count"] <= 32 for candidate in ranked)
     assert all(candidate["ranking_explanation"].find("excluded from ranking") >= 0 for candidate in ranked)
+    assert all(candidate["shared_sample_outcome_status"].startswith("candidate_") for candidate in ranked)
+    assert all(candidate["impact_evidence_status"].startswith("candidate_") for candidate in ranked)
 
 
 def _proposal_fixture() -> tuple[OSMData, dict, dict]:
@@ -1175,6 +1184,8 @@ def test_proposal_context_is_deterministic_provenanced_geographic_and_bounded() 
     assert packet["candidate_evaluation"]["candidates"][0]["geometry"] == candidate_geometry
     assert packet["candidate_evaluation"]["candidates"][0]["shared_sample_impact"]["aggregate"] == evaluation["ranked_candidates"][0]["impact"]["aggregate"]
     assert packet["candidate_evaluation"]["candidates"][0]["targeted_diagnostic_impact"]["sample"]["kind"] == "targeted_diagnostic_routes"
+    assert packet["sim_method_versions"]["sumo_comparison"] == "arteria.sumo-comparison.v1"
+    assert packet["candidate_evaluation"]["candidates"][0]["impact_evidence_status"].startswith("candidate_")
     assert packet["capabilities"]["unsupported_simulation_capabilities"]
     assert "graph" not in packet
     assert len(json.dumps(packet, ensure_ascii=False, allow_nan=False).encode("utf-8")) <= packet["truncation"]["packet_byte_limit"]
@@ -1251,6 +1262,33 @@ def test_proposal_validation_rejects_invalid_units_unmatched_candidates_and_cand
     assert "unsupported_units" in unit_codes
     assert "candidate_not_found" in invented_codes
     assert "candidate_intervention_mismatch" in mismatch_codes
+
+
+def test_proposal_validation_rejects_stale_source_polygon_and_retrieval_evidence() -> None:
+    data, analysis, evaluation = _proposal_fixture()
+    option = prepare_candidate_options(analysis, evaluation)[0]
+    wrong_area = normalize_area({
+        "city_id": data.area.city_id,
+        "area_id": data.area.area_id,
+        "bbox": [27.5752, 47.1552, 27.5898, 47.1698],
+        "crs": "EPSG:4326",
+        "boundary_source": data.area.boundary_source,
+    })
+    mismatched_snapshot = OSMData(
+        area=wrong_area, graphs=data.graphs, layers=data.layers,
+        layer_availability=data.layer_availability, metadata=data.metadata, warnings=data.warnings,
+    )
+    polygon_result = validate_proposal(option, data=mismatched_snapshot, candidate_evaluation=evaluation)
+    assert "stale_source_evidence" in {finding["code"] for finding in polygon_result["findings"]}
+    assert polygon_result["status"] == "rejected"
+
+    changed_metadata = {**data.metadata, "retrieved_at": "2026-10-18T12:00:00Z"}
+    stale_snapshot = OSMData(
+        area=data.area, graphs=data.graphs, layers=data.layers,
+        layer_availability=data.layer_availability, metadata=changed_metadata, warnings=data.warnings,
+    )
+    stale_result = validate_proposal(option, data=stale_snapshot, candidate_evaluation=evaluation)
+    assert "stale_source_evidence" in {finding["code"] for finding in stale_result["findings"]}
 
 
 def test_proposal_validation_rejects_unsupported_claims_and_deduplicates_actions() -> None:
@@ -1421,3 +1459,401 @@ def test_sumo_trip_accounting_separates_completed_unfinished_and_unreported_vehi
     assert metrics["unreported_trip_count"] == 1
     assert metrics["vehicle_movement_verified_count"] == 2
     assert len(features) == 1
+
+
+def test_feature_category_selector_queries_only_requested_category_and_reports_other_layers_unknown(
+    monkeypatch: pytest.MonkeyPatch,
+    local_cache_dir: Path,
+) -> None:
+    requested_tags: list[dict[str, object]] = []
+    _install_osm_mocks(monkeypatch)
+
+    def features_from_polygon(*args: object, **kwargs: object) -> gpd.GeoDataFrame:
+        requested_tags.append(kwargs["tags"])
+        index = pd.MultiIndex.from_tuples([("way", 5001)], names=["element", "osmid"])
+        return gpd.GeoDataFrame({"amenity": ["school"]}, geometry=[Point(27.5805, 47.160)], index=index, crs="EPSG:4326")
+
+    monkeypatch.setattr(geo_module.ox, "features_from_polygon", features_from_polygon)
+    result = acquire_osm_data(
+        [27.579, 47.159, 27.582, 47.162], modes=("walk",), cache_dir=local_cache_dir,
+        use_cache=False, feature_categories=("schools",),
+    )
+
+    assert requested_tags == [{"amenity": ["kindergarten", "school", "university"]}]
+    assert len(result.layers["schools"]) == 1
+    assert result.layer_availability["schools"]["status"] == "available"
+    assert result.layer_availability["buildings"]["status"] == "unknown"
+    assert result.metadata["feature_category_availability"]["schools"]["status"] == "available"
+    assert result.metadata["feature_category_availability"]["buildings"]["status"] == "not_requested"
+
+
+@pytest.mark.parametrize(
+    "categories, include_features, message",
+    [
+        (("schools", "schools"), True, "duplicate"),
+        (("unknown",), True, "Unsupported"),
+        (("schools", "healthcare", "services", "parking", "buildings"), True, "at most"),
+        (("schools",), False, "conflicts"),
+        ("schools", True, "not a string"),
+    ],
+)
+def test_feature_category_selector_rejects_ambiguous_or_unbounded_selections(
+    monkeypatch: pytest.MonkeyPatch,
+    local_cache_dir: Path,
+    categories: object,
+    include_features: bool,
+    message: str,
+) -> None:
+    _install_osm_mocks(monkeypatch)
+    with pytest.raises(ValueError, match=message):
+        acquire_osm_data(
+            [27.579, 47.159, 27.582, 47.162], modes=("walk",), cache_dir=local_cache_dir,
+            use_cache=False, feature_categories=categories, include_features=include_features,  # type: ignore[arg-type]
+        )
+
+
+@pytest.mark.parametrize(
+    ("category", "expected_tags"),
+    [
+        ("buildings", {"building": True}),
+        ("schools", {"amenity": ["kindergarten", "school", "university"]}),
+        ("healthcare", {"amenity": ["clinic", "doctors", "hospital", "pharmacy"], "healthcare": True}),
+        ("services", {"amenity": ["clinic", "community_centre", "doctors", "fire_station", "hospital", "kindergarten", "library", "marketplace", "pharmacy", "police", "school", "university"]}),
+        ("public_transport", {"amenity": ["bus_station"], "highway": ["bus_stop"], "public_transport": True, "railway": ["halt", "station", "subway_entrance", "tram_stop"]}),
+        ("parking", {"amenity": ["parking"], "parking": True}),
+        ("green_space", {"landuse": ["allotments", "forest", "grass", "recreation_ground"], "leisure": ["garden", "nature_reserve", "park", "recreation_ground"], "natural": ["grassland", "scrub", "wood"]}),
+        ("crossings", {"crossing": True, "highway": ["crossing"]}),
+    ],
+)
+def test_feature_category_query_mapping_is_explicit_and_stable(category: str, expected_tags: dict[str, object]) -> None:
+    assert geo_module.FEATURE_CATEGORY_TAGS[category] == expected_tags
+    assert geo_module._feature_query_tags((category,)) == expected_tags
+
+
+def test_empty_feature_selection_does_not_issue_a_broad_query(monkeypatch: pytest.MonkeyPatch, local_cache_dir: Path) -> None:
+    _install_osm_mocks(monkeypatch)
+
+    def fail_if_queried(*args: object, **kwargs: object) -> None:
+        raise AssertionError("An explicit empty category selection must not issue a feature request")
+
+    monkeypatch.setattr(geo_module.ox, "features_from_polygon", fail_if_queried)
+    result = acquire_osm_data(
+        [27.579, 47.159, 27.582, 47.162], modes=("walk",), cache_dir=local_cache_dir,
+        use_cache=False, feature_categories=[],
+    )
+    assert result.metadata["feature_query_requested"] is False
+    assert result.metadata["feature_query_mode"] == "disabled"
+    assert all(value["status"] == "not_requested" for value in result.metadata["feature_category_availability"].values())
+    assert all(result.layer_availability[name]["status"] == "unknown" for name in result.layers)
+
+
+def test_selected_feature_cache_requires_exact_area_hash_and_supports_verified_hit(
+    monkeypatch: pytest.MonkeyPatch,
+    local_cache_dir: Path,
+) -> None:
+    index = pd.MultiIndex.from_tuples([("way", 6060)], names=["element", "osmid"])
+    schools = gpd.GeoDataFrame({"amenity": ["school"]}, geometry=[Point(27.5805, 47.160)], index=index, crs="EPSG:4326")
+    _install_osm_mocks(monkeypatch, features=schools)
+    area = [27.579, 47.159, 27.582, 47.162]
+    first = acquire_osm_data(area, modes=("walk",), cache_dir=local_cache_dir, feature_categories=("schools",))
+
+    def fail_if_queried(*args: object, **kwargs: object) -> None:
+        raise AssertionError("A matching verified category cache should be reused")
+
+    monkeypatch.setattr(geo_module.ox, "features_from_polygon", fail_if_queried)
+    second = acquire_osm_data(area, modes=("walk",), cache_dir=local_cache_dir, feature_categories=("schools",))
+    assert first.metadata["feature_query_requested"] is True
+    assert second.metadata["cache"]["features_cache_hit"] is True
+    assert second.metadata["cache"]["features_area_verification"] == "geometry_sha256"
+    assert len(second.layers["schools"]) == 1
+
+    graph_key = geo_module._area_key(normalize_area(area))
+    cache_identity = geo_module._feature_cache_identity(normalize_area(area), graph_key, ("schools",), geo_module._feature_query_tags(("schools",)))
+    sidecar = local_cache_dir / f"{cache_identity}-features.json"
+    metadata = json.loads(sidecar.read_text(encoding="utf-8"))
+    metadata.pop("source_area_geometry_sha256")
+    sidecar.write_text(json.dumps(metadata), encoding="utf-8")
+    fresh_index = pd.MultiIndex.from_tuples([("way", 6061)], names=["element", "osmid"])
+    fresh = gpd.GeoDataFrame({"amenity": ["school"]}, geometry=[Point(27.5807, 47.160)], index=fresh_index, crs="EPSG:4326")
+    monkeypatch.setattr(geo_module.ox, "features_from_polygon", lambda *args, **kwargs: fresh)
+    rejected = acquire_osm_data(area, modes=("walk",), cache_dir=local_cache_dir, feature_categories=("schools",))
+    assert rejected.metadata["cache"]["features_cache_hit"] is False
+    assert rejected.metadata["cache"]["features_area_verification"] == "verified_by_requested_geometry"
+    assert any("source geometry metadata" in warning for warning in rejected.warnings)
+
+
+def test_selected_feature_cache_keys_are_isolated_by_area_and_category(
+    monkeypatch: pytest.MonkeyPatch,
+    local_cache_dir: Path,
+) -> None:
+    index = pd.MultiIndex.from_tuples([("way", 7070)], names=["element", "osmid"])
+    features = gpd.GeoDataFrame({"amenity": ["school"]}, geometry=[Point(27.5805, 47.160)], index=index, crs="EPSG:4326")
+    _install_osm_mocks(monkeypatch, features=features)
+    area_a = [27.579, 47.159, 27.582, 47.162]
+    area_b = [27.5792, 47.1592, 27.5818, 47.1618]
+    first = acquire_osm_data(area_a, modes=("walk",), cache_dir=local_cache_dir, feature_categories=("schools",))
+    wrong_area = acquire_osm_data(area_b, modes=("walk",), cache_dir=local_cache_dir, feature_categories=("schools",))
+    other_category = acquire_osm_data(area_a, modes=("walk",), cache_dir=local_cache_dir, feature_categories=("healthcare",))
+
+    assert first.metadata["cache"]["features_cache_key"] != wrong_area.metadata["cache"]["features_cache_key"]
+    assert first.metadata["cache"]["features_cache_key"] != other_category.metadata["cache"]["features_cache_key"]
+    assert wrong_area.metadata["cache"]["features_cache_hit"] is False
+    assert other_category.metadata["cache"]["features_cache_hit"] is False
+
+
+@pytest.mark.parametrize("limit_name", ["MAX_OSM_FEATURE_COUNT", "MAX_OSM_FEATURE_JSON_BYTES"])
+def test_selected_feature_response_bounds_fail_as_unknown_without_breaking_graph(
+    monkeypatch: pytest.MonkeyPatch,
+    local_cache_dir: Path,
+    limit_name: str,
+) -> None:
+    index = pd.MultiIndex.from_tuples([("way", 8080)], names=["element", "osmid"])
+    features = gpd.GeoDataFrame({"amenity": ["school"]}, geometry=[Point(27.5805, 47.160)], index=index, crs="EPSG:4326")
+    _install_osm_mocks(monkeypatch, features=features)
+    monkeypatch.setattr(geo_module, limit_name, 0 if limit_name == "MAX_OSM_FEATURE_COUNT" else 1)
+
+    result = acquire_osm_data(
+        [27.579, 47.159, 27.582, 47.162], modes=("walk",), cache_dir=local_cache_dir,
+        use_cache=False, feature_categories=("schools",),
+    )
+    assert result.layer_availability["walk_network"]["status"] == "available"
+    assert result.metadata["feature_category_availability"]["schools"]["status"] == "request_failed"
+    assert result.metadata["feature_category_availability"]["schools"]["feature_count"] is None
+
+
+def test_selected_feature_failure_and_invalid_geometry_remain_unknown(
+    monkeypatch: pytest.MonkeyPatch,
+    local_cache_dir: Path,
+) -> None:
+    _install_osm_mocks(monkeypatch, feature_error=TimeoutError("category endpoint timeout"))
+    failed = acquire_osm_data(
+        [27.579, 47.159, 27.582, 47.162], modes=("walk",), cache_dir=local_cache_dir,
+        use_cache=False, feature_categories=("schools",),
+    )
+    assert failed.layer_availability["walk_network"]["status"] == "available"
+    assert failed.metadata["feature_category_availability"]["schools"]["status"] == "request_failed"
+    assert failed.metadata["feature_category_availability"]["schools"]["feature_count"] is None
+    assert failed.layer_availability["schools"]["status"] == "unknown"
+
+    _install_osm_mocks(monkeypatch)
+    invalid = gpd.GeoDataFrame(
+        {"amenity": ["school"]}, geometry=[Polygon([(0, 0), (1, 1), (1, 0), (0, 1), (0, 0)])], crs="EPSG:4326",
+    )
+    monkeypatch.setattr(geo_module.ox, "features_from_polygon", lambda *args, **kwargs: invalid)
+    rejected = acquire_osm_data(
+        [27.579, 47.159, 27.582, 47.162], modes=("walk",), cache_dir=local_cache_dir,
+        use_cache=False, feature_categories=("schools",),
+    )
+    assert rejected.metadata["feature_category_availability"]["schools"]["status"] == "request_failed"
+    assert rejected.metadata["feature_query"]["rejected_geometry_count"] == 1
+    assert rejected.layer_availability["schools"]["status"] == "unknown"
+
+
+def _driving_intervention(data: OSMData) -> dict[str, object]:
+    catalog = get_driving_intervention_catalog(data)
+    target = catalog["targets"][0]
+    return {
+        "schema_version": DRIVING_INTERVENTION_SCHEMA,
+        "action": SUPPORTED_DRIVING_ACTION,
+        "target": dict(target),
+        "parameters": {"speed_limit_mps": 6.0},
+    }
+
+
+def _mock_paired_sumo_processes(
+    monkeypatch: pytest.MonkeyPatch,
+    *,
+    failure: str | None = None,
+    invalid_scenario_route: bool = False,
+) -> SumoInstallation:
+    def fake_run(args: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        if "--version" in args:
+            return subprocess.CompletedProcess(args, 0, "Eclipse SUMO 1.28.0\n", "")
+        if "--output-file" in args:
+            edge_path = Path(args[args.index("--edge-files") + 1])
+            Path(args[args.index("--output-file") + 1]).write_text(edge_path.read_text(encoding="utf-8"), encoding="utf-8")
+            return subprocess.CompletedProcess(args, 0, "", "")
+        tripinfo_path = Path(args[args.index("--tripinfo-output") + 1])
+        is_scenario = tripinfo_path.parent.name == "scenario"
+        if is_scenario and failure == "timeout":
+            raise subprocess.TimeoutExpired(args, timeout=60)
+        if is_scenario and failure == "failed":
+            return subprocess.CompletedProcess(args, 2, "", "fixture SUMO failure")
+        route_root = ET.parse(Path(args[args.index("--route-files") + 1])).getroot()
+        route_map = {row.get("id"): row.get("edges", "") for row in route_root.findall("route")}
+        trip_root = ET.Element("tripinfos")
+        route_output_root = ET.Element("routes")
+        for index, vehicle in enumerate(route_root.findall("vehicle")):
+            vehicle_id = vehicle.get("id")
+            edges = "invalid-edge" if is_scenario and invalid_scenario_route else route_map[vehicle.get("route")]
+            duration = 20 + index if is_scenario else 10 + index
+            ET.SubElement(trip_root, "tripinfo", {
+                "id": vehicle_id, "depart": vehicle.get("depart", "0"),
+                "arrival": str(float(vehicle.get("depart", "0")) + duration),
+                "duration": str(duration), "routeLength": "200", "waitingTime": "1" if is_scenario else "0",
+            })
+            reported = ET.SubElement(route_output_root, "vehicle", {"id": vehicle_id})
+            ET.SubElement(reported, "route", {"edges": edges})
+        tripinfo_path.write_text(ET.tostring(trip_root, encoding="unicode"), encoding="utf-8")
+        Path(args[args.index("--vehroute-output") + 1]).write_text(ET.tostring(route_output_root, encoding="unicode"), encoding="utf-8")
+        return subprocess.CompletedProcess(args, 0, "", "")
+
+    monkeypatch.setattr(sumo_engine_module.subprocess, "run", fake_run)
+    return SumoInstallation(Path("sumo.exe"), Path("netconvert.exe"), None)
+
+
+def test_paired_sumo_unavailable_reuses_demand_and_changes_only_isolated_target_edge(tmp_path: Path) -> None:
+    data = _sumo_fixture_data()
+    original_edges = list(data.graphs["drive"].edges(keys=True, data=True))
+    target = _driving_intervention(data)
+
+    result = evaluate_driving_scenario(
+        data, target, tmp_path / "paired-unavailable", vehicle_count=5, seed=22,
+        installation=SumoInstallation(sumo=None, netconvert=None, home=None),
+    )
+
+    output = tmp_path / "paired-unavailable"
+    assert result["status"] == "unavailable"
+    assert result["comparison"] is None
+    assert result["baseline"]["measurements"] is None
+    assert result["scenario"]["measurements"] is None
+    assert result["demand"]["generated_vehicle_count"] == 5
+    baseline_routes = ET.parse(output / "baseline" / "iasi.synthetic.rou.xml").getroot()
+    scenario_routes = ET.parse(output / "scenario" / "iasi.synthetic.rou.xml").getroot()
+    assert ET.tostring(baseline_routes) == ET.tostring(scenario_routes)
+    baseline_edges = {item.get("id"): float(item.get("speed")) for item in ET.parse(output / "baseline" / "iasi.edges.edg.xml").getroot()}
+    scenario_edges = {item.get("id"): float(item.get("speed")) for item in ET.parse(output / "scenario" / "iasi.edges.edg.xml").getroot()}
+    changed = [edge_id for edge_id in baseline_edges if baseline_edges[edge_id] != scenario_edges[edge_id]]
+    assert changed == [target["target"]["sumo_edge_id"]]
+    assert original_edges == list(data.graphs["drive"].edges(keys=True, data=True))
+    assert result["intervention"]["validation"]["physical_feasibility"] == "unknown"
+
+
+def test_paired_sumo_rejects_stale_target_revision_before_creating_outputs(tmp_path: Path) -> None:
+    data = _sumo_fixture_data()
+    intervention = _driving_intervention(data)
+    intervention["target"]["network_revision"] = "stale"
+    output = tmp_path / "stale-pair"
+    with pytest.raises(ValueError, match="stale"):
+        evaluate_driving_scenario(data, intervention, output, installation=SumoInstallation(None, None, None))
+    assert not output.exists()
+
+
+def test_paired_sumo_runs_identical_demand_and_compares_actual_reported_route_pairs(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    data = _sumo_fixture_data()
+    intervention = _driving_intervention(data)
+
+    def fake_run(args: list[str], **kwargs: object) -> subprocess.CompletedProcess[str]:
+        if "--version" in args:
+            return subprocess.CompletedProcess(args, 0, "Eclipse SUMO 1.28.0\n", "")
+        if "--output-file" in args:
+            edge_path = Path(args[args.index("--edge-files") + 1])
+            Path(args[args.index("--output-file") + 1]).write_text(edge_path.read_text(encoding="utf-8"), encoding="utf-8")
+            return subprocess.CompletedProcess(args, 0, "", "")
+        route_path = Path(args[args.index("--route-files") + 1])
+        route_root = ET.parse(route_path).getroot()
+        route_map = {row.get("id"): row.get("edges", "") for row in route_root.findall("route")}
+        vehicles = route_root.findall("vehicle")
+        tripinfo_path = Path(args[args.index("--tripinfo-output") + 1])
+        vehroute_path = Path(args[args.index("--vehroute-output") + 1])
+        is_scenario = tripinfo_path.parent.name == "scenario"
+        trip_root = ET.Element("tripinfos")
+        route_output_root = ET.Element("routes")
+        for index, vehicle in enumerate(vehicles):
+            vehicle_id = vehicle.get("id")
+            edges = route_map[vehicle.get("route")]
+            duration = 20 + index if is_scenario else 10 + index
+            ET.SubElement(trip_root, "tripinfo", {
+                "id": vehicle_id, "depart": vehicle.get("depart", "0"), "arrival": str(float(vehicle.get("depart", "0")) + duration),
+                "duration": str(duration), "routeLength": "200", "waitingTime": "1" if is_scenario else "0",
+            })
+            reported = ET.SubElement(route_output_root, "vehicle", {"id": vehicle_id})
+            ET.SubElement(reported, "route", {"edges": edges})
+        tripinfo_path.write_text(ET.tostring(trip_root, encoding="unicode"), encoding="utf-8")
+        vehroute_path.write_text(ET.tostring(route_output_root, encoding="unicode"), encoding="utf-8")
+        return subprocess.CompletedProcess(args, 0, "", "")
+
+    monkeypatch.setattr(sumo_engine_module.subprocess, "run", fake_run)
+    fake_installation = SumoInstallation(Path("sumo.exe"), Path("netconvert.exe"), None)
+    result = evaluate_driving_scenario(data, intervention, tmp_path / "paired-success", vehicle_count=4, seed=31, installation=fake_installation)
+
+    assert result["status"] == "completed"
+    assert result["simulator"]["version"] == "Eclipse SUMO 1.28.0"
+    assert result["comparison"]["paired_vehicle_count"] == result["demand"]["generated_vehicle_count"]
+    assert result["comparison"]["paired_vehicle_count"] > 0
+    assert result["comparison"]["metrics"]["duration_s"]["scenario_minus_baseline_mean"] == pytest.approx(10)
+    assert result["demand"]["sha256"]
+    assert result["baseline"]["outputs"]["vehroute"] == "iasi.vehroute.xml"
+    assert result["scenario"]["outputs"]["geojson"] == "iasi.simulation.geojson"
+    route_collection = json.loads((tmp_path / "paired-success" / "scenario" / "iasi.simulation.geojson").read_text(encoding="utf-8"))
+    assert route_collection["metadata"]["route_geometry_is_timestep_gps"] is False
+    assert all(feature["properties"]["route_geometry_source"].startswith("SUMO vehroute-output") for feature in route_collection["features"])
+    assert result["outputs"]["network_geojson_contains_target"] is True
+    json.dumps(result, ensure_ascii=False, allow_nan=False)
+
+
+@pytest.mark.parametrize(("failure", "expected_status"), [("failed", "failed"), ("timeout", "timeout")])
+def test_paired_sumo_failure_on_one_side_never_exposes_comparison_metrics(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    failure: str,
+    expected_status: str,
+) -> None:
+    data = _sumo_fixture_data()
+    result = evaluate_driving_scenario(
+        data, _driving_intervention(data), tmp_path / f"paired-{failure}", vehicle_count=4,
+        installation=_mock_paired_sumo_processes(monkeypatch, failure=failure),
+    )
+    assert result["status"] == expected_status
+    assert result["baseline"]["status"] == "completed"
+    assert result["scenario"]["status"] == expected_status
+    assert result["baseline"]["measurements"] is not None
+    assert result["scenario"]["measurements"] is None
+    assert result["comparison"] is None
+
+
+def test_paired_sumo_excludes_invalid_actual_routes_without_inventing_a_delta(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    data = _sumo_fixture_data()
+    result = evaluate_driving_scenario(
+        data, _driving_intervention(data), tmp_path / "paired-invalid-route", vehicle_count=3,
+        installation=_mock_paired_sumo_processes(monkeypatch, invalid_scenario_route=True),
+    )
+    assert result["status"] == "completed"
+    assert result["comparison"]["status"] == "no_comparable_completed_pairs"
+    assert result["comparison"]["paired_vehicle_count"] == 0
+    assert result["comparison"]["metrics"] is None
+    assert result["comparison"]["invalid_or_disconnected_route_vehicle_ids"]
+
+
+def test_reproducible_mvp_demo_writes_json_geojson_and_markdown_without_network_access(tmp_path: Path) -> None:
+    output = tmp_path / "mvp-demo"
+    first = run_mvp_demo(source="fixture", output_dir=output)
+    second = run_mvp_demo(source="fixture", output_dir=tmp_path / "mvp-demo-repeat")
+
+    assert first["schema_version"] == "arteria.mvp-demo.v1"
+    assert first["study"]["source"]["network_requests_made"] is False
+    assert first["study"]["source"]["area_equivalence"] == "synthetic_fixture"
+    assert first["analysis"]["analysis_id"] == second["analysis"]["analysis_id"]
+    assert first["candidate_evaluation"]["ranked_candidates"] == second["candidate_evaluation"]["ranked_candidates"]
+    assert (output / "report.json").is_file()
+    geojson = json.loads((output / "candidate-evidence.geojson").read_text(encoding="utf-8"))
+    assert geojson["type"] == "FeatureCollection"
+    assert geojson["metadata"]["license"] is None
+    assert (output / "summary.md").is_file()
+    json.dumps(first, ensure_ascii=False, allow_nan=False)
+
+
+def test_mvp_demo_area_source_validates_without_implicit_osm_acquisition(tmp_path: Path) -> None:
+    area_path = tmp_path / "area.json"
+    area_path.write_text(json.dumps({"city_id": "iasi-ro", "area_id": "test-area", "bbox": [27.579, 47.159, 27.582, 47.162], "crs": "EPSG:4326", "boundary_source": "user_selected"}), encoding="utf-8")
+    result = run_mvp_demo(source="area", area_json=area_path, acquire=False, output_dir=tmp_path / "area-report")
+    assert result["study"]["area_id"] == "test-area"
+    assert result["study"]["source"]["network_requests_made"] is False
+    assert result["study"]["source"]["area_equivalence"] == "not_acquired"
+    assert result["analysis"]["network_metrics"] == {}

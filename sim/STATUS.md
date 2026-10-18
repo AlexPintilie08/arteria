@@ -1,8 +1,21 @@
 # Spatial analysis and simulation status
 
-Updated: 2026-10-17
+Updated: 2026-10-18
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for SIM internals, [APPLICATION_INTEGRATION.md](APPLICATION_INTEGRATION.md) for the frontend/backend handoff, [README.md](README.md) for usage, and [AGENTS.md](AGENTS.md) for component instructions.
+
+## SIM v4 local verification (2026-10-18)
+
+- Branch: `feat/sim-v4-mvp`, based on `origin/main` at `e785649308923c0c91de40ebb1b0b85b5962962e`; this worktree does not update `main`.
+- Environment: reused `F:\AI\arteria-fullstack\.venv\Scripts\python.exe` (Python 3.12.15); no dependency installation. `uv` is unavailable. SUMO 1.28.0 portable binaries were SHA-256 verified against the official release manifest and kept under ignored `sim/.cache/`.
+- Real area: Iași `iasi-central-local-demo`, explicit user-selected bounded bbox `[27.5755,47.1610,27.5825,47.1655]`, OSM snapshot retrieved `2026-10-18T08:04:25Z`, 40 nodes / 78 directed driving edges. Source geometry hash `63ad7d5b660fba1669653a38bd2e6cdd13ab37c03157f4594d38bd1243285608` matches the requested study polygon (`source_area_verification=verified`, method `source_geometry_sha256`).
+- Native baseline: netconvert and SUMO 1.28.0 both executed successfully. The 180-second simulated horizon used deterministic synthetic demand, seed 4092, 20 generated/departed/finished vehicles, 0 unfinished, 0 not departed, and 0 unreported. Actual TripInfo means: duration 42.75 s, waiting 0.10 s, route length 516.18 m. Executed route geometries are from SUMO `vehroute-output` edge sequences mapped onto source OSM geometry, not GPS.
+- Native paired scenario: `set_drive_edge_speed_limit` on one version-bound directed source edge, modeled at 5.0 m/s, with the same 20 vehicle IDs, OD routes, departure schedule, seed, and horizon in both runs. Both runs completed 20/20 trips. Scenario-minus-baseline means: duration +0.15 s; waiting 0.00 s; route length 0.00 m across 20 comparable completed vehicles. This is one uncalibrated simulation comparison, not a measured traffic impact or recommendation; zero/negative modeled benefit is valid.
+- Final-code native rerun: full catalog targets (including catalog metadata) are accepted directly by the paired evaluator. The geometry-hash-verified baseline and paired run both completed 20/20 vehicles with the same reported metrics above.
+- Artifacts (all ignored/local): [baseline report JSON](.cache/sumo-v4-demo/baseline-iasi-v4-final-code/iasi.simulation.json), [baseline route GeoJSON](.cache/sumo-v4-demo/baseline-iasi-v4-final-code/iasi.simulation.geojson), [paired result JSON](.cache/sumo-v4-demo/paired-iasi-speed-v4-final-code/iasi.sumo-comparison.json), [paired changed edge GeoJSON](.cache/sumo-v4-demo/paired-iasi-speed-v4-final-code/scenario/iasi.changed-edge.geojson), and [earlier native run report](.cache/sumo-v4-demo/REAL_RUN_REPORT.md).
+- v4 adds the bounded OSM category selector, structured no-shared-benefit/local-only impact states, stale area/source-evidence rejection, a separate versioned speed-limit driving intervention, paired SUMO contract, and `python -m sim.mvp_demo`. See [INTEGRATION_CONTRACT_V4.md](INTEGRATION_CONTRACT_V4.md).
+- Full local regression after final safety edits: **167 passed, 1 pre-existing Starlette/httpx deprecation warning** using the existing Python 3.12.15 environment. Spatial smoke passed. `python -m sim.sumo_support --smoke` passed with SUMO/TraCI 1.28.0. Fixture proposal demo and integrated MVP demo each completed; all 3 fixture candidate options passed SIM proposal validation. The explicit cache-mode MVP demo made no OSM request, returned 3 accepted candidates, and correctly marked its legacy source-area equivalence unverified.
+- GitHub Actions for the new branch and PR are pending publication; no new CI result is claimed here.
 
 ## Working
 
@@ -26,14 +39,14 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for SIM internals, [APPLICATION_INTEGRATI
 - The source OSM object IDs, source URLs, retrieval/snapshot timestamps, tags, query bounds, uncertainty notes, attribution, and ODbL-1.0 terms are recorded in the catalog and [NEIGHBORHOODS_LICENSE.md](NEIGHBORHOODS_LICENSE.md).
 - These place polygons are not verified legal or municipal boundaries. Coverage is partial; missing polygons are not inferred. The ignored raw response is not included in the repository. Reuse `load_neighborhood_catalog(path)` to import the checked-in GeoJSON.
 
-## SIM v3 proposal verification
+## Historical SIM v3 proposal verification (as of 2026-10-17)
 
 - Pre-change Windows/Python 3.12 baseline used the provisioned environment without installing dependencies: 65 passed (60 SIM and 5 project tests). The SIM v3 suite now passes 78 total tests (73 SIM and 5 project tests), including proposal validation and bounded SUMO preparation/accounting cases.
 - Offline proposal demos generated a 48,022-byte fixture evidence packet and a 64,118-byte cached Iași packet; each produced 3 candidate-backed graph options, all 3 passed proposal validation, remained unclassified, and retained unknown physical feasibility.
 - The cached Iași proposal demo used the existing graph without a network request and produced 3 calculated options. Its legacy sidecar has no matching geometry hash, so selected-area equivalence remains unverified and mapped-building no-hit evidence stays unknown.
 - Final cached Iași SUMO preparation read a 40-node/78-directed-edge OSM driving graph, generated 20 deterministic routes with departures in the first 70% of the 180-second horizon, and wrote metric plain-XML inputs, source ID mapping, and WGS84 network GeoJSON. It used the 13.9 m/s speed and one-lane-per-direction fallbacks for 70 and 60 edges respectively; 18 edges used straight-line geometry fallbacks. It stopped at network conversion because netconvert is absent; SUMO vehicle execution and traffic measurements were not produced. The cached source-area equivalence is also unverified.
 
-## Verification and CI coverage
+## Historical v2/v3 verification and CI coverage (as of 2026-10-17)
 
 - Local Windows/Python 3.12 regression run used the provisioned `.venv` without installing dependencies: `.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-v21-final tests sim/test_engine.py`: **65 passed** (60 SIM and 5 project tests).
 - Final SIM v3 regression run: `.venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider --basetemp=sim/.cache/pytest-v3-final-20261017b tests sim/test_engine.py`: **78 passed** (73 SIM and 5 project tests). Spatial smoke passed. SUMO discovery smoke skipped because the `sumo` and `netconvert` executables are absent; Python bindings are installed. Fixture and cached proposal demos passed validation for all 3 options each, and the cached Iași SUMO preparation produced all bounded input artifacts before reporting `unavailable` at network conversion.
@@ -55,6 +68,6 @@ Package-root imports now expose catalog loading/selection/validation, candidate 
 - Candidate lines remain conditional. Mapped material building conflicts are filtered from the eligible shortlist; historical cache uncertainty, water/barrier coverage (not acquired), ownership, access rights, legal status, grade/slope, field safety, accessibility standards, and construction feasibility remain unknown. Small-component links can reflect graph or boundary artifacts and need source-data review.
 - Route samples are graph-node pairs, not observed trips or a statistically representative sample. Counts are not extrapolated to residents.
 - Walking/cycling times use constant-speed assumptions. Population, congestion, observed traffic volumes, and real-time conditions are not inferred.
-- Plain-XML conversion inputs and synthetic demand generation are implemented and offline-tested, but this Windows environment has neither netconvert nor sumo; no SUMO network was built and no vehicle simulation ran. Real traffic is uncalibrated and the available legacy cached Iași source area is unverified.
+- The historical v3 cache-only SUMO path had no native binaries and an unverified legacy area. The v4 local run above uses a separately acquired geometry-hash-verified OSM area and actual native SUMO output. SUMO remains optional on other machines; all demand is synthetic and outputs are uncalibrated.
 - `origin/master` proposal endpoints remain draft/precomputed. The separate `origin/feat/backend-api` adds a pedestrian graph-study API backed by pinned SIM v2.1 snapshot `752c92da9184effc9b87704e0868320f569454ea`; it does not consume these v3 proposal APIs or execute SUMO. SIM itself has no cloud provider, persistence, HTTP endpoint, or adapter to the shared TypeScript Alternative wire shape.
 - The current workflow does not include a separate macOS Intel job; this revision was CI-verified on Windows x64 and macOS ARM64.
