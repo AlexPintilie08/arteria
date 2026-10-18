@@ -49,13 +49,18 @@ export interface Issue extends Evidence {
 export interface AnalyzeResponse {
   analysis_id: string;
   baseline_id: string;
-  inputs?: { cycle_seconds: number; lost_seconds: number; ns_green_seconds: number };
-  area: AreaRef & { crs: string };
+  area: Area & { crs: string };
   created_at: string;
+  mode?: 'demo';
+  inputs?: { cycle_seconds: number; lost_seconds: number; ns_green_seconds: number; ns_demand_vph?: number; ew_demand_vph?: number };
+  provenance?: Provenance[];
   indicators: Indicator[];
   issues: Issue[];
   layer_availability: { layer: LayerId; status: EvidenceStatus; reason: string }[];
   warnings: string[];
+}
+export interface Provenance {
+  source: string; source_version: string; retrieved_at: string; method: string; crs: string;
 }
 export interface Intervention {
   type: string; geometry: Geometry; parameters: Record<string, unknown>;
@@ -75,7 +80,7 @@ export interface Alternative {
   validation: { status: 'accepted' | 'rejected' | 'unavailable'; checks: string[] };
 }
 export interface ProposeResponse {
-  proposal_set_id: string; analysis_id: string;
+  proposal_set_id: string; analysis_id: string; baseline_id: string;
   model: { provider: string; model_id: string; generated_at: string };
   alternatives: Alternative[];
   rejected_alternatives: unknown[];
@@ -93,9 +98,10 @@ export interface EvaluateRequest {
 }
 export interface EvaluateResponse {
   evaluation_id: string; scenario_id: string; created_at: string;
-  baseline: { id: string; source_snapshot: string };
-  scenario: { id: string; intervention_catalog_version: string };
-  comparisons: { indicator_id: string; baseline: Measurement; scenario: Measurement; delta: Measurement }[];
+  baseline: { id: string; source_snapshot: string; intervention_catalog_version: string };
+  scenario: { id: string; source_snapshot: string; intervention_catalog_version: string };
+  comparisons: { indicator_id: string; baseline: Measurement; scenario: Measurement; delta: Measurement;
+    percent_change: number | null; impact: 'improved' | 'worsened' | 'unchanged' | 'unknown' }[];
   simulation: {
     status: string; mode: 'none' | 'live' | 'offline' | 'replay'; run_id: string | null;
     started_at: string | null; completed_at: string | null;
@@ -117,13 +123,23 @@ export interface SpatialCandidate {
   ranking_explanation?: string;
 }
 export interface SpatialStudy {
-  study_id: string; baseline_id: string; source: 'fixture' | 'osm'; engine_revision: string;
-  analysis: Record<string, unknown>;
+  study_id: string; baseline_id: string; created_at: string;
+  source: 'fixture' | 'osm'; engine_revision: string; calculation: 'pedestrian_graph';
+  analysis: Record<string, unknown> & { provenance?: SpatialSourceProvenance };
   alternatives: { ranked_candidates: SpatialCandidate[]; warnings: string[] };
   proposal_options: SpatialProposalOption[];
   proposal_validation: SpatialProposalValidation;
   evidence_packet: Record<string, unknown>;
   warnings: string[];
+}
+/** SIM metadata is preserved as returned; fixture snapshots may have no retrieval time. */
+export interface SpatialSourceProvenance {
+  source: string;
+  source_version?: string | null;
+  retrieved_at?: string | null;
+  working_crs?: string;
+  crs?: string;
+  limitations?: string[];
 }
 export interface SpatialProposalOption {
   candidate_id: string;
@@ -144,6 +160,7 @@ export interface SpatialSelection {
   baseline_id: string; candidate_id: string; intervention: Record<string, unknown>;
 }
 export interface SpatialEvaluation {
+  study_id: string; baseline_id: string; candidate_id: string;
   source: 'fixture' | 'osm'; execution: 'stored_graph_comparison'; sumo_executed: false;
   evaluated_at: string;
   impact: {

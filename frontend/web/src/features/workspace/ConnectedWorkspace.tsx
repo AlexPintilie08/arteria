@@ -6,7 +6,7 @@ import { alternativeLabels, layers, neighborhoods } from '@arteria/shared/fixtur
 import { api } from '../../lib/api';
 import { SpatialPanel } from './SpatialPanel';
 import styles from './ConnectedWorkspace.module.css';
-import { label, unit, source, formatNumber as number } from './presentation';
+import { label, unit, source, formatNumber as number, formatTimestamp, presentError, type PresentedError } from './presentation';
 
 type Section = 'analysis' | 'scenarios' | 'comparison' | 'spatial';
 const labels: Record<Section, string> = { analysis: 'Explorează', scenarios: 'Scenarii', comparison: 'Compară', spatial: 'Acces pietonal' };
@@ -23,11 +23,11 @@ export function ConnectedWorkspace() {
   const [green, setGreen] = useState(40);
   const [tuned, setTuned] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<PresentedError | null>(null);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => () => controller.current?.abort(), []);
 
-  function cancel() { controller.current?.abort(); setBusy(false); setError(''); }
+  function cancel() { controller.current?.abort(); setBusy(false); setError(null); }
   function clearSelection() { cancel(); setProposal(null); setEvaluation(null); }
   function reset() { clearSelection(); setAnalysis(null); setIssue(null); setTuned(false); }
   async function request(action: (signal: AbortSignal) => Promise<void>) {
@@ -35,7 +35,7 @@ export function ConnectedWorkspace() {
     const active = new AbortController(); controller.current = active; setBusy(true);
     try { await action(active.signal); }
     catch (cause) {
-      if (!active.signal.aborted) setError(cause instanceof Error ? cause.message : 'Cererea a eșuat. Reîncearcă.');
+      if (!active.signal.aborted) setError(presentError(cause));
     } finally { if (!active.signal.aborted) setBusy(false); }
   }
   const selected = proposal?.alternatives.find(a => a.level === level);
@@ -86,12 +86,12 @@ export function ConnectedWorkspace() {
 
   return <div className={styles.root}>
     <a className="skip-link" href="#workspace">Sari la spațiul de lucru</a>
-    <header className={styles.header}><a href="/">ARTERIA <small>by ARION</small></a><span className={styles.badge}>Semaforizare demo · graf pietonal SIM v3</span></header>
+    <header className={styles.header}><a href="/">ARTERIA <small>by ARION</small></a><span className={styles.badge}>Semafoare demonstrative · analiză pietonală SIM</span></header>
     <nav className={styles.nav} aria-label="Navigație principală">{(Object.keys(labels) as Section[]).map(key =>
       <button key={key} aria-current={section === key ? 'page' : undefined} onClick={() => setSection(key)}>{labels[key]}</button>)}</nav>
     <main id="workspace" className={styles.main}>
       {busy && <p role="status">Pregătim rezultatele…</p>}
-      {error && <div className={styles.error} role="alert">Nu am putut obține rezultatele. Reîncearcă în câteva momente.<details><summary>Detalii despre problemă</summary>{error}</details></div>}
+      {error && <div className={styles.error} role="alert"><strong>{error.title}</strong><details><summary>Detalii despre problemă</summary><p>{error.detail}</p>{error.fields?.length ? <ul>{error.fields.map((item, i) => <li key={`${item.field}-${i}`}>{item.field}: {item.reason}</li>)}</ul> : null}{error.requestId && <p>Identificator cerere: <code>{error.requestId}</code></p>}</details></div>}
       {section === 'analysis' && <>
         <section className={styles.card}><h1>Analiza zonei</h1>
           <p>Explorează o zonă și compară posibile îmbunătățiri. În această demonstrație folosim date sintetice, nu măsurători reale din Iași.</p>
@@ -103,6 +103,9 @@ export function ConnectedWorkspace() {
         </section>
         {!analysis ? <section className={styles.card}><h2>Începe cu o zonă.</h2><p>Alege zona care te interesează, apoi pornește analiza.</p></section> : <>
           <section className={styles.card}><h2>Situația actuală</h2><div className={styles.grid}>{analysis.indicators.map(i => <article key={i.id}><h3>{label(i.id, i.label)}</h3><strong>{number(i.value)} {unit(i.unit)}</strong><p className={styles.muted}>{label(i.status)} · {i.provenance.map(p => source(p.source)).join(', ')}</p></article>)}</div>
+            <details><summary>Proveniența datelor și a calculului</summary><p>Tipul calculului: model demonstrativ de semaforizare ({analysis.mode ?? 'mod necunoscut'}); nu este simulare SUMO.</p>
+              {(analysis.provenance ?? analysis.indicators.flatMap(i => i.provenance)).map((p, index) => <p key={`${p.source}-${index}`}>Sursă: {source(p.source)} · versiune sursă: {p.source_version || 'Nedisponibilă în răspuns'} · captură: {formatTimestamp(p.retrieved_at)} · metodă: {p.method} · CRS: {p.crs}</p>)}
+              <p>Revizia motorului: API-ul nu furnizează acest câmp.</p></details>
             {analysis.layer_availability.map(l => <p className={styles.muted} key={l.layer}>{label(l.layer)}: {label(l.status)}</p>)}
           </section>
           <section className={styles.card}><h2>Ce putem îmbunătăți?</h2>{analysis.issues.length === 0 && <p>Nu am identificat propuneri pentru această analiză.</p>}
@@ -137,7 +140,7 @@ export function ConnectedWorkspace() {
             {evaluation.comparisons.map(c => <tr key={c.indicator_id}><th>{label(c.indicator_id, analysis?.indicators.find(i => i.id === c.indicator_id)?.label)}</th><td>{number(c.baseline.value)} {unit(c.baseline.unit)}</td><td>{number(c.scenario.value)} {unit(c.scenario.unit)}</td><td className={c.delta.value !== null && c.delta.value < 0 ? styles.good : styles.bad}>{number(c.delta.value)} {unit(c.delta.unit)}</td></tr>)}
           </tbody></table></div><p>Pentru întârziere, o diferență negativă înseamnă îmbunătățire; o diferență pozitivă înseamnă înrăutățire.</p>
           <p className={styles.muted}>{evaluation.simulation.status === 'not_requested' ? 'Rezultate estimate pe date demonstrative. Nu s-a rulat o simulare de trafic.' : 'Vezi detaliile calculului în secțiunea de mai jos.'}</p><Warnings items={evaluation.warnings} />
-          <details><summary>Surse și ipoteze</summary>{evaluation.comparisons.map(c => <p key={c.indicator_id}>{c.indicator_id}: {c.scenario.status} · {c.scenario.provenance.map(p => `${p.source} / ${p.method}`).join('; ')} · {c.scenario.uncertainty.description}</p>)}<p>Referința analizei: {evaluation.baseline.id}</p></details>
+          <details><summary>Surse și ipoteze</summary>{evaluation.comparisons.map(c => <p key={c.indicator_id}>{c.indicator_id}: {c.scenario.status} · {c.scenario.provenance.map(p => `${source(p.source)} / ${p.source_version} / ${formatTimestamp(p.retrieved_at)} / ${p.method}`).join('; ')} · {c.scenario.uncertainty.description}</p>)}<p>Referința analizei: {evaluation.baseline.id} · tipul calculului: estimare pe model demonstrativ, fără simulare efectivă de trafic.</p><p>Revizia motorului: API-ul nu furnizează acest câmp.</p></details>
         </>}
       </section>}
       {section === 'spatial' && <SpatialPanel />}
