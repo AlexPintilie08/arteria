@@ -1,4 +1,4 @@
-import type { AnalyzeRequest, AnalyzeResponse, ProposeRequest, ProposeResponse, EvaluateRequest, EvaluateResponse, ApiErrorBody, SpatialStudy, SpatialSelection, SpatialEvaluation } from './contracts.ts';
+import type { AnalyzeRequest, AnalyzeResponse, ProposeRequest, ProposeResponse, EvaluateRequest, EvaluateResponse, ApiErrorBody, SpatialStudy, SpatialSelection, SpatialEvaluation, SpatialPlanningResult } from './contracts.ts';
 import { ApiContractError, isApiErrorBody, parseApiResponse } from './runtime-validation.ts';
 export { ApiContractError } from './runtime-validation.ts';
 
@@ -14,7 +14,7 @@ export class ApiTimeoutError extends Error {
 }
 export function createApiClient(baseUrl: string, options: { fetch?: typeof fetch; timeoutMs?: number } = {}) {
   const transport = options.fetch ?? globalThis.fetch;
-  async function post<T>(path: string, payload: unknown, signal?: AbortSignal): Promise<T> {
+  async function request<T>(path: string, init: RequestInit, signal?: AbortSignal): Promise<T> {
     const controller = new AbortController();
     const abort = () => controller.abort(signal?.reason);
     if (signal?.aborted) abort();
@@ -24,10 +24,7 @@ export function createApiClient(baseUrl: string, options: { fetch?: typeof fetch
     try {
       let response: Response;
       try {
-        response = await transport(`${baseUrl.replace(/\/$/, '')}${path}`, {
-          method: 'POST', headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload), signal: controller.signal,
-        });
+        response = await transport(`${baseUrl.replace(/\/$/, '')}${path}`, { ...init, signal: controller.signal });
       } catch (cause) { if (timedOut) throw new ApiTimeoutError(); throw cause; }
       if (!response.ok) {
         let body: ApiErrorBody | undefined;
@@ -45,10 +42,26 @@ export function createApiClient(baseUrl: string, options: { fetch?: typeof fetch
       clearTimeout(timeout); signal?.removeEventListener('abort', abort);
     }
   }
+  async function post<T>(path: string, payload: unknown, signal?: AbortSignal, headers: Record<string, string> = {}): Promise<T> {
+    return request<T>(path, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...headers },
+      body: JSON.stringify(payload),
+    }, signal);
+  }
+  async function get<T>(path: string, signal?: AbortSignal): Promise<T> {
+    return request<T>(path, { method: 'GET' }, signal);
+  }
   return {
     spatialStudy: (signal?: AbortSignal) => post<SpatialStudy>('/api/v1/spatial/studies', { source: 'fixture' }, signal),
     spatialNeighborhoodStudy: (neighborhoodId: string, signal?: AbortSignal) => post<SpatialStudy>(
       '/api/v1/spatial/studies', { source: 'osm', neighborhood_id: neighborhoodId }, signal,
+    ),
+    spatialPlanning: (studyId: string, idempotencyKey: string, signal?: AbortSignal) => post<SpatialPlanningResult>(
+      `/api/v1/spatial/studies/${encodeURIComponent(studyId)}/planning`, {}, signal, { 'Idempotency-Key': idempotencyKey },
+    ),
+    getSpatialPlanning: (studyId: string, planningId: string, signal?: AbortSignal) => get<SpatialPlanningResult>(
+      `/api/v1/spatial/studies/${encodeURIComponent(studyId)}/planning/${encodeURIComponent(planningId)}`, signal,
     ),
     spatialEvaluate: (studyId: string, body: SpatialSelection, signal?: AbortSignal) => post<SpatialEvaluation>(`/api/v1/spatial/studies/${encodeURIComponent(studyId)}/evaluate`, body, signal),
     analyze: (body: AnalyzeRequest, signal?: AbortSignal) => post<AnalyzeResponse>('/analyze', body, signal),
@@ -58,6 +71,7 @@ export function createApiClient(baseUrl: string, options: { fetch?: typeof fetch
 }
 
 function endpointName(path: string) {
+  if (path.includes('/planning')) return 'spatialPlanning';
   if (path === '/analyze') return 'analyze';
   if (path === '/propose') return 'propose';
   if (path === '/evaluate') return 'evaluate';

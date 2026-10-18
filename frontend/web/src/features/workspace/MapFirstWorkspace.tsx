@@ -1,0 +1,402 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { SpatialEvaluation, SpatialPlanningResult, SpatialStudy } from '@arteria/shared/contracts';
+import { spatialApi } from '../../lib/api';
+import { controlledAnalysisMessage, loadSimCatalog, searchSimPlaces, type LoadedSimCatalog, type SourcedPlace } from '../neighborhoods/sim-geography';
+import { formatTimestamp, presentError, source, type PresentedError } from './presentation';
+import { geometryFeatureCollection, isJsonRecord, jsonArray, returnedAggregate, safeFeatureCollection, simSolutions, studyProblems, validatedRecommendations, type JsonRecord } from './map-first-data';
+import styles from './MapFirstWorkspace.module.css';
+
+const CatalogMap = dynamic(() => import('../map/NeighborhoodCatalogMap'), {
+  ssr: false,
+  loading: () => <div className={styles.mapLoading} role="status">Se încarcă harta Iașului…</div>,
+});
+
+type BusyAction = 'study' | 'planning' | 'evaluation' | null;
+interface ActiveCandidate { candidateId: string; geometry: unknown }
+
+function stringValue(value: unknown, fallback: string): string {
+  return typeof value === 'string' && value.trim() ? value : fallback;
+}
+
+function formatValue(value: unknown): string {
+  if (typeof value === 'number' && Number.isFinite(value)) return value.toLocaleString('ro-RO', { maximumFractionDigits: 2 });
+  if (value === null || value === undefined) return 'Necunoscut';
+  if (typeof value === 'string') return value;
+  return 'Necunoscut';
+}
+
+function properties(place: SourcedPlace): JsonRecord {
+  return isJsonRecord(place.feature.properties) ? place.feature.properties : {};
+}
+
+function geometryFromSolution(value: unknown): unknown {
+  if (!isJsonRecord(value)) return null;
+  return value.geometry ?? null;
+}
+
+function lineGeometry(value: unknown): unknown {
+  if (!isJsonRecord(value)) return null;
+  const before = isJsonRecord(value.before) ? value.before : null;
+  const after = isJsonRecord(value.after) ? value.after : null;
+  return after?.geometry ?? before?.geometry ?? null;
+}
+
+function getMapCandidateGeometry(study: SpatialStudy, planning: SpatialPlanningResult | null, candidateId: string): unknown {
+  const recommendation = validatedRecommendations(planning).find((item) => item.candidate_id === candidateId);
+  const aiGeometry = recommendation?.authoritative_sim_solution?.geometry;
+  if (aiGeometry) return aiGeometry;
+  const solution = simSolutions(study).find((item) => item.candidate_id === candidateId);
+  const geometry = geometryFromSolution(solution);
+  if (geometry) return geometry;
+  const candidate = study.alternatives.ranked_candidates.find((item) => item.candidate_id === candidateId);
+  return candidate?.intervention.geometry ?? null;
+}
+
+function Aggregate({ value }: { value: unknown }) {
+  const aggregate = returnedAggregate(value);
+  if (!aggregate) return <p className={styles.muted}>SIM nu a returnat impact agregat pentru această soluție.</p>;
+  const entries = Object.entries(aggregate).filter(([, amount]) =>
+    amount === null || (typeof amount === 'number' && Number.isFinite(amount))
+  );
+  if (!entries.length) return <p className={styles.muted}>SIM nu a returnat valori numerice pentru acest indicator.</p>;
+  const labels: Record<string, string> = {
+    evaluated_pair_count: 'Perechi de rute comparate', improved_count: 'Rute îmbunătățite',
+    unchanged_count: 'Neschimbate', regressed_count: 'Rute înrăutățite',
+    newly_reachable_count: 'Nou accesibile', newly_unreachable_count: 'Nou inaccesibile',
+    total_distance_savings_m: 'Diferență agregată de distanță (m)',
+    average_distance_savings_m: 'Diferență medie de distanță (m)',
+    total_estimated_time_savings_s: 'Diferență estimată de timp (s)',
+  };
+  return <dl className={styles.aggregate}>{entries.map(([key, amount]) => <div key={key}><dt>{labels[key] ?? key.replaceAll('_', ' ')}</dt><dd>{formatValue(amount)}</dd></div>)}</dl>;
+}
+
+export function MapFirstWorkspace() {
+  const [catalog, setCatalog] = useState<LoadedSimCatalog | null>(null);
+  const [catalogError, setCatalogError] = useState('');
+  const [catalogLoading, setCatalogLoading] = useState(true);
+  const [query, setQuery] = useState('');
+  const [selectedPlace, setSelectedPlace] = useState<SourcedPlace | null>(null);
+  const [fillPolygons, setFillPolygons] = useState(false);
+  const [study, setStudy] = useState<SpatialStudy | null>(null);
+  const [planning, setPlanning] = useState<SpatialPlanningResult | null>(null);
+  const [evaluation, setEvaluation] = useState<SpatialEvaluation | null>(null);
+  const [activeCandidate, setActiveCandidate] = useState<ActiveCandidate | null>(null);
+  const [busy, setBusy] = useState<BusyAction>(null);
+  const [error, setError] = useState<PresentedError | null>(null);
+  const requestController = useRef<AbortController | null>(null);
+  const planningKey = useRef<{ studyId: string; key: string } | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    setCatalogLoading(true);
+    void Promise.all([
+      fetch('/data/iasi-neighborhoods.geojson', { signal: controller.signal }),
+      fetch('/data/iasi-neighborhood-validation.json', { signal: controller.signal }),
+    ]).then(async ([catalogResponse, validationResponse]) => {
+      if (!catalogResponse.ok || !validationResponse.ok) throw new Error('Fișierele catalogului SIM nu au putut fi încărcate.');
+      const [catalogData, validationData] = await Promise.all([catalogResponse.json(), validationResponse.json()]);
+      setCatalog(loadSimCatalog(catalogData, validationData));
+    }).catch((cause: unknown) => {
+      if (!controller.signal.aborted) setCatalogError(cause instanceof Error ? cause.message : 'Catalogul SIM nu a putut fi încărcat.');
+    }).finally(() => { if (!controller.signal.aborted) setCatalogLoading(false); });
+    return () => controller.abort();
+  }, []);
+
+  const places = catalog?.places ?? [];
+  const results = useMemo(() => searchSimPlaces(places, query), [places, query]);
+  const sourcedProblemCollection = safeFeatureCollection(study?.problem_locations_geojson);
+  const aiRecommendations = validatedRecommendations(planning);
+  const validCandidateIds = useMemo(() => new Set(
+    (study?.proposal_validation.results ?? [])
+      .filter((result) => result.status === 'candidate_backed_evaluated' && typeof result.candidate_id === 'string')
+      .map((result) => result.candidate_id as string),
+  ), [study]);
+  const selectedCanRun = Boolean(selectedPlace
+    && selectedPlace.geometryType !== 'Point'
+    && selectedPlace.validation.status === 'valid'
+    && selectedPlace.validation.analysis_eligible);
+
+  function clearStudyState() {
+    requestController.current?.abort();
+    requestController.current = null;
+    planningKey.current = null;
+    setBusy(null);
+    setError(null);
+    setStudy(null);
+    setPlanning(null);
+    setEvaluation(null);
+    setActiveCandidate(null);
+  }
+
+  function selectPlace(place: SourcedPlace) {
+    clearStudyState();
+    setSelectedPlace(place);
+  }
+
+  async function runRequest(action: BusyAction, run: (signal: AbortSignal) => Promise<void>) {
+    requestController.current?.abort();
+    const controller = new AbortController();
+    requestController.current = controller;
+    setBusy(action);
+    setError(null);
+    try {
+      await run(controller.signal);
+    } catch (cause) {
+      if (!controller.signal.aborted) setError(presentError(cause));
+    } finally {
+      if (!controller.signal.aborted) setBusy(null);
+    }
+  }
+
+  function createStudy() {
+    if (!selectedCanRun || !selectedPlace) return;
+    setStudy(null); setPlanning(null); setEvaluation(null); setActiveCandidate(null);
+    void runRequest('study', async (signal) => {
+      const result = await spatialApi.spatialNeighborhoodStudy(selectedPlace.id, signal);
+      if (!signal.aborted) {
+        planningKey.current = null;
+        setStudy(result);
+      }
+    });
+  }
+
+  function requestPlanning() {
+    if (!study) return;
+    if (!planningKey.current || planningKey.current.studyId !== study.study_id) {
+      planningKey.current = { studyId: study.study_id, key: crypto.randomUUID() };
+    }
+    const key = planningKey.current.key;
+    void runRequest('planning', async (signal) => {
+      const result = await spatialApi.spatialPlanning(study.study_id, key, signal);
+      if (!signal.aborted) setPlanning(result);
+    });
+  }
+
+  function reloadPlanning() {
+    if (!study || !planning) return;
+    void runRequest('planning', async (signal) => {
+      const result = await spatialApi.getSpatialPlanning(study.study_id, planning.planning_id, signal);
+      if (!signal.aborted) setPlanning(result);
+    });
+  }
+
+  function activateSolution(candidateId: string, geometry: unknown) {
+    setActiveCandidate({ candidateId, geometry });
+    setEvaluation(null);
+  }
+
+  function evaluateCandidate(candidateId: string) {
+    if (!study || !validCandidateIds.has(candidateId)) return;
+    const candidate = study.alternatives.ranked_candidates.find((item) => item.candidate_id === candidateId);
+    if (!candidate) return;
+    void runRequest('evaluation', async (signal) => {
+      const result = await spatialApi.spatialEvaluate(study.study_id, {
+        baseline_id: study.baseline_id,
+        candidate_id: candidate.candidate_id,
+        intervention: candidate.intervention,
+      }, signal);
+      if (!signal.aborted) {
+        setEvaluation(result);
+        setActiveCandidate({ candidateId, geometry: getMapCandidateGeometry(study, planning, candidateId) ?? candidate.intervention.geometry });
+      }
+    });
+  }
+
+  const resultProblems = study ? studyProblems(study) : [];
+  const resultSolutions = study ? simSolutions(study) : [];
+  const selectedProperties = selectedPlace ? properties(selectedPlace) : {};
+  const attribution = stringValue(catalog?.metadata.attribution, '© OpenStreetMap contributors');
+  const sourceSnapshot = stringValue(catalog?.metadata.source_snapshot_at, 'indisponibilă');
+  const aiCanRender = aiRecommendations.length > 0;
+  const aiUnavailable = planning && !aiCanRender;
+
+  return <div className={styles.app}>
+    <a className={styles.skipLink} href="#catalog-inspector">Sari la catalog și rezultate</a>
+    <header className={styles.header}>
+      <Link className={styles.brand} href="/" aria-label="ARTERIA, pagina principală"><span className={styles.brandMark}>A</span><span>ARTERIA<small>by ARION</small></span></Link>
+      <div className={styles.city}><span>Laborator urban</span><strong>Iași, România</strong></div>
+      <div className={styles.headerActions}><span className={styles.connected}>SIM · graf pietonal</span><Link href="/app/demo" className={styles.demoLink}>Demonstrație semafoare</Link></div>
+    </header>
+    <main className={styles.workspace}>
+      <section className={styles.mapPanel} aria-label="Harta Iași">
+        <CatalogMap
+          places={places}
+          selectedId={selectedPlace?.id ?? null}
+          problems={sourcedProblemCollection}
+          candidateGeometry={activeCandidate?.geometry ?? null}
+          fillPolygons={fillPolygons}
+          onSelect={selectPlace}
+        />
+        <div className={styles.mapSummary}>
+          <span>Catalog geografic SIM</span>
+          <strong>{catalogLoading ? 'Se încarcă datele Iașului…' : `${places.filter((place) => place.geometryType !== 'Point').length} zone poligonale · ${places.filter((place) => place.geometryType === 'Point').length} repere punctuale`}</strong>
+        </div>
+      </section>
+
+      <aside id="catalog-inspector" className={styles.inspector} aria-label="Catalog și analiză SIM">
+        <div className={styles.inspectorTitle}>
+          <div><p className={styles.eyebrow}>SIM · OpenStreetMap</p><h1>{selectedPlace?.name ?? 'Alege o zonă'}</h1></div>
+          {selectedPlace && <button type="button" className={styles.textButton} onClick={() => { clearStudyState(); setSelectedPlace(null); }}>Șterge</button>}
+        </div>
+
+        <label className={styles.searchLabel} htmlFor="neighborhood-search">Caută cartier sau reper</label>
+        <input id="neighborhood-search" className={styles.search} type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ex. Copou, Tătărași…" />
+
+        <div className={styles.catalogMeta}>
+          <span>{catalogLoading ? 'Se încarcă catalogul…' : `${results.length} din ${places.length} înregistrări`}</span>
+          <label className={styles.fillToggle}><input type="checkbox" checked={fillPolygons} onChange={(event) => setFillPolygons(event.target.checked)} /> Umplere poligoane</label>
+        </div>
+        {catalogError && <p className={styles.error} role="alert">{catalogError}</p>}
+        <div className={styles.placeList} role="listbox" aria-label="Rezultate catalog SIM">
+          {results.map((place) => (
+            <button key={place.id} type="button" role="option" aria-selected={selectedPlace?.id === place.id} className={selectedPlace?.id === place.id ? styles.placeSelected : styles.place} onClick={() => selectPlace(place)}>
+              <span className={styles.placeMark} aria-hidden="true">{place.geometryType === 'Point' ? '•' : '⌑'}</span>
+              <span className={styles.placeName}>{place.name}<small>{place.id}</small></span>
+              <span className={place.validation.analysis_eligible ? styles.statusReady : styles.statusLimited}>{place.geometryType === 'Point' ? 'Punct' : place.validation.analysis_eligible ? 'Analizabil' : 'Limitat'}</span>
+            </button>
+          ))}
+          {!catalogLoading && !catalogError && results.length === 0 && <p className={styles.muted}>Nicio înregistrare nu corespunde căutării.</p>}
+        </div>
+
+        <div className={styles.sourceNote}>
+          <strong>Limitele sunt orientative</strong>
+          <p>Poligoanele reprezintă extinderi de loc mapate în OSM, nu limite administrative oficiale. Punctele nu primesc contur. Sursă: {attribution} · ODbL-1.0.</p>
+        </div>
+
+        {selectedPlace && <section className={styles.selection} aria-label="Zona selectată">
+          <div className={styles.selectionHeader}><h2>{selectedPlace.name}</h2><span className={styles.geometryBadge}>{selectedPlace.geometryType === 'Point' ? 'Reper punctual' : selectedPlace.geometryType}</span></div>
+          <p className={styles.placeId}>ID SIM canonic: <code>{selectedPlace.id}</code></p>
+          <p className={styles.analysisStatus}>
+            {selectedPlace.geometryType === 'Point'
+              ? 'Acest loc este înregistrat ca punct OpenStreetMap. Nu are geometrie de zonă, deci nu poate fi folosit drept poligon de analiză.'
+              : selectedPlace.validation.analysis_eligible
+                ? 'Eligibil pentru un studiu pe graful pietonal SIM.'
+                : selectedPlace.validation.status === 'requires_controlled_analysis'
+                  ? controlledAnalysisMessage(selectedPlace)
+                  : selectedPlace.validation.reason ?? 'Zona nu este eligibilă pentru analiza SIM standard.'}
+          </p>
+          <dl className={styles.sourceDetails}>
+            <div><dt>Sursă</dt><dd>{stringValue(selectedProperties.source, 'OpenStreetMap')}</dd></div>
+            <div><dt>Data sursei</dt><dd>{formatTimestamp(stringValue(selectedProperties.source_snapshot_at, sourceSnapshot))}</dd></div>
+            <div><dt>Incertitudine</dt><dd>{stringValue(selectedProperties.uncertainty_notes, 'Acoperirea și limitele necesită verificare.')}</dd></div>
+            {typeof selectedProperties.source_url === 'string' && <div><dt>Obiect OSM</dt><dd><a href={selectedProperties.source_url} target="_blank" rel="noreferrer">Deschide sursa ↗</a></dd></div>}
+          </dl>
+          <button className={styles.primary} type="button" disabled={!selectedCanRun || busy !== null} onClick={createStudy}>
+            {busy === 'study' ? 'Se calculează studiul SIM…' : 'Rulează studiu pietonal SIM'}
+          </button>
+          <p className={styles.muted}>Studiul cere date OSM pentru zona selectată. Rezultatele privesc graful pietonal mapat, nu traficul observat. Nu există fallback automat la date sintetice.</p>
+        </section>}
+
+        {busy && <p className={styles.progress} role="status">{busy === 'study' ? 'Se preiau și verifică datele OSM; cererea poate dura până la 90 de secunde.' : busy === 'planning' ? 'SIM validează interpretarea dovezilor…' : 'Se încarcă comparația de graf…'}</p>}
+        {error && <div className={styles.error} role="alert"><strong>{error.title}</strong><details><summary>Detalii</summary><p>{error.detail}</p>{error.requestId && <p>Cerere: <code>{error.requestId}</code></p>}</details></div>}
+
+        {study && <section className={styles.results} aria-label="Rezultatele studiului SIM">
+          <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>Rezultat calculat de SIM</p><h2>Studiu pietonal</h2></div><span className={styles.doneBadge}>Salvat</span></div>
+          <div className={styles.identityGrid}>
+            <div><span>Studiu</span><code>{study.study_id}</code></div>
+            <div><span>Baseline</span><code>{study.baseline_id}</code></div>
+            <div><span>Area ID</span><code>{String(study.urban_issues?.area_id ?? selectedPlace?.id ?? 'Necunoscut')}</code></div>
+            <div><span>Hash dovezi</span><code>{study.evidence_packet_sha256 ?? 'Nedisponibil'}</code></div>
+          </div>
+          <p className={styles.resultLabel}>Probleme detectate în datele cartografiate ({resultProblems.length})</p>
+          {resultProblems.length ? <ul className={styles.resultList}>{resultProblems.map((problem, index) => {
+            const id = stringValue(problem.problem_id, `problem-${index}`);
+            const geometry = problem.geometry;
+            return <li key={id}>
+              <strong>{stringValue(problem.title, stringValue(problem.problem_type, 'Problemă SIM'))}</strong>
+              <p>{stringValue(problem.description, 'SIM a identificat o problemă în rețeaua pietonală cartografiată.')}</p>
+              <small>{id} · Severitate: {stringValue(problem.severity, 'necunoscută')} · {geometry ? 'geometria este afișată pe hartă' : 'SIM nu a furnizat geometrie; nu a fost creat marker'}</small>
+            </li>;
+          })}</ul> : <p className={styles.muted}>SIM nu a returnat probleme cu geometrie sau evidență pentru acest studiu.</p>}
+          {sourcedProblemCollection.features.length > 0 && <p className={styles.legendNote}>Marcajele roșii de pe hartă provin din `problem_locations_geojson` al SIM.</p>}
+
+          <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>Soluții legate de dovezi</p><h2>Opțiuni SIM ({resultSolutions.length})</h2></div></div>
+          {resultSolutions.length ? <ul className={styles.resultList}>{resultSolutions.map((solution, index) => {
+            const id = stringValue(solution.solution_id, `solution-${index}`);
+            const candidateId = typeof solution.candidate_id === 'string' ? solution.candidate_id : null;
+            const status = stringValue(solution.status, 'necunoscut');
+            const canEvaluate = candidateId !== null && validCandidateIds.has(candidateId);
+            const impacts = solution.shared_sample_impact;
+            const geometry = geometryFromSolution(solution);
+            return <li key={id}>
+              <div className={styles.resultTitle}><strong>{stringValue(solution.title, stringValue(solution.solution_type, 'Soluție SIM'))}</strong><span>{status}</span></div>
+              <p>{stringValue(solution.description, stringValue(solution.rationale, 'Opțiune produsă din analiza SIM.'))}</p>
+              <small>{candidateId ? `Candidate ID: ${candidateId}` : 'Concept de verificare, fără geometrie executabilă'} · Fezabilitate fizică: necunoscută</small>
+              {Array.isArray(solution.evidence_ids) && <p className={styles.evidenceIds}>Dovezi: {solution.evidence_ids.map(String).join(', ') || 'Niciuna returnată'}</p>}
+              {canEvaluate && <>
+                <Aggregate value={impacts} />
+                <div className={styles.buttonRow}>
+                  <button type="button" className={styles.secondary} onClick={() => activateSolution(candidateId, geometry)}>Arată candidatul pe hartă</button>
+                  <button type="button" className={styles.secondary} disabled={busy !== null} onClick={() => evaluateCandidate(candidateId)}>Compară Înainte / După</button>
+                </div>
+              </>}
+              {candidateId && !canEvaluate && <p className={styles.muted}>SIM nu a aprobat evaluarea acestui candidat pentru comparația de graf.</p>}
+            </li>;
+          })}</ul> : <p className={styles.muted}>SIM nu a returnat soluții pentru problemele acestui studiu.</p>}
+
+          {evaluation && <section className={styles.evaluation} aria-label="Comparație calculată de SIM">
+            <p className={styles.eyebrow}>Comparație Înainte / După · graf pietonal</p>
+            <h2>{evaluation.candidate_id}</h2>
+            <p>Baseline: <code>{evaluation.baseline_id}</code> · evaluat: {formatTimestamp(evaluation.evaluated_at)}. Comparația folosește perechi de noduri eșantionate, nu deplasări observate. SUMO executat: nu.</p>
+            <Aggregate value={evaluation.impact.aggregate} />
+            <div className={styles.routeTableWrap}><table className={styles.routeTable}><caption>Rute calculate de SIM pe același graf de referință</caption><thead><tr><th>Pereche</th><th>Înainte</th><th>După</th><th>Diferență (m)</th></tr></thead><tbody>{evaluation.impact.routes.map((route, index) => {
+              const before = isJsonRecord(route.before) ? route.before : {};
+              const after = isJsonRecord(route.after) ? route.after : {};
+              return <tr key={`${route.origin_node_id}-${route.destination_node_id}-${index}`}>
+                <td>{route.origin_node_id} → {route.destination_node_id}</td>
+                <td>{stringValue(before.status, 'Nedisponibil')} · {formatValue(before.network_distance_m)} m</td>
+                <td>{stringValue(after.status, 'Nedisponibil')} · {formatValue(after.network_distance_m)} m</td>
+                <td>{formatValue(route.distance_delta_m)}</td>
+              </tr>;
+            })}</tbody></table></div>
+            <p className={styles.muted}>Valorile sunt rezultate de model pe rețeaua pietonală OpenStreetMap. Nu reprezintă trafic măsurat, economii reale, populație afectată sau fezabilitate fizică.</p>
+          </section>}
+
+          <section className={styles.aiPanel} aria-label="Planificare asistată de AI">
+            <div className={styles.sectionHeading}><div><p className={styles.eyebrow}>Interpretarea dovezilor</p><h2>Planificare AI</h2></div></div>
+            <p className={styles.muted}>Modelul poate explica numai identificatorii și dovezile deja validate de SIM. Geometria și impactul rămân cele calculate de SIM.</p>
+            <button className={styles.secondary} type="button" disabled={busy !== null} onClick={requestPlanning}>{busy === 'planning' ? 'Se solicită…' : planning ? 'Reîncarcă rezultatul salvat' : 'Solicită interpretare AI'}</button>
+            {planning && <>
+              <p className={planning.ai_generated ? styles.aiAvailable : styles.aiUnavailable} role="status">
+                {planning.ai_generated && ['completed', 'completed_with_rejections'].includes(planning.provider_status)
+                  ? `Răspuns AI validat de SIM · ${planning.provider ?? 'provider'} · ${planning.model_id ?? 'model indisponibil'}`
+                  : `AI indisponibil (${planning.provider_status}). Rezultatele SIM deterministe rămân afișate; nu s-au inventat recomandări.`}
+              </p>
+              <details><summary>Identificatorii rezultatului</summary><p>Planning ID: <code>{planning.planning_id}</code></p><p>Study ID: <code>{planning.study_id}</code> · Baseline ID: <code>{planning.baseline_id}</code></p><p>Area ID: <code>{planning.area_id}</code> · Hash dovezi: <code>{planning.evidence_packet_sha256}</code></p><p>Validare: {stringValue(planning.validation?.status, 'indisponibilă')}</p>{planning.warnings.map((warning, index) => <p key={index}>{warning}</p>)}<button type="button" className={styles.textButton} onClick={reloadPlanning}>Reîncarcă rezultatul după ID</button></details>
+              {planning.summary && aiCanRender && <p>{planning.summary}</p>}
+              {aiCanRender && <ul className={styles.resultList}>{aiRecommendations.map((recommendation) => {
+                const authoritative = recommendation.authoritative_sim_solution!;
+                const geometry = authoritative.geometry ?? null;
+                const candidateId = recommendation.candidate_id;
+                const canEvaluate = validCandidateIds.has(candidateId);
+                return <li key={recommendation.solution_id}>
+                  <strong>{recommendation.title ?? 'Recomandare AI validată'}</strong>
+                  <p>{recommendation.explanation ?? 'Interpretare bazată pe dovezile legate de SIM.'}</p>
+                  <small>{recommendation.solution_id} · candidate: {candidateId} · dovezi: {(recommendation.evidence_ids ?? []).join(', ') || 'fără referințe returnate'}</small>
+                  <p className={styles.muted}>Geometria, intervenția și impactul provin din înregistrarea SIM atașată după validare.</p>
+                  {authoritative.shared_sample_impact != null && <Aggregate value={authoritative.shared_sample_impact} />}
+                  <div className={styles.buttonRow}><button type="button" className={styles.secondary} onClick={() => activateSolution(candidateId, geometry)}>Arată soluția pe hartă</button>{canEvaluate && <button type="button" className={styles.secondary} disabled={busy !== null} onClick={() => evaluateCandidate(candidateId)}>Compară candidatul SIM</button>}</div>
+                </li>;
+              })}</ul>}
+              {aiUnavailable && <p className={styles.muted}>Pentru recomandări cloud este necesar provider configurat pe server. Nu afișăm text demonstrativ ca răspuns AI.</p>}
+            </>}
+          </section>
+
+          <details className={styles.provenance}><summary>Proveniență și limite ale studiului</summary>
+            <p>Sursă: {source(study.source)} · calcul: {study.calculation} · versiune motor: <code>{study.engine_revision}</code> · creat: {formatTimestamp(study.created_at)}.</p>
+            <p>Catalog sursă: {attribution} · ODbL-1.0 · snapshot: {sourceSnapshot}.</p>
+            {study.warnings.map((warning, index) => <p key={index}>{warning}</p>)}
+            {Array.isArray(study.solution_plan?.limitations) && study.solution_plan!.limitations.map((limitation, index) => <p key={index}>{String(limitation)}</p>)}
+          </details>
+        </section>}
+
+        {!selectedPlace && <div className={styles.emptyHint}><strong>Harta Iașului este gata.</strong><p>Apasă un poligon sau caută un cartier pentru a inspecta sursa și eligibilitatea.</p></div>}
+        <footer className={styles.footer}><span>{catalog?.metadata.source ?? 'OpenStreetMap'} · snapshot {sourceSnapshot}</span><Link href="/app/demo">Deschide demonstrația cu cele 5 repere salvate →</Link></footer>
+      </aside>
+    </main>
+  </div>;
+}

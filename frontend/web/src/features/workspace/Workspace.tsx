@@ -33,7 +33,7 @@ export function App() {
   return demoMode ? <PreviewApp /> : <ConnectedWorkspace />;
 }
 
-function PreviewApp() {
+export function PreviewApp() {
   const [section, setSection] = useState<Section>('analysis');
   const [selectedId, setSelectedId] = useState('copou');
   const selected = neighborhoods.find((item) => item.id === selectedId) ?? neighborhoods[0]!;
