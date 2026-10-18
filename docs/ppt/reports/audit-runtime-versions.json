@@ -1,0 +1,13 @@
+{
+  "fastapi": "0.143.3",
+  "pydantic": "2.14.1",
+  "pytest": "9.1.1",
+  "osmnx": "2.1.1",
+  "networkx": "3.7",
+  "geopandas": "1.2.0",
+  "shapely": "2.2.0",
+  "pyproj": "3.8.0",
+  "httpx": "0.28.1",
+  "traci": "1.28.0",
+  "sumolib": "1.28.0"
+}

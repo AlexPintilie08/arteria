@@ -1,0 +1,15 @@
+WARNING: Retrying (Retry(total=4, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno 11001] getaddrinfo failed)")': /simple/pytest/
+WARNING: Retrying (Retry(total=3, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno 11001] getaddrinfo failed)")': /simple/pytest/
+WARNING: Retrying (Retry(total=2, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno 11001] getaddrinfo failed)")': /simple/pytest/
+WARNING: Retrying (Retry(total=1, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno 11001] getaddrinfo failed)")': /simple/pytest/
+WARNING: Retrying (Retry(total=0, connect=None, read=None, redirect=None, status=None)) after connection broken by 'NameResolutionError("HTTPSConnection(host='pypi.org', port=443): Failed to resolve 'pypi.org' ([Errno 11001] getaddrinfo failed)")': /simple/pytest/
+ERROR: Could not find a version that satisfies the requirement pytest (from versions: none)
+ERROR: No matching distribution found for pytest
+WARNING: Failed to remove contents in a temporary directory 'C:\Users\fagat\AppData\Local\Packages\sandbox.{784f9d02-c48c-473a-b10b-35c8e51669aa}\AC\Temp\pip-build-tracker-7vndm0ka'.
+You can safely remove it manually.
+WARNING: Failed to remove contents in a temporary directory 'C:\Users\fagat\AppData\Local\Packages\sandbox.{784f9d02-c48c-473a-b10b-35c8e51669aa}\AC\Temp\pip-target-iqvvy5fp'.
+You can safely remove it manually.
+WARNING: Failed to remove contents in a temporary directory 'C:\Users\fagat\AppData\Local\Packages\sandbox.{784f9d02-c48c-473a-b10b-35c8e51669aa}\AC\Temp\pip-ephem-wheel-cache-i0s_ck4q'.
+You can safely remove it manually.
+WARNING: Failed to remove contents in a temporary directory 'C:\Users\fagat\AppData\Local\Packages\sandbox.{784f9d02-c48c-473a-b10b-35c8e51669aa}\AC\Temp\pip-install-m01xs22r'.
+You can safely remove it manually.

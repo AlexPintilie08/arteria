@@ -1,0 +1,9 @@
+........................................................................ [ 52%]
+..................................................................       [100%]
+============================== warnings summary ===============================
+docs\ppt\reports\.qa\runtime\fastapi\testclient.py:1
+  D:\Olipiade\Hackathon_AI_IASI_2026\docs\ppt\reports\.qa\runtime\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+138 passed, 1 warning in 15.59s

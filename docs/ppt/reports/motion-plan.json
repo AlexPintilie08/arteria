@@ -4,7 +4,7 @@
     "shape": "reveal:s01_title",
     "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.52,
     "delay": 0
   },
   {
@@ -12,16 +12,16 @@
     "shape": "reveal:s01_subtitle",
     "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.42,
+    "delay": 0.1
   },
   {
     "slide": 1,
     "shape": "reveal:s01_product",
     "trigger": "after",
     "effect": "fade",
-    "duration": 0.45,
-    "delay": 0
+    "duration": 0.42,
+    "delay": 0.1
   },
   {
     "slide": 2,
@@ -34,73 +34,81 @@
   {
     "slide": 2,
     "shape": "reveal:s02_category_1",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 2,
     "shape": "reveal:s02_category_2",
     "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 2,
     "shape": "reveal:s02_category_3",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 2,
     "shape": "reveal:s02_category_4",
     "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
+  },
+  {
+    "slide": 2,
+    "shape": "reveal:s02_question",
+    "trigger": "after",
+    "effect": "fade",
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 3,
     "shape": "reveal:s03_row_1",
-    "trigger": "click",
+    "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.32,
     "delay": 0
   },
   {
     "slide": 3,
     "shape": "reveal:s03_row_2",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 3,
     "shape": "reveal:s03_row_3",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 3,
     "shape": "reveal:s03_value",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.35,
+    "delay": 0.1
   },
   {
     "slide": 4,
     "shape": "reveal:s04_stage_1",
-    "trigger": "click",
+    "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.34,
     "delay": 0
   },
   {
@@ -108,32 +116,32 @@
     "shape": "reveal:s04_link_1",
     "trigger": "after",
     "effect": "wipe",
-    "duration": 0.3,
+    "duration": 0.28,
     "delay": 0
   },
   {
     "slide": 4,
     "shape": "reveal:s04_stage_2",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.34,
+    "delay": 0.08
   },
   {
     "slide": 4,
     "shape": "reveal:s04_link_2",
     "trigger": "after",
     "effect": "wipe",
-    "duration": 0.3,
+    "duration": 0.28,
     "delay": 0
   },
   {
     "slide": 4,
     "shape": "reveal:s04_stage_3",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.34,
+    "delay": 0.08
   },
   {
     "slide": 5,
@@ -146,129 +154,137 @@
   {
     "slide": 5,
     "shape": "reveal:s05_step_1",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 5,
     "shape": "reveal:s05_step_2",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 5,
     "shape": "reveal:s05_step_3",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 6,
     "shape": "reveal:s06_frontend",
-    "trigger": "click",
+    "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.34,
     "delay": 0
   },
   {
     "slide": 6,
     "shape": "reveal:s06_backend",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.34,
+    "delay": 0.08
   },
   {
     "slide": 6,
     "shape": "reveal:s06_link_backend",
     "trigger": "after",
     "effect": "wipe",
-    "duration": 0.3,
+    "duration": 0.28,
     "delay": 0
   },
   {
     "slide": 6,
     "shape": "reveal:s06_sim",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.34,
+    "delay": 0.08
   },
   {
     "slide": 6,
     "shape": "reveal:s06_link_sim",
     "trigger": "after",
     "effect": "wipe",
-    "duration": 0.3,
+    "duration": 0.28,
     "delay": 0
   },
   {
     "slide": 6,
-    "shape": "reveal:s06_ai_future",
-    "trigger": "click",
+    "shape": "reveal:s06_status",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
+  },
+  {
+    "slide": 6,
+    "shape": "reveal:s06_ai_future",
+    "trigger": "after",
+    "effect": "fade",
+    "duration": 0.35,
+    "delay": 0.12
   },
   {
     "slide": 7,
     "shape": "reveal:s07_customer",
-    "trigger": "click",
+    "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.32,
     "delay": 0
   },
   {
     "slide": 7,
     "shape": "reveal:s07_price",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 7,
     "shape": "reveal:s07_value",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 8,
     "shape": "reveal:s08_first_case",
-    "trigger": "click",
+    "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.34,
     "delay": 0
   },
   {
     "slide": 8,
     "shape": "reveal:s08_outreach",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 8,
     "shape": "reveal:s08_commercial",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 9,
     "shape": "reveal:s09_member_1",
-    "trigger": "click",
+    "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.42,
     "delay": 0
   },
   {
@@ -276,48 +292,48 @@
     "shape": "reveal:s09_member_2",
     "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0.06
+    "duration": 0.42,
+    "delay": 0.12
   },
   {
     "slide": 9,
     "shape": "reveal:s09_member_3",
     "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0.06
+    "duration": 0.42,
+    "delay": 0.12
   },
   {
     "slide": 10,
     "shape": "reveal:s10_priority_1",
-    "trigger": "click",
+    "trigger": "auto",
     "effect": "fade",
-    "duration": 0.4,
+    "duration": 0.32,
     "delay": 0
   },
   {
     "slide": 10,
     "shape": "reveal:s10_priority_2",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 10,
     "shape": "reveal:s10_priority_3",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.32,
+    "delay": 0.08
   },
   {
     "slide": 10,
     "shape": "reveal:s10_request",
-    "trigger": "click",
+    "trigger": "after",
     "effect": "fade",
-    "duration": 0.4,
-    "delay": 0
+    "duration": 0.35,
+    "delay": 0.12
   },
   {
     "slide": 11,

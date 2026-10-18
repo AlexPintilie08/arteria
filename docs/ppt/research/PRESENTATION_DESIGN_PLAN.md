@@ -29,7 +29,7 @@ Nu există fotografii de produs sau logos instituționale obligatorii de păstra
 
 ## 2. Backup și trasabilitate
 
-Backup-ul `.backup.pptx` nu se suprascrie. Copia populată anterioară este păstrată separat ca `docs/ppt/archive/pre-audit/Template-Pitch-Hackathon.pre-audit.pptx`; generatorul anterior ca `docs/ppt/archive/pre-audit/build_deck.pre-audit.py`. Generatorul final încarcă această copie, reține cele zece pagini de pitch (indicii originali 4–13) și trei pagini suport, șterge ghidajul și redesenează conținutul. Nu pornește de la o prezentare goală. Nu se fac modificări funcționale în frontend/backend/sim.
+Backup-ul `.backup.pptx` nu se suprascrie. Copia populată anterioară este păstrată separat ca `docs/ppt/archive/pre-audit/Template-Pitch-Hackathon.pre-audit.pptx`; generatorul anterior ca `docs/ppt/archive/pre-audit/build_deck.pre-audit.py`. Generatorul V1 a extras cele zece pagini de pitch și trei anexe din acea copie. Generatorul V2 încarcă cele 13 slide-uri din archive/v1/Template-Pitch-Hackathon.v1.pptx și rafinează conținutul. Nu pornește de la o prezentare goală. Nu se fac modificări funcționale în frontend/backend/sim.
 
 ## 3. Sistemul vizual
 
@@ -39,7 +39,7 @@ Tipografie: Calibri pentru compatibilitate Office și diacritice. Copertă 58–
 
 Grilă: margine x=0,65 inch, dreapta=12,68; titlu y=0,9–1,75; conținut y=2,15–6,4; sursă/folio y≈6,95. Gutter de 0,35–0,5 inch. Titluri și text aliniate la stânga. Diagramele folosesc noduri și conectori nativi strict pentru semnificația fluxurilor cerute; fără ilustrații programatice decorative. Un singur folio discret arată numărul și secțiunea P/R/O/B/A/business.
 
-Textul rămâne editabil; tabelele sunt native, diagramele sunt forme/conectori PowerPoint. Nu se creează chart cu valori de trafic demonstrative. Capturile sunt singurele obiecte raster importante și nu acoperă un slide integral. Se păstrează proporțiile și atribuirea OSM. Capturile conțin UI-ul real, inclusiv etichete încă excesive; eticheta externă „date predefinite” este obligatorie.
+Textul rămâne editabil; tabelele sunt native, diagramele sunt forme/conectori PowerPoint. Nu se creează chart cu valori de trafic demonstrative. Capturile sunt singurele obiecte raster importante și nu acoperă un slide integral. Se păstrează proporțiile și atribuirea OSM. Capturile conțin UI-ul real, inclusiv etichete încă excesive; eticheta externă „date sintetice” este obligatorie.
 
 ## 4. Specificații pe slide
 
@@ -57,15 +57,15 @@ Fundal alb. Tabel nativ cu trei rânduri, primele coloane nume/rol, fără panou
 
 ### 4 — Soluție
 
-Fundal navy. Titlu 36 pt. Flux pe o singură linie cu trei noduri native, ocupând 70% lățime și circa 1,5 inch înălțime. Numere 01/02/03 la 36 pt; etichete 22 pt, conectori simpli. Delimitarea prezent/viitor pe două rânduri 19 pt sub flux. Note: catalog fix și ajustări locale. Click simplu.
+Fundal navy. Titlu 36 pt. Flux pe o singură linie cu trei noduri native, ocupând 70% lățime și circa 1,5 inch înălțime. Numere 01/02/03 la 36 pt; etichete 22 pt, conectori simpli. Delimitarea prezent/viitor pe două rânduri 19 pt sub flux. Note: API conectat și studii pe graf. Click simplu.
 
 ### 5 — Demo
 
-Fundal navy, conținut pe două coloane: explicații 34%, captură comparație 62%, gutter 4%. Titlu 36 pt. Trei acțiuni scurte 21 pt. Disclaimer amber 18–20 pt, poziționat lângă captură, nu ascuns în footnote. Captura contain, pe fundal neutru, cu atribuirea OSM dacă apare harta; interfața nu este redesenată artificial. Adresa localhost este text de lucru, nu QR public. Note: demo de 75 s și plan B captură, fără afirmație de video înregistrat. Click simplu; fără animație automată.
+Fundal navy, conținut pe două coloane: explicații 34%, captură comparație 62%, gutter 4%. Titlu 36 pt. Trei acțiuni scurte 21 pt. Disclaimer amber 18–20 pt, poziționat lângă captură, nu ascuns în footnote. Captura contain, pe fundal neutru, cu atribuirea OSM dacă apare harta; interfața nu este redesenată artificial. Adresa localhost este text de lucru, nu QR public. Note: demo de 75 s și plan B captură, fără afirmație de video înregistrat. Captură cu Fade automat și trei acțiuni progresive la click.
 
 ### 6 — Arhitectură
 
-Fundal alb. Trei componente principale editabile pe orizontală, nod AI sub backend; descrieri 19–20 pt și titluri 24 pt. Conectorii către analiza urbană și LLM sunt întrerupți, cu legendă 14 pt. Sunt denumite exact limitele FastAPI și serverului demo. Spațiu liber de minimum 0,3 inch între noduri; niciun conector nu trece prin cuvinte. Note: scheme incompatibile, sim smoke, fără provider. Click simplu.
+Fundal alb. Trei componente principale editabile pe orizontală, nod AI sub backend; descrieri 19–20 pt și titluri 24 pt. Conectorii frontend–backend–SIM sunt continui. Providerul AI viitor este un nod separat etichetat. FastAPI, Pydantic și SQLite sunt implementate. Spațiu liber de minimum 0,3 inch între noduri; niciun conector nu trece prin cuvinte. Note: API unificat, graf pietonal și SUMO local condiționat; fără provider cloud. Click simplu.
 
 ### 7 — Business
 
@@ -85,11 +85,11 @@ Fundal navy. Titlu 36 pt. Roadmap nativ în trei pași, 21 pt, circa 1,1 inch î
 
 ### 11 — Anexa A / dovezi
 
-Fundal alb. „5/5” 64 pt, „teste client API” 24 pt. Typecheck/build în două rânduri de 22 pt, apoi limite la 18 pt. Sursă/an vizibile. Fără procent de acoperire. Note: fetch mock, Python și SUMO nereexecutate. Click simplu.
+Fundal alb. „9/9” 64 pt, „teste frontend” 24 pt. Typecheck/build în două rânduri de 22 pt, apoi limite la 18 pt. Sursă/an vizibile. Fără procent de acoperire. Note: 9 teste frontend și 138 teste Python trecute; binarele SUMO nereexecutate. Click simplu.
 
 ### 12 — Anexa B / AI
 
-Fundal navy. Flux editabil cu patru pași; tip 19–21 pt, minimum 0,3 inch gutter. Legături întrerupte și etichetă „flux propus” la 16 pt. Linia „catalog fix, fără LLM” la 23 pt în amber, vizibilă. Axioma despre recomandare/măsurătoare la 24 pt. Note: validare schema + spațiu + specialist și calcule separate. Click simplu.
+Fundal navy. Flux editabil cu patru pași; tip 19–21 pt, minimum 0,3 inch gutter. Legături întrerupte și etichetă „flux propus” la 16 pt. Linia „propuneri deterministe și validare” la 23 pt în amber, vizibilă. Axioma despre recomandare/măsurătoare la 24 pt. Note: validare schema + spațiu + specialist și calcule separate. Click simplu.
 
 ### 13 — Anexa C / metodă
 
@@ -105,10 +105,14 @@ Raportul final include diferențele față de original, trasabilitatea afirmați
 
 ## 6. Rafinare și sistem de mișcare V2
 
-V2 continuă pachetul V1 arhivat, cu aceeași identitate și 13 slide-uri. Slide-ul 2 înlocuiește diagonalele cu o ramificație ortogonală și patru etichete echilibrate. Slide-ul 4 centrează cele trei etape pe o axă și dezvăluie legăturile după etapa corespunzătoare. Slide-ul 6 acordă backendului mai mult spațiu și enumeră cele trei POST demonstrative lângă GET /health; avertizarea de fixture și AI planificat rămân vizibile. Slide-ul 9 are trei profiluri egale. Slide-ul 12 folosește patru noduri aliniate și legături viitoare clar întrerupte.
+V2 continuă pachetul V1 arhivat, cu aceeași identitate și 13 slide-uri. Slide-ul 2 înlocuiește diagonalele cu o ramificație ortogonală și patru etichete echilibrate. Slide-ul 4 centrează cele trei etape pe o axă și dezvăluie legăturile după etapa corespunzătoare. Slide-ul 6 acordă backendului mai mult spațiu pentru FastAPI/Pydantic/SQLite și studiile spațiale; avertizarea de semaforizare sintetică și AI planificat rămâne vizibilă. Slide-ul 9 are trei profiluri egale. Slide-ul 12 folosește patru noduri aliniate și legături viitoare clar întrerupte.
 
 Tranziții: Fade Smoothly, 0,55 s, fără avans automat, audio sau Morph. Obiecte: Fade 0,35–0,45 s; Wipe 0,3 s doar pentru conectorii de flux, cu aceeași direcție. Grupurile native păstrează textul și formele editabile. Introducerile de titlu/captură sunt automate în interiorul slide-ului, iar explicațiile principale sunt grupate în maximum patru click-uri pe slide; anexele au numai introducere discretă, fără click-uri suplimentare. Avertizările de demo și ipoteză rămân vizibile de la intrare.
 
 Planul exact, duratele, declanșatoarele și țintele sunt generate în `docs/ppt/reports/motion-plan.json`. Scriptul `scripts/apply_transitions.ps1` adaugă animații de obiect reale prin MainSequence.AddEffect; numele său istoric nu limitează funcția la tranziții. Se verifică separat timing OOXML, inventarul COM și playback-ul vizual. Exportul PNG arată compoziția finală statică și nu dovedește redarea animațiilor.
 
 Pipeline: generator → copie statică de staging → COM motion → export PowerPoint → QA → publicare atomică a finalului. Sesiunile PowerPoint ale utilizatorului nu sunt închise. Arhiva originală este verificată prin SHA-256 înainte și după proces. Documentele active sunt în research/, scripturile în scripts/, rapoartele în reports/, istoria în archive/.
+
+## Actualizare după sincronizarea Git — 18 octombrie 2026
+
+Această secțiune înlocuiește descrierile tehnice V1 de mai sus. Slide-urile 4–6 arată API-ul conectat, validarea Pydantic, SQLite și studiile pe graf pietonal. Legăturile implementate sunt continue; numai providerul LLM rămâne viitor. Slide-ul 5 folosește captura autentică connected-comparison.png; estimările de semaforizare sunt sintetice. Slide-ul 10 cere date documentate, calibrare și test cu specialistul. Slide-ul 11 prezintă 9/9 teste frontend, fără revendicare de impact. Slide-ul 12 distinge propunerile deterministe și validatorul existent de providerul LLM planificat. Rezultatele Python și limitele SUMO sunt documentate în raportul QA.

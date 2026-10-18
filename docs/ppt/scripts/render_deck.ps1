@@ -1,5 +1,5 @@
 param(
-    [string]$InputDeck = 'docs/ppt/Template-Pitch-Hackathon.pptx',
+    [string]$InputDeck = 'docs/ppt/ARTERIA.pptx',
     [string]$OutputDir = 'docs/ppt/preview',
     [switch]$Pdf
 )

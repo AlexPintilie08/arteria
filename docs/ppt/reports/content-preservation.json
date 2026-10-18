@@ -1,0 +1,120 @@
+{
+  "backup_sha256": "69dc4f6e03c33e8eb5050953d7c73ef7c68cfcd22cc45927ffb62eefa32484e5",
+  "corrected_sha256": "a29ad1b61ff353719d06b44176e72ee4697c7e1282e9628f113ddecc0786368d",
+  "slides": [
+    {
+      "slide": 1,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 2,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 3,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 4,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 5,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 6,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 7,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 8,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 9,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 10,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 11,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 12,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    },
+    {
+      "slide": 13,
+      "nontext_xml_identical": true,
+      "timing_identical": true,
+      "transition_identical": true
+    }
+  ],
+  "changed_parts": [
+    "ppt/slides/slide1.xml",
+    "ppt/slides/slide2.xml",
+    "ppt/slides/slide3.xml",
+    "ppt/slides/slide4.xml",
+    "ppt/slides/slide5.xml",
+    "ppt/slides/slide6.xml",
+    "ppt/slides/slide7.xml",
+    "ppt/slides/slide8.xml",
+    "ppt/slides/slide9.xml",
+    "ppt/slides/slide10.xml",
+    "ppt/slides/slide11.xml",
+    "ppt/slides/slide12.xml",
+    "ppt/slides/slide13.xml",
+    "ppt/notesSlides/notesSlide1.xml",
+    "ppt/notesSlides/notesSlide3.xml",
+    "ppt/notesSlides/notesSlide4.xml",
+    "ppt/notesSlides/notesSlide5.xml",
+    "ppt/notesSlides/notesSlide6.xml",
+    "ppt/notesSlides/notesSlide7.xml",
+    "ppt/notesSlides/notesSlide8.xml",
+    "ppt/notesSlides/notesSlide9.xml",
+    "ppt/notesSlides/notesSlide10.xml",
+    "ppt/notesSlides/notesSlide11.xml",
+    "ppt/notesSlides/notesSlide2.xml",
+    "ppt/notesSlides/notesSlide13.xml",
+    "ppt/notesSlides/notesSlide12.xml",
+    "ppt/media/image2.jpg"
+  ],
+  "unchanged_theme_layout_geometry_styles": true,
+  "media_exception": "Slide 5 comparison bitmap only: real current uncropped capture; original picture geometry unchanged.",
+  "submission_main_slides_byte_identical": true,
+  "notes_complete": true,
+  "full_slide_count": 13,
+  "submission_slide_count": 10,
+  "passed": true
+}

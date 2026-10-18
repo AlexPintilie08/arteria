@@ -1,0 +1,71 @@
+{
+  "powerPointVersion": "16.0",
+  "slides": 10,
+  "slidesVisited": [
+    {
+      "slide": 1,
+      "effects": 3,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 2,
+      "effects": 6,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 3,
+      "effects": 4,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 4,
+      "effects": 5,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 5,
+      "effects": 4,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 6,
+      "effects": 7,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 7,
+      "effects": 3,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 8,
+      "effects": 3,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 9,
+      "effects": 3,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    },
+    {
+      "slide": 10,
+      "effects": 4,
+      "manualReveal": false,
+      "revealClickPreservedSlide": true
+    }
+  ],
+  "allManualAdvancesWorked": true,
+  "revealClicksStayedOnCurrentSlide": true,
+  "nativeSlideshowStarted": true,
+  "intermediateFramesVisuallyInspected": false,
+  "limitation": "COM slideshow was stepped successfully, but no screen capture was available to inspect intermediate animation frames."
+}

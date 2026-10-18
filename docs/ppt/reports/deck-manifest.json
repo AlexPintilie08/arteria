@@ -6,27 +6,30 @@
       "01",
       "ARION · Hackathon AI Iași 2026",
       "Prototip demonstrativ",
-      "Captură din aplicație · © contributori OpenStreetMap"
-    ],
-    "shape_count": 8,
-    "tables": 0,
-    "pictures": 0
+      "Previzualizare istorică · © contributori OpenStreetMap",
+      "ARTERIA",
+      "Comparații de mobilitate\npentru specialiști",
+      "Semaforizare demonstrativă\nși acces pietonal pe graf"
+    ]
   },
   {
     "slide": 2,
     "text": [
       "ARTERIA / P / PROBLEMA",
       "02",
-      "O intervenție. Mai multe efecte.",
-      "Situație propusă · README.md și docs/ARCHITECTURE.md, audit 2026",
+      "Ce schimbă o legătură nouă?",
+      "Caz de utilizare propus · fără interviuri validate · 18.10.2026",
       "Utilizator vizat: specialistul în mobilitate",
-      "Reconfigurarea unei străzi cere o comparație explicabilă.",
-      "Ce se schimbă? Pe ce date ne bazăm?",
+      "Specialistul trebuie să compare rutele înainte și după.",
+      "",
+      "Legătură nouă",
+      "Transport public",
+      "Pietoni",
+      "Biciclete",
+      "Trafic auto",
+      "Ce rute se schimbă? Ce rămâne necunoscut?",
       "Nevoie propusă; interviurile cu utilizatori urmează."
-    ],
-    "shape_count": 13,
-    "tables": 0,
-    "pictures": 0
+    ]
   },
   {
     "slide": 3,
@@ -34,12 +37,17 @@
       "ARTERIA / R / ALTERNATIVE",
       "03",
       "Instrumentele există",
-      "Surse: qgis.org · sumo.dlr.de · Primăria Iași; consultate 2026",
+      "Surse: qgis.org · sumo.dlr.de · cod ARTERIA · consultate 18.10.2026",
+      "QGIS",
+      "Date și analiză geografică",
+      "SUMO",
+      "Simulare microscopică de trafic",
+      "Procesul de lucru",
+      "Pregătirea datelor și compararea variantelor",
+      "ARTERIA leagă pașii într-un prototip:",
+      "zonă → alternative → comparație",
       "Avantajul de utilizare trebuie validat cu specialiști."
-    ],
-    "shape_count": 9,
-    "tables": 0,
-    "pictures": 0
+    ]
   },
   {
     "slide": 4,
@@ -47,66 +55,86 @@
       "ARTERIA / B / SOLUȚIA",
       "04",
       "Parcursul unei comparații",
-      "Astăzi: interfață și scenarii demonstrative",
-      "Urmează: date verificate și evaluare reproductibilă"
-    ],
-    "shape_count": 10,
-    "tables": 0,
-    "pictures": 0
+      "01",
+      "Alege zona",
+      "02",
+      "Examinează\nalternativele",
+      "03",
+      "Compară\nscenariul",
+      "Graf pietonal: alternative pe același eșantion de rute",
+      "Separat: semaforizare sintetică; impact real nevalidat"
+    ]
   },
   {
     "slide": 5,
     "text": [
       "ARTERIA / A / DEMO",
       "05",
-      "Podu Roș, în prototip",
-      "DEMO: date predefinite\nși ajustări locale",
-      "Fără analiză urbană sau\nrulare SUMO din interfață",
-      "Demo local: localhost:3000/app · Captură din aplicația existentă"
-    ],
-    "shape_count": 10,
-    "tables": 0,
-    "pictures": 0
+      "Semaforizare: un compromis",
+      "DEMO: API conectat\ndate sintetice",
+      "Semaforizare estimată\nFără SUMO din interfață",
+      "Captură verificată la 18.10.2026 · valori sintetice, nu trafic din Iași",
+      "01",
+      "Selectează reperul",
+      "02",
+      "Alege o alternativă",
+      "03",
+      "Deschide comparația"
+    ]
   },
   {
     "slide": 6,
     "text": [
       "ARTERIA / B / CONSTRUCȚIE",
       "06",
-      "Frontend · Backend · Sim",
-      "backend/main.py · backend/server.py · sim/ · Audit 2026; legături întrerupte = integrări urbane viitoare",
-      "Endpoint-uri demo: date fixe, fără LLM sau evaluare SUMO."
-    ],
-    "shape_count": 11,
-    "tables": 0,
-    "pictures": 0
+      "Interfață · Backend · SIM",
+      "Cod: backend/main.py · spatial_worker.py · sim/ · LLM și SUMO neconectate la UI",
+      "",
+      "Interfață",
+      "Next.js / MapLibre\nClient API conectat",
+      "",
+      "Backend",
+      "FastAPI / Pydantic\nSQLite · API evaluare\nStudii spațiale",
+      "",
+      "SIM",
+      "Graf pietonal / OSM\nRute · candidați validați\nSUMO separat, local",
+      "Graf: comparație salvată în SQLite. Semaforizare: estimări sintetice.",
+      "",
+      "LLM neintegrat",
+      "Există: dovezi, catalog și validare. Generarea LLM urmează."
+    ]
   },
   {
     "slide": 7,
     "text": [
-      "ARTERIA / BUSINESS / CINE PLĂTEȘTE",
+      "ARTERIA / MODEL ECONOMIC",
       "07",
       "Model economic de testat",
-      "Sursă preț: ipoteza din pitch-ul anterior, 2026",
-      "Ipoteză de abonament,\nnevalidată",
-      "Niciun client plătitor confirmat"
-    ],
-    "shape_count": 9,
-    "tables": 0,
-    "pictures": 0
+      "Ipoteză din pitch-ul anterior, 2026 · preț nevalidat prin interviuri",
+      "Abonament propus,\npreț nevalidat",
+      "Nu avem dovezi de clienți plătitori",
+      "Cumpărător vizat",
+      "Administrație locală /\nconsultanță de mobilitate",
+      "1.500 €",
+      "/ lună",
+      "Valoare de verificat: timpul\npregătirii unei comparații",
+      "Costuri de măsurat:\ndate, calcul și suport"
+    ]
   },
   {
     "slide": 8,
     "text": [
       "ARTERIA / R / PIAȚA",
       "08",
-      "Primii utilizatori, înainte de extindere",
-      "Ipoteze de lucru, 2026 · Nu reprezintă venit sau piață măsurată",
-      "Scenariu ipotetic; organizațiile și conversia nu sunt validate"
-    ],
-    "shape_count": 8,
-    "tables": 0,
-    "pictures": 0
+      "Validarea pieței începe în Iași",
+      "Plan propus · 18.10.2026 · nu reprezintă tracțiune comercială",
+      "Fără listă validată de clienți sau dimensiune de piață măsurată",
+      "Iași: propunem un prim caz cu un specialist",
+      "Apoi: identificăm organizații de intervievat",
+      "Canal propus: introduceri prin mentori și comunități de mobilitate",
+      "Criteriul propus pentru continuare",
+      "Utilitate și plată validate"
+    ]
   },
   {
     "slide": 9,
@@ -114,69 +142,35 @@
       "ARTERIA / O / ECHIPA",
       "09",
       "ARION",
-      "Responsabilități confirmate de echipă · Cerința V2, 18 octombrie 2026",
+      "Nume și responsabilități furnizate de echipă · 18.10.2026",
+      "",
+      "Iustin Fagateanu",
+      "Interfață și\nexperiență web",
+      "",
+      "Alex Pintilie",
+      "Inițializare proiect\nși baza de simulare",
+      "",
+      "Fagateanu Eusebiu",
+      "Dezvoltare backend",
       "Următoarea nevoie: validare cu un specialist în mobilitate"
-    ],
-    "shape_count": 8,
-    "tables": 0,
-    "pictures": 0
+    ]
   },
   {
     "slide": 10,
     "text": [
       "ARTERIA / A / CE URMEAZĂ",
       "10",
-      "Prima comparație pe date verificate",
-      "Măsurăm timpul pregătirii comparației și trasabilitatea rezultatului.",
-      "Un caz verificabil. Apoi extindere."
-    ],
-    "shape_count": 11,
-    "tables": 0,
-    "pictures": 0
-  },
-  {
-    "slide": 11,
-    "text": [
-      "ARTERIA / ANEXA A / DOVEZI",
-      "11",
-      "Ce este verificat astăzi",
-      "Sursă: verificări locale ale repository-ului, 2026",
-      "Typecheck\nweb · mobile · shared",
-      "Build web\n/ și /app",
-      "Date urbane reale / AI generativ / SUMO din UI — neintegrate",
-      "Testele Python și SUMO nu au fost rerulate în audit."
-    ],
-    "shape_count": 9,
-    "tables": 0,
-    "pictures": 0
-  },
-  {
-    "slide": 12,
-    "text": [
-      "ARTERIA / ANEXA B / AI",
-      "12",
-      "Rolul AI în fluxul propus",
-      "Sursă: docs/ARCHITECTURE.md; stare verificată în cod, 2026",
-      "Astăzi: catalog fix, fără apel LLM",
-      "Planificat: validare pe server și aprobare de către specialist",
-      "O recomandare nu constituie o măsurătoare."
-    ],
-    "shape_count": 8,
-    "tables": 0,
-    "pictures": 0
-  },
-  {
-    "slide": 13,
-    "text": [
-      "ARTERIA / ANEXA C / METODĂ",
-      "13",
-      "Condițiile unei evaluări credibile",
-      "Surse: docs/ARCHITECTURE.md · SUMO Calibrator · Audit repository, 2026",
-      "Lipsă date → necunoscut\nPropunere AI → ipoteză\nRulare repetată → rezultat verificabil",
-      "Nu există încă efecte de trafic validate în repository."
-    ],
-    "shape_count": 7,
-    "tables": 0,
-    "pictures": 0
+      "Următorul pas: un caz validat",
+      "Măsurăm timpul de lucru și corectitudinea propunerilor.",
+      "Un caz verificabil. Apoi extindere.",
+      "Date locale",
+      "verificate",
+      "LLM cu",
+      "validare",
+      "Test cu",
+      "un specialist",
+      "Cererea noastră",
+      "O introducere către un specialist\nși acces la un set de date local."
+    ]
   }
 ]

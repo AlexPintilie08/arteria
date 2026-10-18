@@ -1,0 +1,100 @@
+{
+  "slides": 13,
+  "objects": {
+    "groups": 43,
+    "textboxes": 153,
+    "tables": 4,
+    "pictures": 2,
+    "connectors": 21,
+    "notes": 13
+  },
+  "rendered_slides": 13,
+  "text_bounds_checked": 153,
+  "text_overflow": [],
+  "out_of_canvas": [],
+  "backup_unchanged": true,
+  "backup_sha256": "56133b4d2fe6946ff4c5a246e4d0f8be0baa0ac2f6638a6e25f969994695d170",
+  "pptx_sha256": "a29ad1b61ff353719d06b44176e72ee4697c7e1282e9628f113ddecc0786368d",
+  "motion": [
+    {
+      "slide": 1,
+      "effects": 3,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 2,
+      "effects": 5,
+      "clicks": 2,
+      "targetsValid": true
+    },
+    {
+      "slide": 3,
+      "effects": 4,
+      "clicks": 4,
+      "targetsValid": true
+    },
+    {
+      "slide": 4,
+      "effects": 5,
+      "clicks": 3,
+      "targetsValid": true
+    },
+    {
+      "slide": 5,
+      "effects": 4,
+      "clicks": 3,
+      "targetsValid": true
+    },
+    {
+      "slide": 6,
+      "effects": 6,
+      "clicks": 4,
+      "targetsValid": true
+    },
+    {
+      "slide": 7,
+      "effects": 3,
+      "clicks": 3,
+      "targetsValid": true
+    },
+    {
+      "slide": 8,
+      "effects": 3,
+      "clicks": 3,
+      "targetsValid": true
+    },
+    {
+      "slide": 9,
+      "effects": 3,
+      "clicks": 1,
+      "targetsValid": true
+    },
+    {
+      "slide": 10,
+      "effects": 4,
+      "clicks": 4,
+      "targetsValid": true
+    },
+    {
+      "slide": 11,
+      "effects": 1,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 12,
+      "effects": 1,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 13,
+      "effects": 1,
+      "clicks": 0,
+      "targetsValid": true
+    }
+  ],
+  "effects": 43,
+  "all_checks_passed": true
+}

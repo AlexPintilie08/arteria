@@ -1,0 +1,2413 @@
+{
+  "schema_version": "arteria.proposal-demo.v1",
+  "demo": {
+    "source_mode": "fixture",
+    "source": "synthetic offline fixture",
+    "retrieved_at": null,
+    "network_requests_made": false,
+    "area_id": "iasi-central-local-demo"
+  },
+  "capability_catalog": {
+    "version": "arteria-sim-interventions-v1",
+    "scope": "Deterministic graph evaluation only; no physical feasibility or construction claims.",
+    "supported_interventions": [
+      {
+        "type_id": "add_pedestrian_connection",
+        "required_parameters": [
+          {
+            "name": "start",
+            "type": "position",
+            "unit": "EPSG:4326",
+            "required": true
+          },
+          {
+            "name": "end",
+            "type": "position",
+            "unit": "EPSG:4326",
+            "required": true
+          }
+        ],
+        "geometric_requirements": [
+          "Both endpoints and the straight connecting segment must lie inside the selected study area.",
+          "Endpoints must snap to distinct mapped walking-network nodes within the configured limit.",
+          "The modeled connection must be longer than zero and no longer than 1000 m."
+        ],
+        "allowed_units": [
+          "EPSG:4326",
+          "m",
+          "m/s",
+          "s"
+        ],
+        "validation_available": true,
+        "graph_evaluation_available": true,
+        "sumo_evaluation_available": false,
+        "required_geographic_evidence": [
+          "validated study-area polygon",
+          "mapped walking graph",
+          "in-area candidate endpoints"
+        ],
+        "implementation_status": "implemented_graph_only"
+      },
+      {
+        "type_id": "set_connection_enabled",
+        "required_parameters": [
+          {
+            "name": "connection_id",
+            "type": "stable_modelled_connection_id",
+            "required": true
+          },
+          {
+            "name": "enabled",
+            "type": "boolean",
+            "required": true
+          }
+        ],
+        "geometric_requirements": [
+          "The connection ID must identify a modeled ARTERIA connection present in the selected baseline graph."
+        ],
+        "allowed_units": [],
+        "validation_available": true,
+        "graph_evaluation_available": true,
+        "sumo_evaluation_available": false,
+        "required_geographic_evidence": [
+          "validated study-area polygon",
+          "baseline graph containing the modeled connection"
+        ],
+        "implementation_status": "implemented_graph_only"
+      }
+    ],
+    "unsupported_examples": [
+      {
+        "type_id": "traffic_signal_retiming",
+        "validation_available": false,
+        "graph_evaluation_available": false,
+        "sumo_evaluation_available": false,
+        "implementation_status": "unsupported"
+      },
+      {
+        "type_id": "new_lane",
+        "validation_available": false,
+        "graph_evaluation_available": false,
+        "sumo_evaluation_available": false,
+        "implementation_status": "unsupported"
+      },
+      {
+        "type_id": "underpass",
+        "validation_available": false,
+        "graph_evaluation_available": false,
+        "sumo_evaluation_available": false,
+        "implementation_status": "unsupported"
+      },
+      {
+        "type_id": "roundabout",
+        "validation_available": false,
+        "graph_evaluation_available": false,
+        "sumo_evaluation_available": false,
+        "implementation_status": "unsupported"
+      }
+    ]
+  },
+  "evidence_packet": {
+    "schema_version": "arteria.proposal-context.v1",
+    "study_area": {
+      "city_id": "iasi-ro",
+      "area_id": "iasi-central-local-demo",
+      "boundary_source": "bounded_bbox",
+      "geometry_reference": {
+        "sha256": "567bf4b0680484a20fd4884b2377164b15bce0369ed0b6070e019ac18f5c16dc",
+        "geometry_type": "Polygon",
+        "crs": "EPSG:4326"
+      },
+      "extent_wgs84": [
+        27.5755,
+        47.161,
+        27.5825,
+        47.1655
+      ],
+      "working_crs": "EPSG:32635"
+    },
+    "geographic_source": {
+      "source": "synthetic offline fixture",
+      "source_version": "sim.demo.fixture.v1",
+      "retrieved_at": null,
+      "working_crs": "EPSG:32635"
+    },
+    "analysis": {
+      "network_metrics": {
+        "walk": {
+          "mode": "walk",
+          "node_count": 7,
+          "edge_count": 6,
+          "component_count": 4,
+          "largest_component_nodes": 3,
+          "largest_component_share": 0.42857142857142855,
+          "isolated_node_count": 2,
+          "assumptions": [
+            "Connected components use weak connectivity for directed OSM graphs."
+          ],
+          "study_area_node_count": 7,
+          "graph_node_count_including_boundary_connectors": 7
+        }
+      },
+      "indicators": [
+        {
+          "id": "population_accessibility",
+          "label": "Population accessibility to mapped services",
+          "value": null,
+          "unit": "person",
+          "status": "unknown",
+          "provenance": [],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No population or address-level demand dataset is included in this OSM snapshot.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_access_green_space_within_15_min",
+          "label": "Mapped walk network nodes within 15 minutes of green_space",
+          "value": null,
+          "unit": "node",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped green_space targets were returned (layer status: unknown); accessibility is unknown, not zero.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_access_healthcare_within_15_min",
+          "label": "Mapped walk network nodes within 15 minutes of healthcare",
+          "value": null,
+          "unit": "node",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped healthcare targets were returned (layer status: unknown); accessibility is unknown, not zero.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_access_public_transport_within_15_min",
+          "label": "Mapped walk network nodes within 15 minutes of public_transport",
+          "value": null,
+          "unit": "node",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped public_transport targets were returned (layer status: unknown); accessibility is unknown, not zero.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_access_schools_within_15_min",
+          "label": "Mapped walk network nodes within 15 minutes of schools",
+          "value": null,
+          "unit": "node",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped schools targets were returned (layer status: unknown); accessibility is unknown, not zero.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_access_services_within_15_min",
+          "label": "Mapped walk network nodes within 15 minutes of services",
+          "value": null,
+          "unit": "node",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped services targets were returned (layer status: unknown); accessibility is unknown, not zero.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_largest_component_share",
+          "label": "Share of retrieved walk graph nodes in the largest component",
+          "value": 0.42857142857142855,
+          "unit": "ratio",
+          "status": "calculated",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "coverage_limitation",
+            "description": "This ratio covers retrieved graph nodes, including boundary connectors, not residents or trips.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_median_detour_ratio_to_green_space",
+          "label": "Median route detour ratio to green_space",
+          "value": null,
+          "unit": "ratio",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped green_space targets were returned (layer status: unknown); detour ratio is unknown.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_median_detour_ratio_to_healthcare",
+          "label": "Median route detour ratio to healthcare",
+          "value": null,
+          "unit": "ratio",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped healthcare targets were returned (layer status: unknown); detour ratio is unknown.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_median_detour_ratio_to_public_transport",
+          "label": "Median route detour ratio to public_transport",
+          "value": null,
+          "unit": "ratio",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped public_transport targets were returned (layer status: unknown); detour ratio is unknown.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_median_detour_ratio_to_schools",
+          "label": "Median route detour ratio to schools",
+          "value": null,
+          "unit": "ratio",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped schools targets were returned (layer status: unknown); detour ratio is unknown.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_median_detour_ratio_to_services",
+          "label": "Median route detour ratio to services",
+          "value": null,
+          "unit": "ratio",
+          "status": "unknown",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "missing_data",
+            "description": "No mapped services targets were returned (layer status: unknown); detour ratio is unknown.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_network_components",
+          "label": "Weakly connected walk graph components",
+          "value": 4,
+          "unit": "component",
+          "status": "calculated",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "coverage_limitation",
+            "description": "Components include retained boundary connectors and may reflect OSM coverage gaps.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_network_nodes",
+          "label": "Nodes in retrieved walk graph, including boundary connectors",
+          "value": 7,
+          "unit": "node",
+          "status": "calculated",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "coverage_limitation",
+            "description": "Graph node totals may include one-edge boundary connectors outside the selected polygon.",
+            "interval": null,
+            "confidence": null
+          }
+        },
+        {
+          "id": "walk_study_area_network_nodes",
+          "label": "Mapped walk network nodes inside the study area",
+          "value": 7,
+          "unit": "node",
+          "status": "calculated",
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "coverage_limitation",
+            "description": "Counts mapped graph nodes inside the polygon; it is not a population count.",
+            "interval": null,
+            "confidence": null
+          }
+        }
+      ],
+      "omitted_indicator_count": 0,
+      "issues": [
+        {
+          "id": "issue_1f15b4901dc74e",
+          "type": "disconnected_walk_component",
+          "severity": "high",
+          "description": "This walk network component has no route to the largest mapped component in the downloaded graph.",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              27.581,
+              47.16199999999999
+            ]
+          },
+          "metrics": {
+            "component_node_count": 1,
+            "component_node_count_in_study_area": 1,
+            "graph_component_count": 4,
+            "largest_component_share": 0.42857142857142855,
+            "units": {
+              "component_node_count": "node",
+              "component_node_count_in_study_area": "node",
+              "graph_component_count": "component",
+              "largest_component_share": "ratio"
+            }
+          },
+          "evidence": [
+            {
+              "source": "OpenStreetMap",
+              "osm_node_ids": [
+                "5"
+              ]
+            }
+          ],
+          "data_coverage": {
+            "mapped_network_nodes": 7,
+            "study_area_network_nodes": 7,
+            "component_node_count_in_study_area": 1
+          },
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "coverage_limitation",
+            "description": "OSM mapping and tags may be incomplete; this issue describes the downloaded snapshot only.",
+            "interval": null,
+            "confidence": null
+          },
+          "omitted_evidence_record_count": 0
+        },
+        {
+          "id": "issue_225cab03bcd2b9",
+          "type": "disconnected_walk_component",
+          "severity": "high",
+          "description": "This walk network component has no route to the largest mapped component in the downloaded graph.",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              27.58,
+              47.162
+            ]
+          },
+          "metrics": {
+            "component_node_count": 1,
+            "component_node_count_in_study_area": 1,
+            "graph_component_count": 4,
+            "largest_component_share": 0.42857142857142855,
+            "units": {
+              "component_node_count": "node",
+              "component_node_count_in_study_area": "node",
+              "graph_component_count": "component",
+              "largest_component_share": "ratio"
+            }
+          },
+          "evidence": [
+            {
+              "source": "OpenStreetMap",
+              "osm_node_ids": [
+                "4"
+              ]
+            }
+          ],
+          "data_coverage": {
+            "mapped_network_nodes": 7,
+            "study_area_network_nodes": 7,
+            "component_node_count_in_study_area": 1
+          },
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "coverage_limitation",
+            "description": "OSM mapping and tags may be incomplete; this issue describes the downloaded snapshot only.",
+            "interval": null,
+            "confidence": null
+          },
+          "omitted_evidence_record_count": 0
+        },
+        {
+          "id": "issue_55702b1ee6efa6",
+          "type": "disconnected_walk_component",
+          "severity": "medium",
+          "description": "This walk network component has no route to the largest mapped component in the downloaded graph.",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [
+              27.578500000010216,
+              47.16400000109115
+            ]
+          },
+          "metrics": {
+            "component_node_count": 2,
+            "component_node_count_in_study_area": 2,
+            "graph_component_count": 4,
+            "largest_component_share": 0.42857142857142855,
+            "units": {
+              "component_node_count": "node",
+              "component_node_count_in_study_area": "node",
+              "graph_component_count": "component",
+              "largest_component_share": "ratio"
+            }
+          },
+          "evidence": [
+            {
+              "source": "OpenStreetMap",
+              "osm_node_ids": [
+                "6",
+                "7"
+              ]
+            }
+          ],
+          "data_coverage": {
+            "mapped_network_nodes": 7,
+            "study_area_network_nodes": 7,
+            "component_node_count_in_study_area": 2
+          },
+          "provenance": [
+            {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "method": "OSMnx mode-specific street graph and NetworkX graph analysis",
+              "crs": "EPSG:32635"
+            }
+          ],
+          "uncertainty": {
+            "kind": "coverage_limitation",
+            "description": "OSM mapping and tags may be incomplete; this issue describes the downloaded snapshot only.",
+            "interval": null,
+            "confidence": null
+          },
+          "omitted_evidence_record_count": 0
+        }
+      ],
+      "omitted_issue_count": 0,
+      "data_availability": {
+        "buildings": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "crossings": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "cycling_infrastructure": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "green_space": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "healthcare": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "parking": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "public_transport": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "roads": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "schools": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "services": {
+          "status": "unknown",
+          "feature_count": 0
+        },
+        "walk_network": {
+          "status": "available",
+          "node_count": 7,
+          "edge_count": 6
+        },
+        "walking_infrastructure": {
+          "status": "unknown",
+          "feature_count": 0
+        }
+      },
+      "uncertainty": {
+        "kind": "coverage_limitation",
+        "description": "OSM completeness varies by place and tag; this output is a snapshot, not a complete inventory.",
+        "interval": null,
+        "confidence": null
+      },
+      "warnings": [
+        "Synthetic offline demonstration data is not evidence about Iași infrastructure.",
+        "OpenStreetMap data copyright OpenStreetMap contributors; attribution and ODbL terms apply.",
+        "Network-node accessibility is not population-weighted; no traffic delay or congestion is inferred."
+      ]
+    },
+    "candidate_evaluation": {
+      "status": "All returned candidates are conditional and require field verification; this graph screening does not make a construction recommendation.",
+      "ranking_methodology": "Lexicographic: newly reachable sampled pairs descending; improved pairs descending; total distance savings among pairs reachable both before and after descending; mapped obstacle intersections ascending; unknown obstacle layers ascending; hypothetical link length ascending; stable candidate ID ascending.",
+      "shared_sample": {
+        "kind": "deterministic_graph_node_pair_sample",
+        "method": "SHA-256 hash ranking from the seed and stable graph node IDs; no global randomness or all-pairs materialization",
+        "seed": "arteria-v1",
+        "requested_pair_count": 32,
+        "evaluated_pair_count": 9,
+        "eligible_graph_node_count": 7,
+        "excluded_discovery_pairs": 12,
+        "interpretation": "Sampled graph-node pairs are analytical probes, not observed journeys or population demand; no representativeness or resident totals are inferred."
+      },
+      "shared_sample_used_for_ranking": {},
+      "candidates": [
+        {
+          "candidate_id": "cand_b4882e4c286dfaccd063",
+          "rank": 1,
+          "related_issue_ids": [
+            "issue_1f15b4901dc74e"
+          ],
+          "discovery": {
+            "method": "disconnected_components",
+            "detour_ratio": null,
+            "directed_route_distances_m": {
+              "start_to_end_m": null,
+              "end_to_start_m": null
+            },
+            "endpoint_component_sizes": [
+              3,
+              1
+            ],
+            "endpoint_component_in_area_node_counts": [
+              3,
+              1
+            ],
+            "small_component_caution": true
+          },
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                27.578300000000002,
+                47.162
+              ],
+              [
+                27.581,
+                47.16199999999999
+              ]
+            ]
+          },
+          "length_m": 204.65264431001083,
+          "intervention": {
+            "type": "add_pedestrian_connection",
+            "start": [
+              27.578300000000002,
+              47.162
+            ],
+            "end": [
+              27.581,
+              47.16199999999999
+            ]
+          },
+          "screening": {
+            "status": "conditional_candidate_requires_field_review",
+            "physical_feasibility": "unknown",
+            "recommendation_status": "conditional_candidate_requires_field_review",
+            "mapped_obstacles": {
+              "mapped_buildings": {
+                "status": "unknown",
+                "classification": "unknown",
+                "intersection_count": 0,
+                "reason": "Layer is missing or its coverage is unknown."
+              },
+              "mapped_water_or_barriers": {
+                "status": "unknown",
+                "classification": "unknown",
+                "intersection_count": 0,
+                "reason": "Layer is missing or its coverage is unknown."
+              }
+            },
+            "missing_evidence": [
+              "land ownership and access rights",
+              "elevation, slope, and accessibility conditions",
+              "field-verified pedestrian safety and construction constraints",
+              "water and other physical barrier geometry"
+            ],
+            "warnings": [
+              "No field survey, property ownership, legal approval, accessibility standard, crossing safety, or construction review was performed.",
+              "Missing mapped geometry is not evidence that a connection is physically feasible.",
+              "Building obstacle screening is unknown because mapped building geometry is unavailable or unusable."
+            ]
+          },
+          "ranking_metrics": {
+            "newly_reachable_pairs": 1,
+            "improved_pairs": 0,
+            "total_distance_savings_m": 0.0,
+            "mapped_obstacle_intersections": 0,
+            "unknown_obstacle_layer_count": 2,
+            "intervention_length_m": 204.65264431001083,
+            "tie_breaker_candidate_id": "cand_b4882e4c286dfaccd063",
+            "targeted_newly_reachable_pairs_diagnostic_only": 4
+          },
+          "ranking_explanation": "Shared-sample-only lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID. Targeted diagnostic routes are excluded from ranking.",
+          "selection_rationale": "['The endpoints are 204.7 m apart and belong to separate weakly connected walking components.']",
+          "shared_sample_impact": {
+            "impact_id": "impact_bf0594de3d5e1a0e8384",
+            "method_version": "arteria-multi-route-impact-v2.1",
+            "aggregate": {
+              "evaluated_pair_count": 9,
+              "improved_count": 0,
+              "unchanged_count": 4,
+              "regressed_count": 0,
+              "newly_reachable_count": 1,
+              "newly_unreachable_count": 0,
+              "unreachable_in_both_count": 4,
+              "reachable_both_comparable_pair_count": 4,
+              "total_distance_savings_m": 0.0,
+              "average_distance_savings_m": 0.0,
+              "median_distance_savings_m": -0.0,
+              "total_estimated_time_savings_s": 0.0,
+              "average_estimated_time_savings_s": 0.0,
+              "reachability_change_count": 1,
+              "improvement_percent": null
+            },
+            "sample": {
+              "kind": "deterministic_graph_node_pair_sample",
+              "method": "SHA-256 hash ranking from the seed and stable graph node IDs; no global randomness or all-pairs materialization",
+              "seed": "arteria-v1",
+              "requested_pair_count": 32,
+              "evaluated_pair_count": 9,
+              "eligible_graph_node_count": 7,
+              "excluded_discovery_pairs": 12,
+              "interpretation": "Sampled graph-node pairs are analytical probes, not observed journeys or population demand; no representativeness or resident totals are inferred."
+            },
+            "provenance": {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "working_crs": "EPSG:32635",
+              "method": "NetworkX weighted shortest paths on one immutable baseline graph and one isolated scenario graph"
+            },
+            "routes": [
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "3",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644470662067135,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644470662067135,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "7",
+                "destination_node_id": "6",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 58.30340291553374,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 58.30340291553374,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "5",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 250.71404928796588,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "4",
+                "destination_node_id": "6",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "7",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "5",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "5",
+                "destination_node_id": "7",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "2",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644467618198114,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644467618198114,
+                  "geometry_included": true
+                }
+              }
+            ],
+            "omitted_route_count": 1,
+            "assumptions": [
+              "Each alternative starts from the same original walking graph; edits are never accumulated between alternatives.",
+              "Estimated walking time assumes a constant 1.3 m/s speed.",
+              "Only graph-node reachability and length-weighted paths are measured; crossings, slope, delays, demand, and physical feasibility are not modeled."
+            ],
+            "warnings": [
+              "OSM network coverage can be incomplete; an unreachable graph pair is not proof of real-world disconnection.",
+              "Sampled routes are graph-node pairs, not observed trips or a statistically representative travel sample.",
+              "Route geometries are independently capped; every selected pair is included in numerical aggregate calculations."
+            ]
+          },
+          "targeted_diagnostic_impact": {
+            "impact_id": "impact_ed42555a0e2562ed4738",
+            "method_version": "arteria-multi-route-impact-v2.1",
+            "aggregate": {
+              "evaluated_pair_count": 4,
+              "improved_count": 0,
+              "unchanged_count": 0,
+              "regressed_count": 0,
+              "newly_reachable_count": 4,
+              "newly_unreachable_count": 0,
+              "unreachable_in_both_count": 0,
+              "reachable_both_comparable_pair_count": 0,
+              "total_distance_savings_m": null,
+              "average_distance_savings_m": null,
+              "median_distance_savings_m": null,
+              "total_estimated_time_savings_s": null,
+              "average_estimated_time_savings_s": null,
+              "reachability_change_count": 4,
+              "improvement_percent": null
+            },
+            "sample": {
+              "kind": "targeted_diagnostic_routes",
+              "method": "explicit caller-supplied graph node IDs",
+              "seed": null,
+              "requested_pair_count": null,
+              "evaluated_pair_count": 4,
+              "eligible_graph_node_count": 7,
+              "excluded_discovery_pairs": 0,
+              "interpretation": "Routes were selected near this candidate's endpoint components to expose local graph effects; they are candidate-specific, not representative, and are excluded from shared-sample ranking."
+            },
+            "provenance": {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "working_crs": "EPSG:32635",
+              "method": "NetworkX weighted shortest paths on one immutable baseline graph and one isolated scenario graph"
+            },
+            "routes": [
+              {
+                "origin_node_id": "3",
+                "destination_node_id": "5",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 157.42511100770062,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "5",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 204.06958166976779,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "5",
+                "destination_node_id": "3",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 157.42511100770062,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "5",
+                "destination_node_id": "2",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 204.06958166976779,
+                  "geometry_included": true
+                }
+              }
+            ],
+            "omitted_route_count": 0,
+            "assumptions": [
+              "Each alternative starts from the same original walking graph; edits are never accumulated between alternatives.",
+              "Estimated walking time assumes a constant 1.3 m/s speed.",
+              "Only graph-node reachability and length-weighted paths are measured; crossings, slope, delays, demand, and physical feasibility are not modeled."
+            ],
+            "warnings": [
+              "OSM network coverage can be incomplete; an unreachable graph pair is not proof of real-world disconnection.",
+              "Sampled routes are graph-node pairs, not observed trips or a statistically representative travel sample.",
+              "Route geometries are independently capped; every selected pair is included in numerical aggregate calculations."
+            ]
+          },
+          "provenance": {
+            "source": "synthetic offline fixture",
+            "source_version": "sim.demo.fixture.v1",
+            "retrieved_at": null,
+            "working_crs": "EPSG:32635",
+            "method": "arteria-pedestrian-candidates-v2.1"
+          },
+          "assumptions": [
+            "The added segment is a straight-line, bidirectional hypothetical pedestrian graph connection, matching the current scenario engine.",
+            "OSM network and obstacle coverage may be incomplete.",
+            "Candidate ranking is a graph-screening result, not a construction recommendation."
+          ]
+        },
+        {
+          "candidate_id": "cand_1a0d20064effb9b92ccd",
+          "rank": 2,
+          "related_issue_ids": [
+            "issue_55702b1ee6efa6"
+          ],
+          "discovery": {
+            "method": "disconnected_components",
+            "detour_ratio": null,
+            "directed_route_distances_m": {
+              "start_to_end_m": null,
+              "end_to_start_m": null
+            },
+            "endpoint_component_sizes": [
+              3,
+              2
+            ],
+            "endpoint_component_in_area_node_counts": [
+              3,
+              2
+            ],
+            "small_component_caution": true
+          },
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                27.578300000000002,
+                47.162
+              ],
+              [
+                27.578,
+                47.163999999999994
+              ]
+            ]
+          },
+          "length_m": 223.42446517193525,
+          "intervention": {
+            "type": "add_pedestrian_connection",
+            "start": [
+              27.578300000000002,
+              47.162
+            ],
+            "end": [
+              27.578,
+              47.163999999999994
+            ]
+          },
+          "screening": {
+            "status": "conditional_candidate_requires_field_review",
+            "physical_feasibility": "unknown",
+            "recommendation_status": "conditional_candidate_requires_field_review",
+            "mapped_obstacles": {
+              "mapped_buildings": {
+                "status": "unknown",
+                "classification": "unknown",
+                "intersection_count": 0,
+                "reason": "Layer is missing or its coverage is unknown."
+              },
+              "mapped_water_or_barriers": {
+                "status": "unknown",
+                "classification": "unknown",
+                "intersection_count": 0,
+                "reason": "Layer is missing or its coverage is unknown."
+              }
+            },
+            "missing_evidence": [
+              "land ownership and access rights",
+              "elevation, slope, and accessibility conditions",
+              "field-verified pedestrian safety and construction constraints",
+              "water and other physical barrier geometry"
+            ],
+            "warnings": [
+              "No field survey, property ownership, legal approval, accessibility standard, crossing safety, or construction review was performed.",
+              "Missing mapped geometry is not evidence that a connection is physically feasible.",
+              "Building obstacle screening is unknown because mapped building geometry is unavailable or unusable."
+            ]
+          },
+          "ranking_metrics": {
+            "newly_reachable_pairs": 1,
+            "improved_pairs": 0,
+            "total_distance_savings_m": 0.0,
+            "mapped_obstacle_intersections": 0,
+            "unknown_obstacle_layer_count": 2,
+            "intervention_length_m": 223.42446517193525,
+            "tie_breaker_candidate_id": "cand_1a0d20064effb9b92ccd",
+            "targeted_newly_reachable_pairs_diagnostic_only": 10
+          },
+          "ranking_explanation": "Shared-sample-only lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID. Targeted diagnostic routes are excluded from ranking.",
+          "selection_rationale": "['The endpoints are 223.4 m apart and belong to separate weakly connected walking components.']",
+          "shared_sample_impact": {
+            "impact_id": "impact_5907963bf06ff367bd04",
+            "method_version": "arteria-multi-route-impact-v2.1",
+            "aggregate": {
+              "evaluated_pair_count": 9,
+              "improved_count": 0,
+              "unchanged_count": 4,
+              "regressed_count": 0,
+              "newly_reachable_count": 1,
+              "newly_unreachable_count": 0,
+              "unreachable_in_both_count": 4,
+              "reachable_both_comparable_pair_count": 4,
+              "total_distance_savings_m": 0.0,
+              "average_distance_savings_m": 0.0,
+              "median_distance_savings_m": -0.0,
+              "total_estimated_time_savings_s": 0.0,
+              "average_estimated_time_savings_s": 0.0,
+              "reachability_change_count": 1,
+              "improvement_percent": null
+            },
+            "sample": {
+              "kind": "deterministic_graph_node_pair_sample",
+              "method": "SHA-256 hash ranking from the seed and stable graph node IDs; no global randomness or all-pairs materialization",
+              "seed": "arteria-v1",
+              "requested_pair_count": 32,
+              "evaluated_pair_count": 9,
+              "eligible_graph_node_count": 7,
+              "excluded_discovery_pairs": 12,
+              "interpretation": "Sampled graph-node pairs are analytical probes, not observed journeys or population demand; no representativeness or resident totals are inferred."
+            },
+            "provenance": {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "working_crs": "EPSG:32635",
+              "method": "NetworkX weighted shortest paths on one immutable baseline graph and one isolated scenario graph"
+            },
+            "routes": [
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "3",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644470662067135,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644470662067135,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "7",
+                "destination_node_id": "6",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 58.30340291553374,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 58.30340291553374,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "5",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "4",
+                "destination_node_id": "6",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "7",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 323.4573144049799,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "5",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "5",
+                "destination_node_id": "7",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "2",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644467618198114,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644467618198114,
+                  "geometry_included": true
+                }
+              }
+            ],
+            "omitted_route_count": 1,
+            "assumptions": [
+              "Each alternative starts from the same original walking graph; edits are never accumulated between alternatives.",
+              "Estimated walking time assumes a constant 1.3 m/s speed.",
+              "Only graph-node reachability and length-weighted paths are measured; crossings, slope, delays, demand, and physical feasibility are not modeled."
+            ],
+            "warnings": [
+              "OSM network coverage can be incomplete; an unreachable graph pair is not proof of real-world disconnection.",
+              "Sampled routes are graph-node pairs, not observed trips or a statistically representative travel sample.",
+              "Route geometries are independently capped; every selected pair is included in numerical aggregate calculations."
+            ]
+          },
+          "targeted_diagnostic_impact": {
+            "impact_id": "impact_9d40eafb103c96966841",
+            "method_version": "arteria-multi-route-impact-v2.1",
+            "aggregate": {
+              "evaluated_pair_count": 10,
+              "improved_count": 0,
+              "unchanged_count": 0,
+              "regressed_count": 0,
+              "newly_reachable_count": 10,
+              "newly_unreachable_count": 0,
+              "unreachable_in_both_count": 0,
+              "reachable_both_comparable_pair_count": 0,
+              "total_distance_savings_m": null,
+              "average_distance_savings_m": null,
+              "median_distance_savings_m": null,
+              "total_estimated_time_savings_s": null,
+              "average_estimated_time_savings_s": null,
+              "reachability_change_count": 10,
+              "improvement_percent": null
+            },
+            "sample": {
+              "kind": "targeted_diagnostic_routes",
+              "method": "explicit caller-supplied graph node IDs",
+              "seed": null,
+              "requested_pair_count": null,
+              "evaluated_pair_count": 10,
+              "eligible_graph_node_count": 7,
+              "excluded_discovery_pairs": 0,
+              "interpretation": "Routes were selected near this candidate's endpoint components to expose local graph effects; they are candidate-specific, not representative, and are excluded from shared-sample ranking."
+            },
+            "provenance": {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "working_crs": "EPSG:32635",
+              "method": "NetworkX weighted shortest paths on one immutable baseline graph and one isolated scenario graph"
+            },
+            "routes": [
+              {
+                "origin_node_id": "3",
+                "destination_node_id": "6",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 171.86497320918096,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "6",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 218.5094438712481,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "3",
+                "destination_node_id": "7",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 230.16837612471468,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "6",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 265.1539114894462,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "7",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 276.81284678678185,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "3",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 171.86497320918096,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "2",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 218.5094438712481,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "7",
+                "destination_node_id": "3",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 230.16837612471468,
+                  "geometry_included": true
+                }
+              }
+            ],
+            "omitted_route_count": 2,
+            "assumptions": [
+              "Each alternative starts from the same original walking graph; edits are never accumulated between alternatives.",
+              "Estimated walking time assumes a constant 1.3 m/s speed.",
+              "Only graph-node reachability and length-weighted paths are measured; crossings, slope, delays, demand, and physical feasibility are not modeled."
+            ],
+            "warnings": [
+              "OSM network coverage can be incomplete; an unreachable graph pair is not proof of real-world disconnection.",
+              "Sampled routes are graph-node pairs, not observed trips or a statistically representative travel sample.",
+              "Route geometries are independently capped; every selected pair is included in numerical aggregate calculations."
+            ]
+          },
+          "provenance": {
+            "source": "synthetic offline fixture",
+            "source_version": "sim.demo.fixture.v1",
+            "retrieved_at": null,
+            "working_crs": "EPSG:32635",
+            "method": "arteria-pedestrian-candidates-v2.1"
+          },
+          "assumptions": [
+            "The added segment is a straight-line, bidirectional hypothetical pedestrian graph connection, matching the current scenario engine.",
+            "OSM network and obstacle coverage may be incomplete.",
+            "Candidate ranking is a graph-screening result, not a construction recommendation."
+          ]
+        },
+        {
+          "candidate_id": "cand_608cb37f0b8cf9254982",
+          "rank": 3,
+          "related_issue_ids": [
+            "issue_55702b1ee6efa6"
+          ],
+          "discovery": {
+            "method": "disconnected_components",
+            "detour_ratio": null,
+            "directed_route_distances_m": {
+              "start_to_end_m": null,
+              "end_to_start_m": null
+            },
+            "endpoint_component_sizes": [
+              3,
+              2
+            ],
+            "endpoint_component_in_area_node_counts": [
+              3,
+              2
+            ],
+            "small_component_caution": true
+          },
+          "geometry": {
+            "type": "LineString",
+            "coordinates": [
+              [
+                27.5775,
+                47.162000000000006
+              ],
+              [
+                27.578,
+                47.163999999999994
+              ]
+            ]
+          },
+          "length_m": 225.47214886033612,
+          "intervention": {
+            "type": "add_pedestrian_connection",
+            "start": [
+              27.5775,
+              47.162000000000006
+            ],
+            "end": [
+              27.578,
+              47.163999999999994
+            ]
+          },
+          "screening": {
+            "status": "conditional_candidate_requires_field_review",
+            "physical_feasibility": "unknown",
+            "recommendation_status": "conditional_candidate_requires_field_review",
+            "mapped_obstacles": {
+              "mapped_buildings": {
+                "status": "unknown",
+                "classification": "unknown",
+                "intersection_count": 0,
+                "reason": "Layer is missing or its coverage is unknown."
+              },
+              "mapped_water_or_barriers": {
+                "status": "unknown",
+                "classification": "unknown",
+                "intersection_count": 0,
+                "reason": "Layer is missing or its coverage is unknown."
+              }
+            },
+            "missing_evidence": [
+              "land ownership and access rights",
+              "elevation, slope, and accessibility conditions",
+              "field-verified pedestrian safety and construction constraints",
+              "water and other physical barrier geometry"
+            ],
+            "warnings": [
+              "No field survey, property ownership, legal approval, accessibility standard, crossing safety, or construction review was performed.",
+              "Missing mapped geometry is not evidence that a connection is physically feasible.",
+              "Building obstacle screening is unknown because mapped building geometry is unavailable or unusable."
+            ]
+          },
+          "ranking_metrics": {
+            "newly_reachable_pairs": 1,
+            "improved_pairs": 0,
+            "total_distance_savings_m": 0.0,
+            "mapped_obstacle_intersections": 0,
+            "unknown_obstacle_layer_count": 2,
+            "intervention_length_m": 225.47214886033612,
+            "tie_breaker_candidate_id": "cand_608cb37f0b8cf9254982",
+            "targeted_newly_reachable_pairs_diagnostic_only": 10
+          },
+          "ranking_explanation": "Shared-sample-only lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID. Targeted diagnostic routes are excluded from ranking.",
+          "selection_rationale": "['The endpoints are 225.5 m apart and belong to separate weakly connected walking components.']",
+          "shared_sample_impact": {
+            "impact_id": "impact_2be83a3e64fd76720868",
+            "method_version": "arteria-multi-route-impact-v2.1",
+            "aggregate": {
+              "evaluated_pair_count": 9,
+              "improved_count": 0,
+              "unchanged_count": 4,
+              "regressed_count": 0,
+              "newly_reachable_count": 1,
+              "newly_unreachable_count": 0,
+              "unreachable_in_both_count": 4,
+              "reachable_both_comparable_pair_count": 4,
+              "total_distance_savings_m": 0.0,
+              "average_distance_savings_m": 0.0,
+              "median_distance_savings_m": -0.0,
+              "total_estimated_time_savings_s": 0.0,
+              "average_estimated_time_savings_s": 0.0,
+              "reachability_change_count": 1,
+              "improvement_percent": null
+            },
+            "sample": {
+              "kind": "deterministic_graph_node_pair_sample",
+              "method": "SHA-256 hash ranking from the seed and stable graph node IDs; no global randomness or all-pairs materialization",
+              "seed": "arteria-v1",
+              "requested_pair_count": 32,
+              "evaluated_pair_count": 9,
+              "eligible_graph_node_count": 7,
+              "excluded_discovery_pairs": 12,
+              "interpretation": "Sampled graph-node pairs are analytical probes, not observed journeys or population demand; no representativeness or resident totals are inferred."
+            },
+            "provenance": {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "working_crs": "EPSG:32635",
+              "method": "NetworkX weighted shortest paths on one immutable baseline graph and one isolated scenario graph"
+            },
+            "routes": [
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "3",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644470662067135,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644470662067135,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "7",
+                "destination_node_id": "6",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 58.30340291553374,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 58.30340291553374,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "5",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "4",
+                "destination_node_id": "6",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "7",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 278.3879850416827,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "5",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "5",
+                "destination_node_id": "7",
+                "outcome": "unreachable_in_both",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "2",
+                "outcome": "unchanged",
+                "before": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644467618198114,
+                  "geometry_included": true
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 46.644467618198114,
+                  "geometry_included": true
+                }
+              }
+            ],
+            "omitted_route_count": 1,
+            "assumptions": [
+              "Each alternative starts from the same original walking graph; edits are never accumulated between alternatives.",
+              "Estimated walking time assumes a constant 1.3 m/s speed.",
+              "Only graph-node reachability and length-weighted paths are measured; crossings, slope, delays, demand, and physical feasibility are not modeled."
+            ],
+            "warnings": [
+              "OSM network coverage can be incomplete; an unreachable graph pair is not proof of real-world disconnection.",
+              "Sampled routes are graph-node pairs, not observed trips or a statistically representative travel sample.",
+              "Route geometries are independently capped; every selected pair is included in numerical aggregate calculations."
+            ]
+          },
+          "targeted_diagnostic_impact": {
+            "impact_id": "impact_0f460055f04bac05c7e5",
+            "method_version": "arteria-multi-route-impact-v2.1",
+            "aggregate": {
+              "evaluated_pair_count": 10,
+              "improved_count": 0,
+              "unchanged_count": 0,
+              "regressed_count": 0,
+              "newly_reachable_count": 10,
+              "newly_unreachable_count": 0,
+              "unreachable_in_both_count": 0,
+              "reachable_both_comparable_pair_count": 0,
+              "total_distance_savings_m": null,
+              "average_distance_savings_m": null,
+              "median_distance_savings_m": null,
+              "total_estimated_time_savings_s": null,
+              "average_estimated_time_savings_s": null,
+              "reachability_change_count": 10,
+              "improvement_percent": null
+            },
+            "sample": {
+              "kind": "targeted_diagnostic_routes",
+              "method": "explicit caller-supplied graph node IDs",
+              "seed": null,
+              "requested_pair_count": null,
+              "evaluated_pair_count": 10,
+              "eligible_graph_node_count": 7,
+              "excluded_discovery_pairs": 0,
+              "interpretation": "Routes were selected near this candidate's endpoint components to expose local graph effects; they are candidate-specific, not representative, and are excluded from shared-sample ranking."
+            },
+            "provenance": {
+              "source": "synthetic offline fixture",
+              "source_version": "sim.demo.fixture.v1",
+              "retrieved_at": null,
+              "working_crs": "EPSG:32635",
+              "method": "NetworkX weighted shortest paths on one immutable baseline graph and one isolated scenario graph"
+            },
+            "routes": [
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "6",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 173.44011450795085,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "1",
+                "destination_node_id": "6",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 220.084582126149,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "3",
+                "destination_node_id": "6",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 220.08458517001802,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "2",
+                "destination_node_id": "7",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 231.74351742348458,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "3",
+                "destination_node_id": "7",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 278.38798808555174,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "3",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 220.08458517001802,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "2",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 173.44011450795085,
+                  "geometry_included": true
+                }
+              },
+              {
+                "origin_node_id": "6",
+                "destination_node_id": "1",
+                "outcome": "newly_reachable",
+                "before": {
+                  "status": "unreachable",
+                  "estimated_walk_time_s": null,
+                  "geometry_included": false
+                },
+                "after": {
+                  "status": "reachable",
+                  "estimated_walk_time_s": 220.084582126149,
+                  "geometry_included": true
+                }
+              }
+            ],
+            "omitted_route_count": 2,
+            "assumptions": [
+              "Each alternative starts from the same original walking graph; edits are never accumulated between alternatives.",
+              "Estimated walking time assumes a constant 1.3 m/s speed.",
+              "Only graph-node reachability and length-weighted paths are measured; crossings, slope, delays, demand, and physical feasibility are not modeled."
+            ],
+            "warnings": [
+              "OSM network coverage can be incomplete; an unreachable graph pair is not proof of real-world disconnection.",
+              "Sampled routes are graph-node pairs, not observed trips or a statistically representative travel sample.",
+              "Route geometries are independently capped; every selected pair is included in numerical aggregate calculations."
+            ]
+          },
+          "provenance": {
+            "source": "synthetic offline fixture",
+            "source_version": "sim.demo.fixture.v1",
+            "retrieved_at": null,
+            "working_crs": "EPSG:32635",
+            "method": "arteria-pedestrian-candidates-v2.1"
+          },
+          "assumptions": [
+            "The added segment is a straight-line, bidirectional hypothetical pedestrian graph connection, matching the current scenario engine.",
+            "OSM network and obstacle coverage may be incomplete.",
+            "Candidate ranking is a graph-screening result, not a construction recommendation."
+          ]
+        }
+      ],
+      "omitted_evaluated_candidate_count": 0,
+      "rejected_candidates": [],
+      "omitted_rejected_candidate_count": 0
+    },
+    "capabilities": {
+      "intervention_catalog_version": "arteria-sim-interventions-v1",
+      "supported_intervention_types": [
+        "add_pedestrian_connection",
+        "set_connection_enabled"
+      ],
+      "unsupported_simulation_capabilities": [
+        "real_area_sumo_network_conversion",
+        "traffic_demand_calibration",
+        "observed_traffic_metrics",
+        "construction_feasibility"
+      ]
+    },
+    "model_limitations": [
+      "Graph-node route samples are calculated network probes, not observed journeys or population demand.",
+      "A hypothetical pedestrian connection is not verified for safety, accessibility, ownership, legal approval, or construction feasibility.",
+      "OSM mapping and tagged feature coverage can be incomplete; missing or empty layers do not establish real-world absence.",
+      "Targeted diagnostic routes are candidate-specific and are excluded from shared-sample ranking.",
+      "No real-area SUMO traffic simulation or calibrated traffic measurement is currently available from this engine."
+    ],
+    "truncation": {
+      "packet_byte_limit": 65536,
+      "selected_limits": {
+        "issues": 24,
+        "indicators": 64,
+        "candidates": 8,
+        "rejected_candidates": 12,
+        "route_samples": 8,
+        "evidence_items": 12
+      },
+      "serialized_bytes": 48022
+    }
+  },
+  "candidate_options": [
+    {
+      "candidate_id": "cand_b4882e4c286dfaccd063",
+      "area_id": "iasi-central-local-demo",
+      "data_source": "synthetic offline fixture",
+      "source_area_verification": "synthetic_fixture",
+      "rank": 1,
+      "planning_category": null,
+      "planning_category_status": "unclassified",
+      "planning_category_reason": "SIM has no validated mapping from graph-link length or impact to Minimală, Moderată, or Transformatoare engineering classes.",
+      "summary": "Candidate-backed hypothetical pedestrian graph connection; field review is required.",
+      "rationale": {
+        "related_issue_ids": [
+          "issue_1f15b4901dc74e"
+        ],
+        "discovery_method": "disconnected_components",
+        "selection": [
+          "The endpoints are 204.7 m apart and belong to separate weakly connected walking components."
+        ],
+        "ranking": "Shared-sample-only lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID. Targeted diagnostic routes are excluded from ranking."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            27.578300000000002,
+            47.162
+          ],
+          [
+            27.581,
+            47.16199999999999
+          ]
+        ]
+      },
+      "intervention": {
+        "type": "add_pedestrian_connection",
+        "start": [
+          27.578300000000002,
+          47.162
+        ],
+        "end": [
+          27.581,
+          47.16199999999999
+        ]
+      },
+      "modeled_impact": {
+        "status": "calculated_graph_sample",
+        "impact_id": "impact_bf0594de3d5e1a0e8384",
+        "aggregate": {
+          "evaluated_pair_count": 9,
+          "improved_count": 0,
+          "unchanged_count": 4,
+          "regressed_count": 0,
+          "newly_reachable_count": 1,
+          "newly_unreachable_count": 0,
+          "unreachable_in_both_count": 4,
+          "reachable_both_comparable_pair_count": 4,
+          "total_distance_savings_m": 0.0,
+          "average_distance_savings_m": 0.0,
+          "median_distance_savings_m": -0.0,
+          "total_estimated_time_savings_s": 0.0,
+          "average_estimated_time_savings_s": 0.0,
+          "reachability_change_count": 1,
+          "improvement_percent": null
+        },
+        "shared_sample": {
+          "kind": "deterministic_graph_node_pair_sample",
+          "method": "SHA-256 hash ranking from the seed and stable graph node IDs; no global randomness or all-pairs materialization",
+          "seed": "arteria-v1",
+          "requested_pair_count": 32,
+          "evaluated_pair_count": 9,
+          "eligible_graph_node_count": 7,
+          "excluded_discovery_pairs": 12,
+          "interpretation": "Sampled graph-node pairs are analytical probes, not observed journeys or population demand; no representativeness or resident totals are inferred."
+        },
+        "targeted_diagnostic_sample": {
+          "kind": "targeted_diagnostic_routes",
+          "method": "explicit caller-supplied graph node IDs",
+          "seed": null,
+          "requested_pair_count": null,
+          "evaluated_pair_count": 4,
+          "eligible_graph_node_count": 7,
+          "excluded_discovery_pairs": 0,
+          "interpretation": "Routes were selected near this candidate's endpoint components to expose local graph effects; they are candidate-specific, not representative, and are excluded from shared-sample ranking."
+        },
+        "observed": false
+      },
+      "screening": {
+        "status": "conditional_candidate_requires_field_review",
+        "physical_feasibility": "unknown",
+        "missing_evidence": [
+          "land ownership and access rights",
+          "elevation, slope, and accessibility conditions",
+          "field-verified pedestrian safety and construction constraints",
+          "water and other physical barrier geometry"
+        ],
+        "warnings": [
+          "No field survey, property ownership, legal approval, accessibility standard, crossing safety, or construction review was performed.",
+          "Missing mapped geometry is not evidence that a connection is physically feasible.",
+          "Building obstacle screening is unknown because mapped building geometry is unavailable or unusable."
+        ]
+      },
+      "construction_cost": {
+        "status": "unsupported",
+        "value": null,
+        "unit": null
+      },
+      "intervention_catalog_version": "arteria-sim-interventions-v1",
+      "evaluation_status": "candidate_evaluated_on_graph"
+    },
+    {
+      "candidate_id": "cand_1a0d20064effb9b92ccd",
+      "area_id": "iasi-central-local-demo",
+      "data_source": "synthetic offline fixture",
+      "source_area_verification": "synthetic_fixture",
+      "rank": 2,
+      "planning_category": null,
+      "planning_category_status": "unclassified",
+      "planning_category_reason": "SIM has no validated mapping from graph-link length or impact to Minimală, Moderată, or Transformatoare engineering classes.",
+      "summary": "Candidate-backed hypothetical pedestrian graph connection; field review is required.",
+      "rationale": {
+        "related_issue_ids": [
+          "issue_55702b1ee6efa6"
+        ],
+        "discovery_method": "disconnected_components",
+        "selection": [
+          "The endpoints are 223.4 m apart and belong to separate weakly connected walking components."
+        ],
+        "ranking": "Shared-sample-only lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID. Targeted diagnostic routes are excluded from ranking."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            27.578300000000002,
+            47.162
+          ],
+          [
+            27.578,
+            47.163999999999994
+          ]
+        ]
+      },
+      "intervention": {
+        "type": "add_pedestrian_connection",
+        "start": [
+          27.578300000000002,
+          47.162
+        ],
+        "end": [
+          27.578,
+          47.163999999999994
+        ]
+      },
+      "modeled_impact": {
+        "status": "calculated_graph_sample",
+        "impact_id": "impact_5907963bf06ff367bd04",
+        "aggregate": {
+          "evaluated_pair_count": 9,
+          "improved_count": 0,
+          "unchanged_count": 4,
+          "regressed_count": 0,
+          "newly_reachable_count": 1,
+          "newly_unreachable_count": 0,
+          "unreachable_in_both_count": 4,
+          "reachable_both_comparable_pair_count": 4,
+          "total_distance_savings_m": 0.0,
+          "average_distance_savings_m": 0.0,
+          "median_distance_savings_m": -0.0,
+          "total_estimated_time_savings_s": 0.0,
+          "average_estimated_time_savings_s": 0.0,
+          "reachability_change_count": 1,
+          "improvement_percent": null
+        },
+        "shared_sample": {
+          "kind": "deterministic_graph_node_pair_sample",
+          "method": "SHA-256 hash ranking from the seed and stable graph node IDs; no global randomness or all-pairs materialization",
+          "seed": "arteria-v1",
+          "requested_pair_count": 32,
+          "evaluated_pair_count": 9,
+          "eligible_graph_node_count": 7,
+          "excluded_discovery_pairs": 12,
+          "interpretation": "Sampled graph-node pairs are analytical probes, not observed journeys or population demand; no representativeness or resident totals are inferred."
+        },
+        "targeted_diagnostic_sample": {
+          "kind": "targeted_diagnostic_routes",
+          "method": "explicit caller-supplied graph node IDs",
+          "seed": null,
+          "requested_pair_count": null,
+          "evaluated_pair_count": 10,
+          "eligible_graph_node_count": 7,
+          "excluded_discovery_pairs": 0,
+          "interpretation": "Routes were selected near this candidate's endpoint components to expose local graph effects; they are candidate-specific, not representative, and are excluded from shared-sample ranking."
+        },
+        "observed": false
+      },
+      "screening": {
+        "status": "conditional_candidate_requires_field_review",
+        "physical_feasibility": "unknown",
+        "missing_evidence": [
+          "land ownership and access rights",
+          "elevation, slope, and accessibility conditions",
+          "field-verified pedestrian safety and construction constraints",
+          "water and other physical barrier geometry"
+        ],
+        "warnings": [
+          "No field survey, property ownership, legal approval, accessibility standard, crossing safety, or construction review was performed.",
+          "Missing mapped geometry is not evidence that a connection is physically feasible.",
+          "Building obstacle screening is unknown because mapped building geometry is unavailable or unusable."
+        ]
+      },
+      "construction_cost": {
+        "status": "unsupported",
+        "value": null,
+        "unit": null
+      },
+      "intervention_catalog_version": "arteria-sim-interventions-v1",
+      "evaluation_status": "candidate_evaluated_on_graph"
+    },
+    {
+      "candidate_id": "cand_608cb37f0b8cf9254982",
+      "area_id": "iasi-central-local-demo",
+      "data_source": "synthetic offline fixture",
+      "source_area_verification": "synthetic_fixture",
+      "rank": 3,
+      "planning_category": null,
+      "planning_category_status": "unclassified",
+      "planning_category_reason": "SIM has no validated mapping from graph-link length or impact to Minimală, Moderată, or Transformatoare engineering classes.",
+      "summary": "Candidate-backed hypothetical pedestrian graph connection; field review is required.",
+      "rationale": {
+        "related_issue_ids": [
+          "issue_55702b1ee6efa6"
+        ],
+        "discovery_method": "disconnected_components",
+        "selection": [
+          "The endpoints are 225.5 m apart and belong to separate weakly connected walking components."
+        ],
+        "ranking": "Shared-sample-only lexicographic order: newly reachable pairs descending, improved pairs descending, comparable distance savings descending, mapped obstacle intersections ascending, unknown obstacle layers ascending, link length ascending, then stable candidate ID. Targeted diagnostic routes are excluded from ranking."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            27.5775,
+            47.162000000000006
+          ],
+          [
+            27.578,
+            47.163999999999994
+          ]
+        ]
+      },
+      "intervention": {
+        "type": "add_pedestrian_connection",
+        "start": [
+          27.5775,
+          47.162000000000006
+        ],
+        "end": [
+          27.578,
+          47.163999999999994
+        ]
+      },
+      "modeled_impact": {
+        "status": "calculated_graph_sample",
+        "impact_id": "impact_2be83a3e64fd76720868",
+        "aggregate": {
+          "evaluated_pair_count": 9,
+          "improved_count": 0,
+          "unchanged_count": 4,
+          "regressed_count": 0,
+          "newly_reachable_count": 1,
+          "newly_unreachable_count": 0,
+          "unreachable_in_both_count": 4,
+          "reachable_both_comparable_pair_count": 4,
+          "total_distance_savings_m": 0.0,
+          "average_distance_savings_m": 0.0,
+          "median_distance_savings_m": -0.0,
+          "total_estimated_time_savings_s": 0.0,
+          "average_estimated_time_savings_s": 0.0,
+          "reachability_change_count": 1,
+          "improvement_percent": null
+        },
+        "shared_sample": {
+          "kind": "deterministic_graph_node_pair_sample",
+          "method": "SHA-256 hash ranking from the seed and stable graph node IDs; no global randomness or all-pairs materialization",
+          "seed": "arteria-v1",
+          "requested_pair_count": 32,
+          "evaluated_pair_count": 9,
+          "eligible_graph_node_count": 7,
+          "excluded_discovery_pairs": 12,
+          "interpretation": "Sampled graph-node pairs are analytical probes, not observed journeys or population demand; no representativeness or resident totals are inferred."
+        },
+        "targeted_diagnostic_sample": {
+          "kind": "targeted_diagnostic_routes",
+          "method": "explicit caller-supplied graph node IDs",
+          "seed": null,
+          "requested_pair_count": null,
+          "evaluated_pair_count": 10,
+          "eligible_graph_node_count": 7,
+          "excluded_discovery_pairs": 0,
+          "interpretation": "Routes were selected near this candidate's endpoint components to expose local graph effects; they are candidate-specific, not representative, and are excluded from shared-sample ranking."
+        },
+        "observed": false
+      },
+      "screening": {
+        "status": "conditional_candidate_requires_field_review",
+        "physical_feasibility": "unknown",
+        "missing_evidence": [
+          "land ownership and access rights",
+          "elevation, slope, and accessibility conditions",
+          "field-verified pedestrian safety and construction constraints",
+          "water and other physical barrier geometry"
+        ],
+        "warnings": [
+          "No field survey, property ownership, legal approval, accessibility standard, crossing safety, or construction review was performed.",
+          "Missing mapped geometry is not evidence that a connection is physically feasible.",
+          "Building obstacle screening is unknown because mapped building geometry is unavailable or unusable."
+        ]
+      },
+      "construction_cost": {
+        "status": "unsupported",
+        "value": null,
+        "unit": null
+      },
+      "intervention_catalog_version": "arteria-sim-interventions-v1",
+      "evaluation_status": "candidate_evaluated_on_graph"
+    }
+  ],
+  "validation": {
+    "schema_version": 1,
+    "status": "all_candidate_backed_evaluated",
+    "results": [
+      {
+        "candidate_id": "cand_b4882e4c286dfaccd063",
+        "intervention_type": "add_pedestrian_connection",
+        "findings": [],
+        "source_area_verification": "synthetic_fixture",
+        "schema_status": "schema_valid_concept",
+        "support_status": "supported_executable_intervention",
+        "evaluation_status": "evaluated_model_scenario",
+        "physical_feasibility": "unknown",
+        "status": "candidate_backed_evaluated"
+      },
+      {
+        "candidate_id": "cand_1a0d20064effb9b92ccd",
+        "intervention_type": "add_pedestrian_connection",
+        "findings": [],
+        "source_area_verification": "synthetic_fixture",
+        "schema_status": "schema_valid_concept",
+        "support_status": "supported_executable_intervention",
+        "evaluation_status": "evaluated_model_scenario",
+        "physical_feasibility": "unknown",
+        "status": "candidate_backed_evaluated"
+      },
+      {
+        "candidate_id": "cand_608cb37f0b8cf9254982",
+        "intervention_type": "add_pedestrian_connection",
+        "findings": [],
+        "source_area_verification": "synthetic_fixture",
+        "schema_status": "schema_valid_concept",
+        "support_status": "supported_executable_intervention",
+        "evaluation_status": "evaluated_model_scenario",
+        "physical_feasibility": "unknown",
+        "status": "candidate_backed_evaluated"
+      }
+    ],
+    "summary": {
+      "submitted_count": 3,
+      "accepted_count": 3,
+      "rejected_count": 0,
+      "duplicate_count": 0
+    }
+  },
+  "limitations": [
+    "A candidate option is a hypothetical graph edit, not a construction recommendation.",
+    "Candidate impacts are calculated from graph-node samples and are not observed journeys or traffic measurements.",
+    "Physical feasibility and construction cost remain unknown or unsupported."
+  ]
+}

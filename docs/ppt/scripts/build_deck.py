@@ -119,10 +119,10 @@ def main():
 
     base(s[4],5,'A / DEMO',copy[5][0],True)
     text(s[4],'Selectează reperul\n↓\nAlege o alternativă\n↓\nDeschide comparația',.65,2.25,4.05,2.85,23,PALE,True)
-    text(s[4],'DEMO: date predefinite\nși ajustări locale',.65,5.2,4.1,.95,22,AMBER,True)
-    text(s[4],'Fără analiză urbană sau\nrulare SUMO din interfață',.65,6.24,4.1,.65,16,PALE)
-    pic(s[4],'comparison-demo.png',5.05,2.05,7.62,4.65)
-    text(s[4],'Demo local: localhost:3000/app · Captură din aplicația existentă',5.05,6.81,7.62,.35,12,MUTED)
+    text(s[4],'DEMO: API conectat\ndate sintetice',.65,5.2,4.1,.95,22,AMBER,True)
+    text(s[4],'Semaforizare estimată\nFără SUMO din interfață',.65,6.24,4.1,.65,16,PALE)
+    pic(s[4],'connected-comparison.png',5.05,2.05,7.62,4.65)
+    text(s[4],'Demo local: localhost:3001/app · Captură din aplicația existentă',5.05,6.81,7.62,.35,12,MUTED)
 
     base(s[5],6,'B / CONSTRUCȚIE',copy[6][0],source='Cod repository, audit 2026 · Linii întrerupte: integrări de construit')
     node(s[5],'Frontend','Next.js / MapLibre\nFixtures locale',.65,2.28,3.65,2.05)
@@ -149,7 +149,7 @@ def main():
     text(s[7],copy[8][5],.65,6.45,12,.45,18,SECOND)
 
     base(s[9],10,'A / CE URMEAZĂ',copy[10][0],True)
-    for x,title,body in [(.65,'Date și','contract unic'),(4.83,'Un indicator','reproductibil'),(9.01,'Test cu','un specialist')]:
+    for x,title,body in [(.65,'Date','documentate'),(4.83,'Calibrare și','verificare'),(9.01,'Test cu','un specialist')]:
         text(s[9],title,x,2.22,3.65,.5,23,BLUE,True);text(s[9],body,x,2.83,3.65,.6,23,PALE)
     link(s[9],3.75,2.65,4.4,2.65);link(s[9],7.98,2.65,8.6,2.65)
     text(s[9],copy[10][2],.65,3.72,12,.85,22,PALE)
@@ -158,8 +158,8 @@ def main():
     text(s[9],copy[10][-1],.65,6.64,12,.5,22,AMBER)
 
     base(s[10],11,'ANEXA A / DOVEZI',copy[11][0],source=copy[11][-1])
-    text(s[10],'5 / 5',.65,2.28,4.8,1.3,72,INK,True)
-    text(s[10],'teste ale clientului API',.65,3.83,4.8,.65,25)
+    text(s[10],'9 / 9',.65,2.28,4.8,1.3,72,INK,True)
+    text(s[10],'teste frontend',.65,3.83,4.8,.65,25)
     text(s[10],'Typecheck\nweb · mobile · shared',6.2,2.35,6.45,1.2,26,INK,True)
     text(s[10],'Build web\n/ și /app',6.2,4,6.45,1.2,26,INK,True)
     text(s[10],copy[11][4],.65,5.8,12,.75,21,INK,True)
@@ -183,18 +183,18 @@ def main():
     (REPORTS/"motion-plan.json").write_text(json.dumps(motion_plan,ensure_ascii=False,indent=2),encoding="utf-8")
 
     exact_sources={
-        1:'README.md; frontend/web/src/features/workspace/Workspace.tsx. Captură actuală, geometrii fixtures.',
+        1:'README.md; frontend/web/src/features/workspace/Workspace.tsx. Captură istorică a hărții demonstrative.',
         2:'README.md; docs/ARCHITECTURE.md. Nu există interviuri sau cost numeric verificat.',
         3:'https://www.qgis.org/project/overview/\nhttps://sumo.dlr.de/docs/\nhttps://www.primaria-iasi.ro/dm_iasi/portal.nsf/pagini/consultare%2Bpublica%2Bplanul%2Bde%2Bmobilitate%2Burbana%2Bdurabila%2Bpentru%2Bpolul%2Bde%2Bcrestere%2Biasi%2Bpmud%2Biasi-0002E4D6?Open%3FOpen=\nPMUD este context, nu dovadă de adopție.',
-        4:'frontend/web/src/features/workspace/Workspace.tsx; frontend/shared/core/fixtures.ts. Scenariul schimbă starea React, nu rețeaua pe backend.',
-        5:'frontend/web/src/features/comparison/ComparisonPanel.tsx. Valorile sunt fixtures și euristici locale; etichetele din UI nu constituie validare. Captură ca Plan B, fără video existent.',
-        6:'backend/main.py; backend/server.py; sim/smoke_test.py; sim/sumo_support.py; frontend/shared/core/api.ts. Clientul /analyze există în non-demo, fluxul urban complet nu este integrat.',
+        4:'backend/main.py; backend/spatial_routes.py; frontend/web/src/features/workspace/ConnectedWorkspace.tsx. API conectat și studii spațiale; nu validare urbană.',
+        5:'backend/simulation_adapter.py; frontend/web/src/features/workspace/ConnectedWorkspace.tsx; docs/ppt/assets/connected-comparison.png. Verificare UI pe API local: verde NS 70 s. Estimări sintetice, fără SUMO și fără măsurători reale.',
+        6:'backend/main.py; backend/storage.py; backend/spatial_routes.py; backend/spatial_adapter.py; sim/. FastAPI și SQLite implementate, graf pietonal conectat. SUMO local opțional; LLM cloud absent.',
         7:'docs/ppt/archive/pre-audit/Template-Pitch-Hackathon.pre-audit.pptx. Preț nevalidat; fără cost de serving măsurat, marjă, prag juridic sau clienți confirmați.',
         8:'18000=12×1500; 180000=10×18000 numai dacă toate organizațiile ar cumpăra. Nu există o listă verificată de zece organizații. Nu este TAM/SAM sau ARR realizat.',
         9:'Componență și responsabilități confirmate explicit de utilizator în cerința V2, 18 octombrie 2026: Iustin Fagateanu — Frontend and web experience; Alex Pintilie — Bootstrap and simulation foundation; Fagateanu Eusebiu — Backend. Codul și Git nu stabilesc autorie individuală pe handlere. Rolurile de scenă și disponibilitatea nu sunt confirmate.',
         10:'docs/ROADMAP.md și docs/ppt/research/PROJECT_RESEARCH_FULL.md §19. Plan propus, fără acord de pilot. Oprirea pitch-ului aici; anexele se deschid doar la întrebare.',
-        11:'frontend/shared/tests/api.test.ts: 5 passed, fetch mock. npm run typecheck și npm run build au trecut. Testele Python/SUMO nereexecutate: runtime fără dependențele proiectului. Niciun procent code coverage măsurat.',
-        12:'docs/ARCHITECTURE.md; backend/server.py: rule-catalog-v1, tokeni zero, validation=True constant. Flux viitor, fără provider LLM implementat. Autoría AI a codului nu este cuantificabilă.',
+        11:'npm test: 9/9; npm run typecheck și npm run build: trecute după merge 00cf80c. Fetch mock și teste geografice; nu code coverage sau efect urban. Python: 138 passed, 1 warning în runtime QA izolat; fără binare SUMO.',
+        12:'sim/proposal_catalog.py; sim/proposal_validation.py; backend/spatial_routes.py. Propuneri deterministe și validarea dovezilor implementate. Provider LLM viitor; fără autorie AI cuantificată.',
         13:'docs/ARCHITECTURE.md; docs/API_CONTRACT.md; sim/sumo_support.py. https://sumo.dlr.de/docs/Simulation/Calibrator.html. Literalul observed nu dovedește achiziția datelor. Fără efect de trafic validat.'}
     manifest=[]
     for i,slide in enumerate(s,1):
@@ -207,6 +207,10 @@ def main():
     output=REPORTS/'.qa/build/static.pptx'
     output.parent.mkdir(parents=True,exist_ok=True)
     prs.save(output)
+    # Content authority: independent source audit, after all V2 design refinements.
+    # Text/notes only; semantic animation group names and geometry stay unchanged.
+    from audited_content import apply
+    apply(output)
     assert hashlib.sha256(backup.read_bytes()).hexdigest()==before
     (REPORTS/'deck-manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
     print(f'Saved static staging deck: {output}; 13 slides; backup unchanged: {before}')

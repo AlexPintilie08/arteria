@@ -1,0 +1,8 @@
+Platform: Windows AMD64
+SUMO executable: not found
+netconvert: not found
+SUMO_HOME: not set (discovery uses PATH)
+Python traci: 1.28.0
+Python sumolib: 1.28.0
+Optional SUMO smoke: skipped; no SUMO executable was found.
+Fallback: use the official SUMO Windows installer or portable ZIP.

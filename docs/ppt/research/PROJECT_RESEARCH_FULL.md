@@ -1,248 +1,210 @@
-# ARTERIA — cercetare completă pentru pitch
+# ARTERIA — cercetare completă, revizie V2 după sincronizarea Git
 
-Audit al checkout-ului local, 17–18 octombrie 2026. Produs: **ARTERIA by ARION**. Limbă de prezentare: română, păstrată din ambele prezentări și din ghidul de pitch. Acest document precedă reconstrucția PPTX și este sursa de adevăr pentru conținut. Nu reprezintă o certificare inginerească sau o validare de piață.
+> Material istoric verificat din nou la 18.10.2026. Inventarul independent curent este `../reports/PROJECT_REALITY_AUDIT.md`, iar corecțiile sunt în `PPT_FACT_CHECK.md` și `PPT_FINAL_CONTENT_AUDIT.md`. Codul și rezultatele reproductibile au prioritate. Cerințele oficiale au fost găsite ulterior: vezi `HACKATHON_REQUIREMENTS_VERIFICATION.md` (3 minute, maximum 10 slide-uri pentru depunere, criterii publicate și conflict de orar nerezolvat). Acest document nu mai este declarat sursă de adevăr în notele prezentării.
+
+Actualizat la 18 octombrie 2026, Europe/Bucharest. Sursa curentă: checkout-ul rezultat după integrarea `origin/main` (`60fe2ee`) în `master`, commit de integrare `00cf80c`. Confirmarea echipei provine direct din cerința V2 a utilizatorului. Auditul V1 și cercetarea V2 înainte de sincronizare sunt păstrate în `docs/ppt/archive/v1/` și `docs/ppt/archive/v2-before-sync/`; afirmațiile lor despre lipsa endpoint-urilor și motorul SIM doar smoke sunt **istorice și înlocuite de această revizie**.
 
 ## 1. Rezumat executiv
 
-ARTERIA propune un laborator de planificare urbană pentru echipele de mobilitate: alegerea unei zone din Iași, examinarea problemelor, compararea intervențiilor și, în viitor, evaluarea lor pe date geografice și simulări reproductibile. Ideea centrală este să explici o decizie înainte de implementarea fizică. Beneficiarii indirecți pot fi locuitorii și utilizatorii transportului public; utilizatorul profesional vizat este specialistul în mobilitate/urbanism. Nu există interviuri sau acorduri de pilot verificate.
+ARTERIA by ARION propune un laborator de planificare urbană pentru specialiști în mobilitate. Repository-ul actual are mai mult decât o interfață: FastAPI oferă un flux coerent de analiză–propunere–evaluare pentru semaforizare **sintetică**, cu validare Pydantic și persistență SQLite. Un flux separat pentru grafuri pietonale conectează backendul la SIM v3 prin subprocess, calculează alternative pe același baseline, verifică propunerile și livrează dovezi. OSM, geometriile și eșantioanele de rute au limitări explicite. Motorul SIM conține pregătire și execuție SUMO condiționată de binare, dar API-ul și UI-ul nu lansează evaluări SUMO; nu există rezultate de trafic calibrat validate.
 
-Checkout-ul conține un **prototip de interfață web funcțional**, o bază Android, un API FastAPI minimal, un server demonstrativ separat și utilitare de verificare geospațială/SUMO. Fluxul web explorează repere, selectează probleme predefinite, schimbă alternative și ajustează valori prin aritmetică locală. Nu există un flux urban real complet de la OSM → analiză → LLM → validare geometrică → scenariu → evaluare SUMO.
+Frontendul are mod conectat implicit și păstrează interfața de hartă demonstrativă numai prin configurare explicită. Android rămâne scaffold. Cloud LLM nu este integrat; propunerile actuale sunt deterministe. Aceste distincții trebuie să rămână vizibile în pitch: un calcul real pe date sintetice nu este o observație a traficului din Iași, iar o comparație de graf nu dovedește fezabilitatea unei construcții.
 
-Constatarea decisivă: mai multe fișiere STATUS și prezentarea veche confundă valori scrise în cod cu observații și rezultate calculate pe o rețea reală. Auditul nu a găsit fișiere de măsurători, grafuri Iași pregătite, rapoarte de calibrare sau artefacte de rulare care să susțină acele etichete. Prezentarea finală trebuie să arate produsul și planul, cu statutul demonstrativ vizibil, fără procente de reducere a traficului, venituri realizate sau parteneriate declarate.
+## 2. Metodă și evidență
 
-## 2. Metodă, acoperire și limite
+După cererea de sincronizare s-au executat `git fetch --all --prune` și integrarea `origin/main`, fără conflicte. Lucrul PPT existent a fost păstrat. Au fost reverificate sursele actualizate: `backend/main.py`, modelele, adaptorul sintetic, stocarea, routerul și workerul spațial; fișierele SIM de analiză, candidați, impact, propuneri și SUMO; workspace-ul conectat, API-ul shared, panoul spațial și geografia frontend; testele și documentele noi. A fost citit `sim/AGENTS.md`. Nu s-au modificat algoritmii aplicației.
 
-S-au inspectat README-ul principal; toate cele 24 de fișiere Markdown de produs/configurație enumerate în repository înaintea acestei livrări; `.github/workflows/ci.yml`; skill-ul local `.agents/skills/pptx/SKILL.md`; configurațiile Python/npm/Expo/Next; toate modulele Python din backend, sim și tests; scripturile de bootstrap/check/dev; contractele și fixtures shared; componentele web de hartă, analiză, scenarii, comparație și marketing; ecranele mobile; prezentările și generatorul existent. Fișierele mari de lock au fost folosite ca metadate de dependențe, nu ca implementare. Au fost excluse `node_modules`, `.next`, cache-uri și pachete generate din auditul surselor.
+Statuturi: **implementat** = cod prezent și inspectat; **verificat la audit** = comandă/probă executată aici; **raportat anterior** = document de predare fără echivalare cu o nouă rulare; **planificat** = lipsă din implementare; **ipoteză** = afirmație de produs/business fără validare utilizatori. Rezultatele comenzilor se păstrează în `docs/ppt/reports/`.
 
-Citirea a urmărit dependențele reale și apelurile, nu doar formulările din documente. S-au inspectat toate cele 16 slide-uri ale șablonului prin export PowerPoint și toate cele 16 previzualizări existente ale versiunii populate; s-a extras textul slide cu slide în fișierele `*.inspection.json`. Nu s-au citit valori din fișiere private `.env` și nu s-au inclus secrete în documente.
+Nu s-au publicat secrete sau valori din `.env`. Dependențele necesare verificărilor au fost instalate în directorul ignorat `docs/ppt/reports/.qa/runtime`, fără schimbarea manifestelor sau instalării globale. Acest runtime folosește intervalele din pyproject și nu este o sincronizare exactă `uv.lock`; versiunile și rezultatul testelor trebuie declarate ca atare.
 
-Niveluri de certitudine: **ridicat** = cod direct inspectat sau comandă executată; **documentat** = afirmație de proiect fără jurnal independent curent; **ipoteză** = propunere de produs/business; **neconfirmat** = lipsesc sursa și/sau validarea. „Implementat” descrie codul disponibil, fără a implica utilizare în producție.
+## 3. Contextul hackathonului și șablonul
 
-## 3. Contextul hackathonului și regulile de pitch
+Backup-ul original rămâne `docs/ppt/archive/original-backup/Template-Pitch-Hackathon.backup.pptx`, SHA-256 `56133b4d2fe6946ff4c5a246e4d0f8be0baa0ac2f6638a6e25f969994695d170`. Are 16 pagini, incluzând ghidaj. Cere zece secțiuni în ordinea: titlu, omul și durerea, alternative/dovezi, soluție, demo, construcție, business, piață, echipa, cererea; apoi anexe. Ghidajul trebuie eliminat. Sunt descrise variante de trei și cinci minute; aceasta nu dovedește durata oficială a evenimentului. Pentru trei minute piața poate fi sărită.
 
-Nu există în checkout un regulament oficial separat, o grilă de punctaj sau o confirmare a duratei alocate echipei. Numele evenimentului provine din repository și din prezentarea existentă; nu a fost validat independent ca denumire oficială.
+Deck-ul rămâne 13 slide-uri (10+3), 13⅓×7½ inch, română, cu responsabilitățile echipei reproduse exact în engleză conform instrucțiunii V2. Nu există un regulament oficial separat sau grilă numerică de jurizare în checkout. Nu s-au identificat logo-uri instituționale obligatorii. Numele autorului template-ului, Andrei Margelatu, este păstrat în note ca atribuire.
 
-Backup-ul `docs/ppt/Template-Pitch-Hackathon.backup.pptx` este un ghid în română realizat de Andrei Margelatu. Slide-ul 2 cere copierea slide-urilor de pitch în aceeași ordine, **zece slide-uri plus anexe**, înlocuirea parantezelor și eliminarea ghidajului. Slide-ul 3 spune că ordinea nu se negociază, doar timpul se ajustează. Ordinea: titlu; omul și durerea; dovezi și alternative; soluție; demo; construcție; cine plătește; piață și primii clienți; echipa; ce urmează și cererea. Pentru varianta de trei minute, piața poate fi sărită/mutată în anexe; pentru cinci minute se păstrează. Duratele sunt prescripții ale ghidului, nu dovada programului real al evenimentului.
+## 4. Problema, analiza nevoii și publicul
 
-Se recomandă păstrarea tuturor celor zece secțiuni într-un pitch de cinci minute și trei anexe după încheiere. Nu se păstrează paginile de instruire ca slide-uri pentru juriu. Nu s-au identificat logo-uri obligatorii de organizatori, reguli de master sau un număr total impus de 16: cele 16 pagini includ ghidaj. Pictogramele mici din template sunt decor/instrucțiuni, nu identitate instituțională. Se păstrează dimensiunile de 13⅓ × 7½ inch, ordinea și structura P·R·O·B·A. Lipsesc dovada obligatorie a trei urme independente de nevoie, interviul real, prețul validat și lista de zece clienți. Aceste lipsuri se declară; nu se completează fictiv.
+Utilizator vizat: specialistul în mobilitate/urbanism care trebuie să compare intervenții pe aceeași zonă și să explice compromisuri, surse și limite. Cumpărător posibil: administrație locală sau consultanță. Locuitorii, pietonii, bicicliștii și utilizatorii transportului public sunt beneficiari potențiali. Primăria și CTP Iași sunt posibili interlocutori, nu parteneri sau clienți confirmați.
 
-## 4. Problema și dovezile disponibile
+Nevoia de a pregăti o comparație explicabilă este o ipoteză de utilizare bine definită în README și arhitectură, dar nu există interviuri, măsurători ale timpului economisit ori disponibilitate de plată confirmate. Nu se reproduce citatul anonim al unui inginer din vechiul deck. Nu se folosesc ca fapte cifrele istorice 42 min/navetist, reducere 34%, pierderi de milioane sau marjă 95%.
 
-### Problema propusă
+Context extern primar, consultat în auditul inițial și păstrat numai pentru afirmații stabile:
 
-Un specialist care discută o intervenție urbană trebuie să compare efectele în aceeași zonă și să explice sursa datelor, metoda și limitele. Documentele proiectului urmăresc accesibilitatea, continuitatea velo, transportul public, parcarea și spațiile verzi, nu numai semaforizarea. Reducerea produsului la un optimizator de semafoare, cum face deck-ul populat, pierde scopul README-ului și nu este susținută de implementare.
+- [Primăria Iași — consultare PMUD](https://www.primaria-iasi.ro/dm_iasi/portal.nsf/pagini/consultare%2Bpublica%2Bplanul%2Bde%2Bmobilitate%2Burbana%2Bdurabila%2Bpentru%2Bpolul%2Bde%2Bcrestere%2Biasi%2Bpmud%2Biasi-0002E4D6?Open%3FOpen=): context de planificare, nu dovadă de cerere pentru ARTERIA.
+- [QGIS overview](https://www.qgis.org/project/overview/): alternativă de lucru GIS; fără benchmark de inferioritate.
+- [SUMO Documentation](https://sumo.dlr.de/docs/): alternativă și componentă tehnică pentru simulare microscopică.
+- [SUMO Calibrator](https://sumo.dlr.de/docs/Simulation/Calibrator.html): calibrarea fluxurilor/vitezelor poate folosi măsurători. Nu validează ARTERIA.
 
-### De ce contează
+Diferențiator propus: parcursul comun zonă→alternative→comparație cu dovezi și incertitudini. Nu se pretinde un algoritm superior QGIS/SUMO sau un cost de studiu competitiv măsurat.
 
-Deciziile de infrastructură afectează grupuri cu nevoi diferite. O comparație inspectabilă poate ajuta discuția dintre administrație, consultanți și operatori, dar nu există în repository o măsurare a timpului economisit sau a calității deciziei. Consultarea PMUD publicată de Primăria Iași confirmă existența unui proces local de planificare a mobilității; nu dovedește că specialiștii ar cumpăra ARTERIA.
+## 5. Soluția și parcursurile utilizatorului
 
-Surse primare consultate online la audit:
+### Flux conectat de semaforizare sintetică
 
-- [Primăria Iași — consultare publică PMUD](https://www.primaria-iasi.ro/dm_iasi/portal.nsf/pagini/consultare%2Bpublica%2Bplanul%2Bde%2Bmobilitate%2Burbana%2Bdurabila%2Bpentru%2Bpolul%2Bde%2Bcrestere%2Biasi%2Bpmud%2Biasi-0002E4D6?Open%3FOpen=): context instituțional, nu statistici de congestie și nici dovadă de adopție.
-- [QGIS — overview](https://www.qgis.org/project/overview/): alternativă GIS pentru vizualizarea și analiza datelor geografice. Nu s-a efectuat un benchmark comparativ.
-- [Eclipse SUMO — documentație](https://sumo.dlr.de/docs/): simulator de trafic, utilizabil și independent de ARTERIA.
-- [SUMO — Calibrator](https://sumo.dlr.de/docs/Simulation/Calibrator.html): explică adaptarea fluxurilor și vitezelor la măsurători. Susține necesitatea unor intrări/calibrări explicite, nu performanța produsului nostru.
+`frontend/web/src/lib/api.ts` activează preview-ul numai dacă `NEXT_PUBLIC_DEMO_MODE === true`; altfel `ConnectedWorkspace.tsx` apelează API-ul. Utilizatorul alege un context de zonă, cere analiza, selectează problema, solicită trei ajustări deterministe ale verdelui sau o valoare proprie, apoi evaluează exact alternativa emisă de server. ID-urile și baseline-ul sunt returnate de backend. Comparația poate arăta îmbunătățire pe o direcție și înrăutățire pe cealaltă. Schimbarea selecției anulează cererea și invalidează rezultatele dependente.
 
-Nu s-au găsit surse verificabile pentru 42 min/navetist, 12 milioane euro pierderi, emisii de 3,2 ori mai mari, 85→56 secunde, reducere de 34%, economie de 32.000 euro, costuri generale SCADA sau studii de 18 luni. Nu se reproduc ca fapte. Citatul unui presupus inginer din deck nu are interviu, dată, consimțământ sau sursă; este eliminat.
+Aceste calcule sunt implementate, dar intrările sunt sintetice; reperele și limitele din acest flux nu devin măsurători locale sau analiză spațială. Termenul transformative desemnează ajustarea integrală a verdelui, nu un pasaj ori reamenajare de infrastructură.
 
-## 5. Public, actori și alternative
+### Flux spațial pietonal
 
-Utilizator primar vizat: inginer/analist de mobilitate sau urbanist care pregătește o comparație. Cumpărător posibil: administrație locală sau birou de consultanță. Operatorul de transport poate furniza cerințe/date. Locuitorii, pietonii și bicicliștii sunt beneficiari potențiali, nu utilizatori validați. Primăria Iași și CTP sunt ținte de conversație, fără acord comercial sau tehnic demonstrat.
+`SpatialPanel.tsx` creează un studiu fixture sau OSM prin `/api/v1/spatial/studies`, examinează candidați și cere comparația unui candidat emis de server pe același baseline. Backendul execută SIM v3 din checkout prin worker cu timeout, verifică schema răspunsului și păstrează rezultatul. Compararea ulterioară folosește rezultatul calculat la crearea studiului, nu pretinde o nouă simulare. Candidatul trebuie să aibă validare `candidate_backed_evaluated`.
 
-Alternative reale: QGIS pentru lucru GIS, SUMO pentru modelare microscopică, procese de studiu și documentare PMUD pentru evaluări instituționale. Nu se afirmă că QGIS/SUMO nu pot compara scenarii sau că toate studiile sunt lente. Diferențierea propusă este integrarea unui parcurs de decizie accesibil, cu surse și incertitudini, nu inventarea unor algoritmi superiori. Fluxurile actuale ale utilizatorilor, costul integrării manuale și disponibilitatea de plată trebuie cercetate prin interviuri.
+### Hartă și Android
 
-## 6. Soluția și parcursul real al utilizatorului
+Workspace-ul original cu MapLibre, probleme și scenarii conceptuale rămâne preview explicit; nu trebuie confundat cu fluxul conectat. Catalogul geografic OSM are 24 Polygon/MultiPolygon și 7 puncte, separat de cele cinci bookmark-uri demo. Android are navigație și ecrane de bază, hartă placeholder și nu apelează API-ul conectat.
 
-Viziune: utilizatorul alege o zonă, vede dovezi, cere alternative constrânse, aplică intervenția și compară indicatori. Propunerile AI ar trebui tratate ca ipoteze până la validare și evaluare.
+## 6. Inventar de funcționalități și stare
 
-Parcursul web existent (`frontend/web/src/features/workspace/Workspace.tsx`):
-
-1. `/` prezintă produsul și un model conceptual de intersecție; `/app` deschide spațiul de lucru.
-2. Utilizatorul alege un reper din Copou, Centru, Podu Roș, Tătărași, Alexandru cel Bun. Acestea nu sunt limite administrative verificate.
-3. Checkbox-urile selectează straturi pentru cererea viitoare; nu activează seturi analitice corespunzătoare pe hartă.
-4. În mod implicit `demoMode` este activ dacă `NEXT_PUBLIC_DEMO_MODE` nu este exact `false`. Analiza demonstrativă returnează indicatori necunoscuți, iar problemele sunt apoi selectate din fixtures locale.
-5. Selectarea problemei permite inspectarea a trei alternative predefinite. Sliderele modifică parametrii locali.
-6. Aplicarea scenariului schimbă starea React și deschide comparația. Nu creează o rețea urbană modificată pe server.
-7. Comparația folosește tabelul static al problemei și ajustări aritmetice locale. Copierea raportului și exportul JSON sunt funcții browser; nu există PDF/GeoJSON generat pe backend.
-
-Browserul a fost deschis pe build-ul local, s-au selectat Podu Roș și previzualizarea, apoi editorul de scenarii. Etichetele observate includ „Previzualizare de interfață” și „SUMO: nicio rulare”, dar și „Date Observate”, „Catalog validat” și afirmații despre măsurători. Aceste ultime formulări depășesc dovezile din cod. Capturile rămân autentice; deck-ul adaugă explicit că datele sunt demonstrative.
-
-## 7. Inventar complet de funcționalități
-
-| Funcționalitate | Stare reală | Dovezi și limite |
+| Funcție | Stare actuală | Sursă / limită |
 |---|---|---|
-| Site de prezentare | Implementat | `frontend/web/src/app/page.tsx`; model conceptual Three.js, tabele și grafice ilustrative |
-| Hartă web | Implementat ca vizualizare | `features/map/MapViewport.tsx`: raster OSM, pitch, navigare, contururi/coridoare/pini din fixtures |
-| Cinci repere Iași | Implementat | `frontend/shared/core/fixtures.ts`; orientative, nu cadastru |
-| Selectarea straturilor | UI + cerere | `Workspace.tsx`; nu analiză independentă pentru fiecare strat |
-| Indicatori cu statut/surse | Model de date + UI parțial | `contracts.ts`, `EvidenceBadge.tsx`, `AnalysisPanel.tsx`; sursele scrise în fixtures nu sunt dovezi de achiziție |
-| Probleme și trei niveluri | Catalog demonstrativ | `fixtures.ts`, `ScenarioPanel.tsx`; fără detecție reală sau validare geometrică |
-| Reglaje și comparație | Implementat demonstrativ | `ComparisonPanel.tsx`; formule euristice pe valori fixe |
-| Export raport | Clipboard + JSON local | `handleCopyReport`, `handleDownloadJson`; nu PDF/GeoJSON persistent |
-| Client API | Implementat, tipizat | timeout, anulare, erori; fără validare runtime JSON |
-| API FastAPI | `/health` | `backend/main.py`; POST-urile lipsesc intenționat în acest app |
-| Server HTTP alternativ | 3 POST demonstrative + health | `backend/server.py`; un singur dataset, fără calcul OSM/LLM |
-| AI generativ | Planificat | arhitectură și contracte; zero apeluri provider în implementarea inspectată |
-| Reguli Pydantic/geometrie | Planificate | importul/dependența nu constituie validare a intervențiilor |
-| NetworkX | Smoke test sintetic | graf a-b-c, 200 m; fără date Iași |
-| SUMO/TraCI | Utilitar smoke real condiționat | `sim/sumo_support.py`; o rețea temporară cu un vehicul și un pas; fără legătură UI |
-| Android | Scaffold | Expo/RN, navigație/ecrane; hartă placeholder, fără propuneri/evaluări reale |
-| Auth, salvare, partajare | Contracte propuse | `api-specs/auth-endpoints.md`, `scenario-persistence-endpoints.md`; fără implementare |
-| SSE și replay SUMO | Contract propus | `api-specs/simulation-engine-contract.md`; fără job runner/artefacte replay |
-| Accesibilitate | Mecanisme implementate | etichete, focus, slider ARIA, reduced motion; fără audit complet WCAG independent |
+| Marketing și intersecție conceptuală 3D | Implementat | `frontend/web/src/app/page.tsx`, marketing Three.js; nu model cadastral |
+| MapLibre și catalog geografic | Implementat | `MapViewport.tsx`, `NeighborhoodExplorer.tsx`, `sim-geography.ts`; limite OSM parțiale |
+| Flux HTTP analyze/propose/evaluate | Implementat, conectat | `backend/main.py`, `ConnectedWorkspace.tsx`; model sintetic |
+| Pydantic și erori uniforme | Implementat | `backend/models.py`, `engine_contract.py`; nu certificare fizică |
+| Persistență rezultate | Implementat | `backend/storage.py`: SQLite JSON, namespace, ID imutabil, capacitate |
+| Catalog demo și recuperare rezultate | Implementat | areas, analyses, proposals, evaluations GET |
+| Studii pietonale / candidați / evaluare | Implementat | `spatial_routes.py`, `spatial_worker.py`, SIM v3 |
+| Analiză OSM și cache pe mod | Implementat | `sim/geo.py`, `analysis.py`; rețea externă și acoperire limitate |
+| Modificare ipotetică graf și impact | Implementat | `scenario.py`, `impact.py`; eșantioane de noduri, nu populație |
+| Catalog/evidence/validare propuneri | Implementat determinist | `proposal_catalog.py`, `proposal_context.py`, `proposal_validation.py`, `proposals.py` |
+| Pregătire și runner local SUMO | Implementat condiționat | `sim/sumo_engine.py`; necesită netconvert/sumo, nu API/UI SUMO integrat |
+| LLM cloud | Planificat | Niciun provider apelat de aplicație |
+| Auth/autorizare, job/SSE SUMO | Planificate | Nu există rute complete pentru acestea |
+| Mobile conectat | Planificat | Expo scaffold, fără apeluri API curente |
+| Export JSON/GeoJSON | Utilitare SIM și preview local | Nu se declară export PDF municipal sau colaborare completă |
 
-## 8. Arhitectura sistemului
+## 7. Arhitectura reală
 
-Există trei componente principale, conform `docs/ARCHITECTURE.md`: frontend, backend și sim. Web/mobile/shared sunt subcomponente frontend, nu servicii suplimentare. Arhitectura intenționată: frontend → backend → sim, iar backend → provider LLM. Frontendul nu trebuie să calculeze rezultate autoritative și nu trebuie să dețină chei LLM.
+Cele trei componente rămân frontend, backend, sim. FastAPI este serverul autoritativ unic; `backend/server.py` este acum launcher compatibil Uvicorn, nu server fixture independent. Frontendul conectat apelează API-ul; backendul apelează modelul sintetic direct și SIM spațial într-un subprocess. SQLite păstrează analize, propuneri, evaluări și studii. Providerul LLM rămâne o dependență viitoare, deci legătura spre AI este întreruptă în diagramă.
 
-Arhitectura actuală are o ruptură explicită: UI-ul web demonstrativ consumă fixtures local; clientul poate apela `/analyze` dacă demo e dezactivat; `/propose` și `/evaluate` există în client, dar nu sunt apelate de componentele scenarii/comparație. FastAPI și serverul stdlib sunt două entry point-uri incompatibile, nu două straturi ale aceluiași API. Backendul nu importă sim pentru analiză/evaluare. Diagrama pitch-ului trebuie să deseneze relațiile viitoare cu linie întreruptă și să numească starea actuală.
+Legăturile frontend→backend și backend→SIM spațial sunt acum implementate și trebuie arătate ca atare, fără a sugera că SUMO sau cloud AI sunt integrate. Diagrama separă graful pietonal de demo-ul de semaforizare. Documentele de predare care încă descriu snapshot extern fixat la 752c92d sunt parțial depășite: `SpatialAdapter.configuration()` folosește implicit repository-ul curent și hash-ul HEAD, cu override explicit `ARTERIA_SIM_ROOT`/REVISION. Codul curent are prioritate față de descrieri istorice.
 
-## 9. Backend — detalii de implementare
+## 8. Backend detaliat
 
-`backend/main.py` creează FastAPI v0.1.0 cu `GET /health`. CORS permite GET/OPTIONS și originile din settings; implicit acestea sunt pe 5173, în timp ce Next rulează pe 3000. Nu există scheme Pydantic de analiză/intervenții, rutare auth, DB, cache, LLM sau jobs în acest fișier.
+`backend/main.py` v0.3.0 are GET /health, POST /analyze, /propose, /evaluate, recuperare /analyses/{id}, /proposals/{id}, /evaluations/{id}, GET /api/v1/areas și include routerul spațial. Validarea Pydantic, erorile 400/404/409/422/502/503/504, request ID și CORS GET/POST/OPTIONS pentru dezvoltare sunt implementate.
 
-`backend/server.py` este un HTTPServer stdlib sincron pe portul 8000, bind `0.0.0.0`, CORS `*`. `DATASETS` conține numai cheia `podu-ros`. `_handle_analyze` elimină prefixul `preview-`, dar orice zonă necunoscută primește dataset-ul Podu Roș, păstrând zona cerută în răspuns. Nu validează limite, CRS, geometrie, mărime sau proveniență. `_handle_propose` citește `problem_id`, deși clientul definește `issue_id`; returnează aceleași alternative, metadate `rule-catalog-v1`, zero tokeni și `validation.passed = True` constant. `latency_ms: 15` este literal, nu benchmark. `_handle_evaluate` citește `alternative`, deși contractul clientului folosește `alternative_level`; valorile sunt extrase din tabel, iar delta se calculează prin scădere. O alternativă necunoscută selectează implicit coloana transformatoare. Nu există implementare Webster/HCM în backend.
+Analiza verifică bookmark-ul, unele constrângeri ale ariei, intrările și indisponibilitatea datelor istorice; baseline-ul și ID-urile sunt derivate determinist din cerere/versiune. /propose verifică analiza/problema și calculează ajustări ale duratei verzi spre repartizare proporțională cererii. /evaluate cere baseline, analiză, propunere și intervenție exact compatibile; compară indicatorii pe aceleași intrări, exceptând parametrul schimbat. Cererile SUMO în acest flux returnează explicit 503, fără fallback ascuns.
 
-Cinci probe directe pe handlere au confirmat dataset identic Copou/Podu Roș și faptul că `alternative_level: minimal` selectează `moderate`. Rezultatele brute sunt în `docs/ppt/reports/backend-audit-probes.json`. Acestea sunt **probe la nivel de handler**, nu teste HTTP: socket-ul localhost a fost restricționat în sandbox. Nu se extrapolează la robustețe sau performanță.
+`SimulationAdapter.indicators()` implementează un model ilustrativ: întârziere uniformă R²/(2C), plus 60 secunde înmulțite cu excesul raportului cerere/capacitate; debit de saturație sintetic 1800 veh/oră. Rezultatul nu este model calibrat de trafic din Iași și nu este SUMO. Formula este cod real, nu tabelul literal din V1.
 
-## 10. Frontend — detalii și decizii
+`Store` creează tabele SQLite, folosește tranzacții BEGIN IMMEDIATE, returnează obiectul existent la retry și aplică limite per namespace. Erorile filesystem/SQLite sunt capturate. Nu este un sistem complet de proiecte, conturi, partajare sau autorizare. Rutele de recuperare există, nu o interfață generală de ștergere publică.
 
-`frontend/web/package.json` declară Next 16.4.2, React 19.3.0, MapLibre 6.14.0 și Three 0.186.1. TypeScript este ~5.9.3 în workspace. Nu există Tailwind/shadcn în dependențele web inspectate. `frontend/mobile/package.json` declară Expo ~58.0.14 și React Native 0.88.0. Python cerut este >=3.12,<3.13; OSMnx >=2,<3; SUMO/TraCI/sumolib sunt fixate la 1.28.0. Sunt valori declarate ale checkout-ului, nu afirmații despre ultimele versiuni publice.
+## 9. Contracte și flux spațial
 
-App Router separă marketingul de produs. Harta este încărcată cu `next/dynamic`, SSR dezactivat. MapLibre primește un worker local, ResizeObserver și cleanup; folosește acum tile-uri raster `tile.openstreetmap.org`, nu stilul OpenFreeMap descris în unele README-uri. Contururile/coridoarele sunt coordonate scrise manual în fixtures. Nu se vede extragere de clădiri 3D sau analiză GIS în acel modul. Three.js desenează o intersecție conceptuală pe pagina de prezentare; aceasta nu este un digital twin cadastral/calibrat.
+`spatial_routes.py` prefix /api/v1/spatial expune POST /studies, GET /studies/{id}, GET /studies/{id}/candidates și POST /studies/{id}/evaluate. Se verifică apartenența baseline-ului, identitatea candidatului, echivalența exactă a intervenției și validarea SIM. Studiul înregistrează engine_revision, sursa fixture/OSM, analiza, alternativele, opțiunile și pachetul de dovezi.
 
-Clientul shared trimite JSON, elimină slash-ul final din base URL, propagă AbortSignal și timeout de 30 secunde, parsează erorile și nu transformă un HTTP eșuat în succes demo. TypeScript asigură tipuri la compilare; `response.json() as T` nu validează la runtime. Schimbarea reperului anulează analiza și golește rezultatele, dar unele stări/parametri de scenariu persistă. Checkbox-urile nu controlează toate straturile vizuale sugerate.
+`SpatialAdapter` limitează la un studiu simultan în proces cu BoundedSemaphore și timeout 90 s. Workerul primește JSON, încarcă SIM din root-ul configurat și nu substituie rezultate la eșec. Pentru fixture folosește `sim.demo.fixture_snapshot`; pentru OSM verifică eligibilitatea catalogului și cere rețeaua walk cu limite 5 km²/5 km și fără achiziția de features în acel flux. Nu se inventează limite pentru puncte.
 
-Comparația pornește din `selectedIssue.comparisonData`. Pentru întârziere/coadă adaugă `(greenDelta * -0.25) - (ctp ? 5.5 : 0)`; pentru debit/capacitate `(greenDelta * 8) + (ctp ? 120 : 0)`; pentru velo `(laneWidth - 2) * 0.12`. Aplică factori de încărcare și limitează minimul. Aceste euristici nu sunt dovada unei implementări validate a formulelor Webster/HCM. Exportul JSON și raportul copiat folosesc tabelul de bază și factorul de încărcare, dar omit ajustările de tuning folosite pe ecran, deci pot diferi de valori afișate. Este o limitare materială pentru un dosar tehnic; nu se modifică aici funcționalitatea produsului.
+Workerul rulează analyze_snapshot, evaluate_candidates pe eșantion comun, prepare_candidate_options, validate_proposal_set și build_proposal_context. EngineResult și reject_nonfinite protejează ieșirea înaintea persistării. Codul shared a fost actualizat și există un test de flux backend/frontend. Specificațiile auth/job/SSE sau exemplele vechi din api-specs nu devin endpoint-uri implementate numai prin existența documentelor.
 
-## 11. AI — ce face și ce nu face
+## 10. Frontend, geografie și performanță
 
-Niciun provider LLM nu este apelat în sursele backend/frontend inspectate. Alternativele sunt catalog fix, iar numele de modele din exemplele `api-specs` nu dovedesc integrare. Nu se declară „AI în producție”, RAG, fine-tuning, învățare din trafic sau generare liberă funcțională. Utilizarea AI la scrierea codului nu poate fi cuantificată sau atribuită pe module din Git; vechiul deck nu este probă pentru procente de autorie.
+Next.js 16.4.2, React 19.3.0, MapLibre 6.14.0 și Three 0.186.1 sunt versiunile declarate în manifeste, nu o afirmație despre ultimele versiuni publice. Shared include tipuri și client HTTP cu timeout/anulare. TypeScript nu validează singur JSON la runtime; backendul aplică scheme. ConnectedWorkspace gestionează baseline, alternativă exactă, reglaje și reseturi, iar SpatialPanel adaptează studiile pietonale separat.
 
-Planul tehnic bine definit în `docs/ARCHITECTURE.md`: backendul selectează un context minim de dovezi și catalog, cere răspuns structurat cu alternative, validează schema și constrângerile, solicită confirmarea specialistului și calculează efectele separat. Modelul generează ipoteze; sim produce măsurători. Cloud LLM este calea propusă, Qwen local un fallback posibil. Până la implementare, „asistat de AI” descrie direcția produsului. Această lipsă poate afecta eligibilitatea într-un hackathon AI; regulamentul complet nu este disponibil pentru a decide.
+Catalogul local derivă din `sim/iasi-neighborhoods.geojson`; frontendul importă un export de date și metadata de eligibilitate. `sim-geography.ts` păstrează Point ca Point, calculează bounds doar din geometriile existente și permite căutare fără diacritice. 24 contururi și 7 puncte nu înseamnă granițe legale certificate sau acoperire completă a orașului.
 
-## 12. Date, contracte și API-uri
+Nu există benchmark FPS, latență end-to-end, test de sarcină sau audit WCAG complet curent. Arhitectura are timeout/caching/zone bounded, dar nu dovedește scară de producție. Controalele accesibile și reduced motion sunt implementări utile, fără a declara conformitate certificată.
 
-Contractele vizează coordonate `[longitudine, latitudine]`, EPSG:4326 pentru transport, CRS metric potrivit pentru calcule, metadata sursă/versiune/timp/metodă și stări observed/calculated/estimated/unknown. Aceste convenții sunt un avantaj de design; aplicarea lor nu este completă.
+## 11. SIM: analiză și scenarii
 
-Diferențe concrete: clientul așteaptă `proposal_set_id`, `model`, `validation` per alternativă, intervenții obiect și expected_impacts; serverul returnează `proposal_run_id`, `model_metadata`, validare globală și stringuri. Evaluarea clientului așteaptă `comparisons` și metadata simulării; serverul returnează `metrics`. Issue în client are `label`, `indicator_ids`, `geometry` și Evidence; serverul are `title`, `supporting_indicator_id`, `coordinates` fără acea structură. `layer_availability` folosește `available` în server, în afara enumului EvidenceStatus. `api-specs` folosesc și `/api/v1/*`, deși serverele implementează căi fără prefix. Contractele auth/areas/simulation/persistence sunt propuneri, nu endpoint-uri disponibile.
+`geo.py` normalizează Polygon/MultiPolygon, bbox și GeoDataFrame, validează mărimea, folosește CRS metric și output WGS84, achiziție OSMnx independentă walk/bike/drive și cache cu metadata de proveniență. `analysis.py` normalizează/proiectează grafuri, calculează conectivitate, rute și indicatori cu surse/unități și produce GeoJSON/issues deterministe.
 
-Datele 2180 veh/h, 340 m, 74,2 s/vehicul și impacturile pe cartiere sunt literali. Nu s-au găsit fișiere brute de senzori, licențe/acorduri de acces sau notebook-uri de calcul. Metadata de proveniență și intervalele de încredere din literal nu devin automat măsurători. Ele pot fi arătate numai ca fixtures demonstrative, fără beneficii reale revendicate.
+`scenario.py` aplică legături pietonale ipotetice pe copii ale baseline-ului, cu verificări de endpoint și lungime. `candidates.py` ecranează un pool bounded și elimină conflicte materiale cu clădiri cunoscute. Absența unei intersecții pe date incomplete nu este dovadă de fezabilitate. `impact.py` folosește același eșantion de perechi nod–nod pentru comparație și ranking; diagnosticele locale specifice candidatului sunt separate.
 
-## 13. Componenta sim
+`proposal_validation.py` tratează propunerile ca input neîncrezător: compară identitate/acțiune, coordonate, unități, citări, metrici pretinse observate, costuri, run IDs și afirmații fizice. JSON valid nu înseamnă proiect realizabil. Opțiunile candidate-backed și pachetul evidence există fără un LLM; categoriile de planificare rămân neclasificate când nu pot fi susținute.
 
-`sim/smoke_test.py` importă OSMnx/GeoPandas/Shapely și calculează calea a→b→c pe un graf sintetic, cu lungimi 120, 80 și 300. Rezultatul așteptat este 200 m. Nu se descarcă OSM și nu se calculează conectivitatea cartierelor.
+## 12. SUMO: implementare versus execuție
 
-`sim/sumo_support.py` caută `sumo` și `netconvert` în PATH/SUMO_HOME, identifică pachetele Python și, când disponibile, generează o rețea temporară, o rută și un vehicul, rulează netconvert și avansează TraCI un pas. Acesta este un smoke real de simulator, dar nu validează geometria Podu Roș, cererea de vârf sau efecte Before/After. STATUS raportează treceri pe Windows/macOS ARM și fallback Intel; jurnalele CI externe nu au fost recitite. Nu s-a rerulat SUMO în runtime-ul auditului, deoarece pachetele/binarul proiectului nu erau disponibile.
+`sim/sumo_engine.py` conține prepare_sumo_network și run_real_area_simulation. Pregătește plain XML metric, maparea ID-urilor sursă, GeoJSON și rute OD sintetice bounded cu seed. Când binarele există, poate apela netconvert și sumo headless, verifica exit/timeout și extrage tripinfo. Outputul refuză suprascrierea unor rezultate existente și păstrează accounting-ul vehiculelor.
 
-## 14. Teste și validare
+Aceasta este o capacitate implementată local, nu doar smoke. Totuși API-ul `SimulationAdapter.require_sumo()` încă refuză integrarea de scenariu SUMO, iar UI-ul nu apelează acest runner. STATUS SIM raportează pregătirea pe cache Iași oprită la netconvert absent, fără măsurători de trafic. O rulare viitoare cu cerere sintetică ar descrie ipotezele ei, nu o predicție calibrată a orașului. Smoke-ul TraCI sintetic rămâne distinct de runner și de evaluarea urbană.
 
-La audit au trecut **5/5 teste Node** din `frontend/shared/tests/api.test.ts`: nume wire/dovezi păstrate cu fetch mock, erori și request ID, HTML 503 tratat ca eșec, anulare și fixture unknown. Aceste teste nu probează interoperabilitatea cu serverul demonstrativ. Typecheck a trecut pe web/mobile/shared. Build-ul Next a trecut: `/` și `/app` prerenderate. Prima încercare de build a întâlnit EPERM la scrierea unui director generat; rerularea autorizată în afara sandboxului a trecut.
+## 13. AI și inovație
 
-În Python sunt cinci teste definite: health, absența POST-urilor în FastAPI, CORS local, graf sintetic, discovery SUMO_HOME. Runtime-ul disponibil pentru audit nu are fastapi/httpx/pytest/geospațial/traci și nu există `.venv` în checkout; testele Python nu au fost rerulate. Nu s-au instalat global dependențe și nu s-a pretins o rulare proaspătă. `scripts/health_smoke.py` pornește uvicorn și testează doar health, nu POST-urile stdlib.
+Nu există provider cloud, apel LLM, RAG sau fine-tuning implementat. Propunerile de semaforizare și cele candidate-backed pe graf sunt deterministe. Planul: backendul trimite dovezi/cataloage limitate unui LLM, validează propunerea independent și cere evaluarea calculată; modelul nu produce măsurători. Acest principiu este deja parțial susținut de catalog/evidence/validator SIM, dar legătura cu providerul rămâne viitoare.
 
-`shared/tests/browser-smoke.cjs` este un script existent cu capturi responsive, tastatură și asserts. Nu a fost rerulat integral; unele heading-uri din script nu mai corespund UI-ului actual. Capturile din `frontend/.qa` sunt istorice și nu se folosesc drept dovadă a UI-ului actual. S-au făcut verificări manuale prin browserul conectat pe aplicația locală și capturi noi în `docs/ppt/assets`. Nu există măsurători FPS, latențe end-to-end, test de sarcină, test Android pe dispozitiv sau audit WCAG complet curent.
+Argumente apărabile: flux HTTP coerent, baseline imutabil, diferențiere între sintetic și OSM, comparații de graf pe eșantion comun, propuneri verificate față de candidații evaluați și tratarea explicită a indisponibilității. Nu se revendică algoritm nou superior, optimizare garantată sau procent verificabil al codului scris de AI.
 
-Nu există un procent de acoperire code coverage măsurat. Cinci teste trecute nu înseamnă „100% din produs verificat”. Nu există un rezultat cantitativ de îmbunătățire a mobilității verificat. Singurele valori numerice folosite ca dovezi în pitch sunt numere de teste/repere și bugete de timp de prezentare etichetate ca atare; orice preț sau scenariu comercial este ipoteză.
+## 14. Teste și rezultate
 
-## 15. Securitate, confidențialitate și exploatare
+După sincronizare, `npm test` a trecut **9/9**: cinci transport/fixtures și patru geografie. Typecheck web/mobile/shared și build-ul Next au trecut. Cele 24 contururi și 7 puncte sunt susținute de catalog și de testele de geografie, fără extrapolare la limite legale.
 
-Bine definite ca intenție: chei pe server, context LLM minim, intervenții validate, provenance și incertitudine, baseline separat de scenariu. Implementarea stdlib nu impune auth, rate limit, limite de corp cerere sau validare robustă de tipuri. JSON valid de forma listă ori tipuri greșite poate declanșa excepții necontrolate; Content-Length nu este validat. CORS `*` și bind toate interfețele sunt convenabile local, dar nu o configurație demonstrată de producție. Nu se expun chei în deck sau rapoarte.
+Testele Python/SIM ale checkout-ului sincronizat au trecut: **138 passed, 1 warning în 15,75 s**, fără skip-uri, în runtime-ul QA izolat. Avertismentul este o depreciere Starlette/httpx. Rezultatul este consemnat în `docs/ppt/reports/project-tests.log` și raportul QA. Documentele de predare raportează anterior 60 teste backend și 78 teste SIM/proiect în ramuri diferite: nu se adună aceste numere și nu se prezintă ca o nouă rulare. Nu există procent code coverage măsurat.
 
-Dacă viitoarele date includ ANPR/video sau traiectorii individuale, sunt necesare guvernanță, minimizare și reguli de acces; nu există o integrare ANPR actuală verificată. OSM raster depinde de internet și de condițiile serviciului; nu se promite un demo offline complet. Licențele datelor și atribuirea trebuie verificate înaintea distribuirii. `docs/frontend/IMPLEMENTATION.md` menționează un audit npm istoric cu vulnerabilități tranzitive; nu este un audit curent și nu justifică un scor de securitate actual.
+Nu există beneficiu real de trafic validat. Comparațiile numerice pe fixture sunt calcul real pe input sintetic; comparațiile OSM pe graf sunt estimări condiționate de snapshot, eșantion și metodă, nu efecte măsurate pe rezidenți. Datele brute de senzori din vechiul demo nu au devenit verificate prin sincronizare.
 
-Scalare: HTTPServer este sincron, nu există cozi de joburi/worker pool, cache de rețele, stocare scenarii sau scheduler SUMO. Arhitectura cu separarea sim permite extinderea viitoare, dar nu dovedește scalare actuală. Fiabilitate: clientul are anulare și timeout; UI-ul are stări unknown și erori, însă fallback-ul de zonă în server poate întoarce o „reușită” semantic greșită. Calculele/calibrarea și contractele trebuie stabilizate înainte de optimizarea volumului.
+## 15. Securitate, confidențialitate și fiabilitate
 
-## 16. Diferențiatori și inovație
+Îmbunătățiri reale față de V1: scheme și răspunsuri validate, erori uniforme, ID-uri legate de baseline, respingerea intervențiilor modificate, SQLite și retry imutabil, limită de capacitate, worker bounded și timeout fără fallback. Nu există auth/autorizare sau izolare multi-tenant completă, coadă distribuită SUMO, rate limit general ori infrastructură de producție demonstrată. GET /health este liveness, nu o verificare de readiness completă a datelor/workerului.
 
-Argumente apărabile: experiență orientată către o zonă și o decizie, compararea intervențiilor de amplitudini diferite, model explicit de dovezi/incertitudine și arhitectură care separă propunerea de măsurare. Interfața web este vizibilă și editabilă prin controale; codul shared menține transportul separat de UI. Nu s-a identificat o metodă nouă de simulare sau un avantaj algoritmic măsurat. Avantajele competitive sunt ipoteze de integrare și utilizabilitate, care cer interviuri și o evaluare comparativă.
+Sursele OSM depind de licență, acoperire și actualizare; atribuirea ODbL trebuie păstrată. Punctele nu sunt poligoane. Dacă în viitor sunt folosite ANPR/video/traiectorii, sunt necesare minimizare, drepturi de acces și guvernanță; această integrare nu este confirmată. Secretele providerilor vor rămâne pe server. Nu se afirmă conformitate legală sau audit de securitate certificat.
 
-## 17. Impact și model economic
+## 16. Impact, model economic și piață
 
-Beneficiu așteptat: specialistul poate discuta variante și compromisuri într-un singur spațiu. Măsurarea viitoare recomandată: timpul necesar pregătirii unei comparații explicabile; procentul de indicatori cu sursă verificabilă; reproducerea aceluiași rezultat pe aceleași intrări; rata de respingere corectă a intervențiilor invalide. Acestea sunt obiective de validare, nu rezultate deja obținute.
+Beneficiu potențial: pregătirea unei comparații explicabile și reproducibile pentru un specialist. Trebuie măsurate timpul de pregătire, sursele verificabile, reproducerea pe aceleași intrări și utilitatea compromisurilor. Nicio economie de timp sau îmbunătățire de mobilitate nu este deja măsurată cu utilizatori.
 
-Model propus: licență/abonament pentru echipe profesionale, pilot cu domeniu restrâns. Prețul de 1.500 euro/lună provine din vechiul deck; poate fi păstrat numai ca **ipoteză de testat**, nu tarif validat. 12 luni × 1.500 = 18.000 euro/an este aritmetică, nu ARR. Un exercițiu comercial cu zece organizații ar însemna 180.000 euro/an dacă toate ar cumpăra la acel preț; zece este o cohortă propusă, nu o listă de clienți ori o estimare a pieței totale. Costul servirii, suportul, CPU-ul SUMO și licențele de date nu sunt măsurate. Nu se declară marjă de 95%, vânzare în 14 zile, fonduri asigurate, eligibilitate de achiziție sau prag legal. Niciun client plătitor identificat prin contract.
+Abonamentul 1.500 euro/lună provine din pitch-ul anterior și rămâne **ipoteză nevalidată**. 18.000 euro/an = 12×1.500, iar 10×18.000 = 180.000 euro/an este numai exercițiul în care toate zece organizații ar cumpăra. Nu este ARR, TAM/SAM sau pipeline confirmat. Lista celor zece organizații trebuie construită; costurile de date/calcul/suport și disponibilitatea de plată sunt necunoscute. Nu se declară marjă, prag juridic sau pilot semnat.
 
-## 18. Contradicții care afectează pitch-ul
+## 17. Echipa confirmată
 
-| Document/afirmație | Ce arată codul | Decizie pentru deck |
+- **Iustin Fagateanu — Frontend and web experience**
+- **Alex Pintilie — Bootstrap and simulation foundation**
+- **Fagateanu Eusebiu — Backend**
+
+Aceste nume și responsabilități sunt confirmate direct de utilizator în V2. Git-ul sincronizat include commitul de predare backend `6f59b22` al autorului Făgăteanu Dumitru-Eusebiu, dar deck-ul păstrează exact numele solicitat **Fagateanu Eusebiu**. Nu se presupune autorie exclusivă asupra fiecărui fișier adus prin merge și nu se inventează funcții individuale. Rolurile de scenă și angajamentul de continuare nu au fost confirmate.
+
+## 18. Contradicții și corecții după Git
+
+| Afirmație istorică | Cod curent | Tratament în pitch |
 |---|---|---|
-| STATUS: modele reale și telemetrie | Literali și euristici locale, fără inputuri măsurate | „Date demonstrative”, fără rezultate de trafic |
-| ARCHITECTURE/API_CONTRACT: POST inexistente | Corect pentru FastAPI; stdlib separat are fixtures | Explicarea celor două entry point-uri |
-| STATUS: cinci cartiere analizate | Dataset unic pe server, fallback Podu Roș | Cinci repere de navigare, nu cinci analize |
-| README: OpenFreeMap | MapViewport actual folosește raster OSM | Captură actuală și atribuire OSM |
-| IMPLEMENTATION: live gate dezactivat | Butonul actual poate apela analyze în non-demo | Se descrie codul curent; nu integrare completă |
-| Deck: Next14, Python3.13, OSMnx1.9, Tailwind | Next16.4.2, Python3.12, OSMnx2.x, CSS | Corectat după manifeste |
-| Deck: micromodel city/live 5 secunde | Doar smoke sintetic opțional | Fără latențe sau live SUMO în pitch |
-| V1 omite al treilea membru | Utilizatorul confirmă în V2: Iustin Fagateanu, Alex Pintilie, Fagateanu Eusebiu | Trei membri și responsabilitățile exacte; fără autorie granulară presupusă |
-| Deck: Q1/Q2 2026 viitor | Data auditului este octombrie 2026 | Roadmap relativ după hackathon |
-| Spec SUMO 1.21/exemplu rulat | Pin 1.28.0, fără artefact oraș | Numere din spec tratate ca exemple |
+| FastAPI doar /health, stdlib separat | FastAPI unic cu flux și storage; server.py launcher | API conectat și Pydantic/SQLite |
+| Alternative numai literali | Calcul sintetic determinist și candidați SIM | Propuneri deterministe, nu LLM |
+| SIM numai smoke | Analiză, cache, candidați, impact, evidence, runner condiționat | Motor de graf implementat; SUMO UI neintegrat |
+| UI numai fixtures | ConnectedWorkspace implicit; preview explicit | Captură nouă a modului conectat |
+| Toate legăturile arhitecturale viitoare | Frontend→API→worker SIM există | Linii continue pentru implementat, întreruptă numai integrarea AI |
+| Roster necunoscut | Confirmat de utilizator, trei membri | Trei profiluri egale |
+| Snapshot extern fixat obligatoriu | SpatialAdapter folosește implicit HEAD curent | Codul actual are prioritate față de handoff vechi |
+| Nicio validare geometrică/persistență | Validări Pydantic/SIM și SQLite prezente | Nu se mai descriu ca total absente; fezabilitatea fizică rămâne necunoscută |
 
-## 19. Roadmap recomandat și criterii de ieșire
+## 19. Roadmap și cererea către juriu
 
-1. **Date și contract unic.** Alegerea unui entry point backend, armonizarea payload-urilor cu shared, validare runtime, eliminarea fallback-ului de zonă și a etichetelor false. Ieșire: integrare contract testată pozitiv și negativ.
-2. **Prima analiză reală.** Zonă bounded, snapshot OSM licențiat, geometrie validată, un indicator reproductibil cu unitate și metodă. Ieșire: aceeași intrare → același rezultat, surse inspectabile.
-3. **Intervenție constrânsă.** Catalog mic cu parametri și reguli geometrice; o schimbare aplicată pe o copie baseline. Ieșire: respingere demonstrată a cazurilor invalide și diferență real calculată.
-4. **AI structurat.** Provider pe server, context limitat, schema și reguli independente de model, mesaje pentru lipsa modelului. Ieșire: propunere acceptată/respinsă și cost/latency măsurate, fără rezultate simulate de LLM.
-5. **Evaluare cu un specialist.** Testarea parcursului și măsurarea timpului de pregătire, fără a modifica trafic real. Ieșire: protocol și observații documentate, acordul organizației.
-6. **SUMO aplicat zonei**, numai cu geometrie și cerere justificabile. Ieșire: configurație/seed/version/output, calibrare explicită, comparație cu baseline și etichetare live/offline/replay.
-7. **Hardening și mobile.** Auth, limite, jobs/caching după nevoie, hartă nativă, verificare Android, accesibilitate și distribuție.
+1. Un caz OSM bounded cu aria/snapshotul/metoda documentate; verificarea calității și a comparației pe eșantion comun.
+2. Test cu un specialist al parcursului conectat și măsurarea timpului de pregătire/trasabilității.
+3. Integrarea opțională a LLM pe pachetul de dovezi, cu validator independent și limite explicite.
+4. Conectarea runnerului SUMO la API doar cu rețea, cerere și binare valide, plus rezultate versionate; calibrarea rămâne etapă separată.
+5. Autorizare, readiness, persistență de proiecte/export și test Android, în funcție de prioritatea utilizatorilor.
 
-Ordinea exprimă dependențe, nu promisiuni calendaristice. Nu se prezintă planul ca pilot semnat sau în curs.
+Cerere: o introducere către un specialist și acces la un set de date local pentru validarea unui caz. Nu un acord existent sau un termen garantat. Menținem ordinea pitch-ului și cererea concretă, înlocuind promisiunea veche „construim primul API” cu validarea fluxului deja implementat.
 
-## 20. Mesajele recomandate pentru juriu
+## 20. Registru de afirmații și dovezi
 
-- ARTERIA vizează comparația explicabilă a intervențiilor urbane pentru specialiști.
-- Demonstrația arată un parcurs web real; scenariile și valorile sunt demonstrative.
-- AI va propune alternative; regulile și calculele independente trebuie să le verifice.
-- Baza tehnică are teste de transport și un build web verificat, dar impactul urban rămâne de validat.
-- Cererea utilă este o introducere către un specialist și acces la un set de date pentru prima analiză reproductibilă.
+| ID / Afirmație | Dovadă → sursă | Certitudine / stare |
+|---|---|---|
+| C01 Planificare urbană pentru mobilitate | README și arhitectură → `README.md`, `docs/ARCHITECTURE.md` | Ridicat / produs propus |
+| C02 Flux conectat de comparație | API calls și ID-uri → `frontend/web/src/features/workspace/ConnectedWorkspace.tsx` | Ridicat / implementat, sintetic |
+| C03 Catalog 24 contururi + 7 puncte | GeoJSON și tests → `sim/iasi-neighborhoods.geojson`, `frontend/web/tests/sim-geography.test.ts` | Ridicat / OSM parțial, nu legal |
+| C04 Propuneri deterministe | formule și opțiuni candidate-backed → `backend/main.py`, `sim/proposals.py` | Ridicat / implementat, fără LLM |
+| C05 Comparație legată de baseline | verificări exacte și delta → `backend/main.py`, `backend/spatial_routes.py` | Ridicat / implementat |
+| C06 FastAPI cu endpoint-uri complete demo | decoratori și modele → `backend/main.py`, `backend/models.py` | Ridicat / implementat |
+| C07 Server unic și SQLite | launcher/storage → `backend/server.py`, `backend/storage.py` | Ridicat / implementat |
+| C08 Cloud AI absent | lipsă provider; opțiuni deterministe → `backend/main.py`, `sim/proposals.py` | Ridicat / provider planificat |
+| C09 Worker SIM integrat | subprocess și engine schema → `backend/spatial_adapter.py`, `spatial_worker.py`, `engine_contract.py` | Ridicat / implementat bounded |
+| C10 SUMO runner condiționat | prepare/run/tripinfo → `sim/sumo_engine.py` | Ridicat / implementat, execuție dependentă de binare; neintegrat API |
+| C11 Analiză/candidați/impact de graf | metode și baseline immutable → `sim/analysis.py`, `candidates.py`, `impact.py`, `scenario.py` | Ridicat / calcul condiționat |
+| C12 Nouă teste Node trecute | comandă npm test → `frontend/shared/tests/api.test.ts`, `frontend/web/tests/sim-geography.test.ts` | Verificat după sincronizare |
+| C13 Typecheck și build trecute | comenzi locale → `frontend/package.json` | Verificat după sincronizare |
+| C14 Android scaffold | componente native placeholder → `frontend/mobile/src/features/` | Ridicat / API neconectat |
+| C15 Dovezi și validare propuneri | verificări citări/unități/candidate → `sim/proposal_context.py`, `sim/proposal_validation.py` | Ridicat / implementat, nu fezabilitate fizică |
+| C16 Preț nevalidat | ipoteză din deck istoric → `docs/ppt/archive/pre-audit/Template-Pitch-Hackathon.pre-audit.pptx` | Ipoteză |
+| C17 Trei membri și rolurile exacte | confirmare explicită utilizator, cerința V2, 18 octombrie 2026 | Confirmat; fără autorie granulară presupusă |
+| C18 Zece secțiuni + anexe | instrucțiunile template-ului → `docs/ppt/archive/original-backup/Template-Pitch-Hackathon.backup.pptx` | Ridicat |
+| C19 Fără impact real de trafic validat | model sintetic, API SUMO indisponibil, limitări SIM → `simulation_adapter.py`, `sim/STATUS.md` | Ridicat în limitele checkout-ului |
+| C20 PMUD context instituțional | pagina oficială Primăria Iași citată în §4 | Context, nu adopție |
 
-La întrebarea „cât e AI?”, răspunsul corect astăzi este „recomandările generative sunt în plan; demo-ul folosește catalog fix”. La „ce nu merge?”, se numesc integrarea datelor, contractele și evaluarea reală. La „de ce voi?”, se arată artefactele construite și se evită atribuirea unor roluri exclusive sau angajamente de timp neverificate.
+## 21. Surse inspectate și limite de confirmare
 
-## 21. Registru de afirmații → dovezi → surse → statut
+Documente noi: `docs/DEMO_API.md`, `docs/BACKEND_AUDIT.md`, `docs/MACBOOK_HANDOFF.md`, `backend/README.md`, `backend/STATUS.md`, `backend/PREDARE_BACKEND.md`, `backend/SPATIAL_API.md`, `backend/FRONTEND_HANDOFF.md`, `sim/AGENTS.md`, `sim/STATUS.md`, `sim/ARCHITECTURE.md`, `sim/APPLICATION_INTEGRATION.md`, `sim/NEIGHBORHOODS_LICENSE.md`, `frontend/STATUS.md`, `frontend/README.md` și testele noi. Descrierile istorice de handoff sunt comparate cu codul și nu luate automat drept comportament curent.
 
-| ID / Afirmație | Dovadă | Sursă exactă | Încredere / statut |
-|---|---|---|---|
-| C01 Produsul vizează planificarea urbană Iași | workflow și arhitectură | `README.md`, `docs/ARCHITECTURE.md` | Ridicat / intenție de produs |
-| C02 Web are un parcurs explorare-scenarii-comparație | componente, stare React, browser local | `frontend/web/src/features/workspace/Workspace.tsx` | Ridicat / UI implementat |
-| C03 Există cinci repere | lista neighborhoods | `frontend/shared/core/fixtures.ts` | Ridicat / repere, nu zone validate |
-| C04 Alternativele sunt predefinite | demoIssuesByNeighborhood | `frontend/shared/core/fixtures.ts`, `features/scenarios/ScenarioPanel.tsx` | Ridicat / demonstrativ |
-| C05 Comparația nu este SUMO | tabele și ajustări locale, fără apel sim | `frontend/web/src/features/comparison/ComparisonPanel.tsx` | Ridicat / euristici demo |
-| C06 FastAPI expune numai health | decorator unic și teste 404 | `backend/main.py`, `tests/test_backend.py` | Ridicat / cod inspectat |
-| C07 Serverul alternativ reutilizează Podu Roș | DATASETS unic, fallback și probe | `backend/server.py`, `docs/ppt/reports/backend-audit-probes.json` | Ridicat / confirmat la handler |
-| C08 AI generativ nu este integrat | catalog fix, fără apeluri provider | `backend/server.py`, `docs/ARCHITECTURE.md` | Ridicat / planificat |
-| C09 Cele trei POST nu sunt interoperabile complet | câmpuri și forme diferite | `frontend/shared/core/contracts.ts`, `backend/server.py`, `api-specs/*.md` | Ridicat / gap de integrare |
-| C10 SUMO smoke generează și avansează scenariu sintetic | cod netconvert și traci | `sim/sumo_support.py` | Ridicat / implementat, nereexecutat la audit |
-| C11 Graful smoke are cale 200 m | cod și assert | `sim/smoke_test.py`, `tests/test_spatial_smoke.py` | Ridicat / sintetic, nereexecutat |
-| C12 Cinci teste Node au trecut | comandă npm test executată | `frontend/shared/tests/api.test.ts` | Ridicat / verificat la audit |
-| C13 Typecheck și build web au trecut | comenzi executate, rute / și /app | `frontend/package.json`, `frontend/web/package.json` | Ridicat / verificat la audit |
-| C14 Harta Android e placeholder | text și componentă native | `frontend/mobile/src/features/map/MapPlaceholder.tsx` | Ridicat / scaffold |
-| C15 Provenance este convenție proiectată | Evidence și Measurement | `frontend/shared/core/contracts.ts`, `docs/API_CONTRACT.md` | Ridicat / tipuri, aplicare incompletă |
-| C16 Prețul 1500/lună este ipoteză | apare în deck-ul anterior, fără clienți | `docs/ppt/Template-Pitch-Hackathon.pre-audit.pptx` | Ipoteză / nevalidat |
-| C17 Echipa are trei membri: Iustin Fagateanu — Frontend and web experience; Alex Pintilie — Bootstrap and simulation foundation; Fagateanu Eusebiu — Backend | Confirmare explicită a utilizatorului în cerința V2, 18 octombrie 2026 | Cerința V2 a utilizatorului; codul backend inspectat separat | Confirmat de utilizator; autorie pe fișiere/funcții neconfirmată |
-| C18 Zece secțiuni în ordine și anexe | instrucțiuni slide 2–3 | `docs/ppt/archive/original-backup/Template-Pitch-Hackathon.backup.pptx` | Ridicat / cerință șablon |
-| C19 Nu există efect de trafic validat în checkout | lipsesc inputuri/rulări/calibrare; valori fixe | `backend/server.py`, `sim/`, `frontend/shared/core/fixtures.ts` | Ridicat în limitele checkout-ului |
-| C20 PMUD este un context instituțional local | pagina oficială de consultare | Primăria Iași, URL în secțiunea 4, accesat 2026 | Ridicat pentru context; fără validare clienți |
-
-### Index de surse suplimentare inspectate
-
-Documentație de produs: `backend/README.md`, `backend/STATUS.md`, `backend/API_ENDPOINTS.md`, `frontend/README.md`, `frontend/STATUS.md`, `frontend/web/README.md`, `frontend/mobile/README.md`, `sim/README.md`, `sim/STATUS.md`, `docs/ROADMAP.md`, `docs/frontend/DESIGN_BRIEF.md`, `docs/frontend/IMPLEMENTATION.md`, `docs/frontend/AI_INTERFACE_PROMPT.md`.
-
-Contracte: toate cele șapte fișiere `api-specs/analysis-endpoints.md`, `areas-endpoints.md`, `auth-endpoints.md`, `evaluation-endpoints.md`, `proposals-endpoints.md`, `scenario-persistence-endpoints.md`, `simulation-engine-contract.md`.
-
-Cod/config: `backend/settings.py`, `tests/test_sumo_support.py`, `scripts/setup.ps1`, `scripts/setup.sh`, `scripts/check.ps1`, `scripts/check.sh`, `scripts/dev.ps1`, `scripts/dev.sh`, `scripts/health_smoke.py`, `.github/workflows/ci.yml`, `pyproject.toml`, `frontend/package.json`, `frontend/web/package.json`, `frontend/mobile/package.json`, `frontend/shared/package.json`, `frontend/web/next.config.mjs`, `frontend/mobile/app.json`, `frontend/mobile/eas.json`, `frontend/web/AGENTS.md`, `.agents/skills/pptx/SKILL.md`.
-
-Resurse pitch: backup original, versiune pre-audit, `docs/ppt/archive/pre-audit/build_deck.pre-audit.py`, `docs/ppt/scripts/export_preview.ps1`, `docs/ppt/scripts/apply_transitions.ps1`, extrasele JSON și `docs/ppt/archive/old-previews/original-template/`. Capturile istorice `frontend/.qa` nu reprezintă validare curentă. Nu există un logo instituțional obligatoriu verificat sau fotografii de echipă confirmate. Nu există o adresă publică demo/contact verificată: nu se distribuie URL-urile inventate anterior.
-
-## 22. Informații care cer confirmare înainte de depunere
-
-Durata oficială de pitch, numele oficial al evenimentului, grila de jurizare și eventualele cerințe AI; rolurile de scenă ale echipei (componența și responsabilitățile tehnice sunt confirmate în V2); angajamentul de continuare; prețul care trebuie testat; o listă reală de organizații de intervievat; existența unor măsurători/rulări externe neincluse în checkout; dreptul de utilizare a datelor; contactul și URL-ul public de demo. Lipsa lor nu împiedică livrarea unui deck onest, dar limitează afirmațiile permise.
-
-## 23. Corecție V2 — echipă și reverificare backend
-
-Utilizatorul a confirmat echipa: **Iustin Fagateanu — Frontend and web experience**, **Alex Pintilie — Bootstrap and simulation foundation**, **Fagateanu Eusebiu — Backend**. Această confirmare înlocuiește incertitudinea de roster din V1. Responsabilitatea Backend este confirmată; nici codul, nici Git-ul disponibil nu stabilesc autorul fiecărei funcții. Nu se deduce că Eusebiu a scris anumiți algoritmi, endpoint-uri sau integrarea AI.
-
-Reverificarea `backend/main.py` și `backend/server.py` la 18 octombrie confirmă aceeași stare: FastAPI are GET /health; serverul HTTP stdlib separat are GET /health și POST /analyze, /propose, /evaluate. Handlerele POST sunt implementate și executabile, dar servesc un dataset fix, catalog predefinit și diferențe aritmetice între valori fixe. Nu sunt doar specificații viitoare, însă nici analiză geospațială, validare geometrică, model LLM sau runner SUMO integrat. Slide-ul 6 le numește acum explicit, cu statutul demo alături. Auth, persistență, SSE și căile /api/v1 din specificații rămân propuse.
-
-Animațiile V2 sunt elemente de prezentare, nu o schimbare a funcționalității aplicației. Orice conector întrerupt din arhitectură/AI continuă să marcheze integrarea urbană viitoare.
+De confirmat înainte de depunere: durata/grila oficială și condițiile AI, rolurile de scenă, disponibilitatea echipei după eveniment, interviuri și preț, date locale și licență, contact/demo URL public și eventuale măsurători externe neincluse în repository. Roster-ul de trei membri este acum confirmat. Nu se certifică eligibilitate sau impact urban real pe baza unei prezentări.

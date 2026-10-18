@@ -1,42 +1,50 @@
-"""Artifact QA: native object inventory, text bounds, source preservation, previews."""
 from pathlib import Path
-import json, hashlib, re, zipfile
+import json,hashlib,zipfile,argparse
+from lxml import etree
 from pptx import Presentation
-from PIL import Image, ImageDraw
-
-ROOT=Path(__file__).resolve().parent
-p=Presentation(ROOT/'Template-Pitch-Hackathon.pptx')
-checks=json.loads((ROOT/'preview/text-bounds.json').read_text(encoding='utf-8-sig'))
-overflow=[x for x in checks if x['boundHeight']>x['height']+1 or x['boundWidth']>x['width']+1]
-out=[];texts=[];counts={'textboxes':0,'tables':0,'pictures':0,'connectors':0,'notes':0}
+from PIL import Image,ImageDraw
+R=Path(__file__).resolve().parents[1]
+a=argparse.ArgumentParser();a.add_argument('--deck',type=Path,default=R/'ARTERIA.pptx');a.add_argument('--preview',type=Path,default=R/'preview');args=a.parse_args();deck=args.deck
+p=Presentation(deck);read=lambda f:json.loads((R/'reports'/f).read_text(encoding='utf-8-sig'))
+bounds=read('text-bounds.json');plan=read('motion-plan.json');com=read('motion-com.json')
+overflow=[x for x in bounds if x['boundHeight']>x['height']+1 or x['boundWidth']>x['width']+1]
+def walk(shapes):
+ for sh in shapes:
+  yield sh
+  if sh.shape_type==6:yield from walk(sh.shapes)
+manifest=[];out=[];counts={'groups':0,'textboxes':0,'tables':0,'pictures':0,'connectors':0,'notes':0}
 for i,s in enumerate(p.slides,1):
-    counts['notes']+=bool(s.notes_slide.notes_text_frame.text.strip())
-    for sh in s.shapes:
-        if sh.has_text_frame:counts['textboxes']+=1;texts.append(sh.text)
-        if sh.has_table:
-            counts['tables']+=1
-            texts.extend(c.text for row in sh.table.rows for c in row.cells)
-        counts['pictures']+=sh.shape_type==13
-        counts['connectors']+=sh.shape_type==9
-        if sh.left<0 or sh.top<0 or sh.left+sh.width>p.slide_width+10 or sh.top+sh.height>p.slide_height+10:out.append({'slide':i,'name':sh.name})
-alltext='\n'.join(texts)
-residuals=re.findall(r'\[NUME|\[CINE|GHIDAJ — NU INTRĂ|RĂMÂNE PE SLIDE|lorem ipsum',alltext,re.I)
-files=sorted((ROOT/'preview').glob('Slide*.PNG'),key=lambda f:int(f.stem[5:]))
-for j in range(0,len(files),4):
-    sheet=Image.new('RGB',(1600,940),'white')
-    for k,f in enumerate(files[j:j+4]):
-        im=Image.open(f);assert im.size==(1920,1080);im.thumbnail((800,450))
-        x=k%2*800;y=k//2*470;sheet.paste(im,(x,y));ImageDraw.Draw(sheet).text((x+10,y+450),f.stem,fill='black')
-    sheet.save(ROOT/'preview'/f'contact-{j//4+1}.jpg')
-original=json.loads((ROOT/'Template-Pitch-Hackathon.backup.inspection.json').read_text(encoding='utf-8'))
-backup_hash=hashlib.sha256((ROOT/'Template-Pitch-Hackathon.backup.pptx').read_bytes()).hexdigest()
-with zipfile.ZipFile(ROOT/'Template-Pitch-Hackathon.pptx') as z:assert z.testzip() is None
-report={'slides':len(p.slides),'slide_size_inches':[p.slide_width/914400,p.slide_height/914400],
-    'objects':counts,'text_bounds_checked':len(checks),'text_overflow':overflow,'out_of_canvas':out,
-    'remaining_template_prompts':residuals,'rendered_slides':len(files),'render_size':[1920,1080],
-    'backup_sha256':backup_hash,'backup_unchanged':backup_hash==original['sha256'],
-    'pptx_sha256':hashlib.sha256((ROOT/'Template-Pitch-Hackathon.pptx').read_bytes()).hexdigest()}
-(ROOT/'qa-results.json').write_text(json.dumps(report,ensure_ascii=False,indent=2),encoding='utf-8')
-assert len(p.slides)==13 and len(files)==13 and not overflow and not out and not residuals
-assert report['backup_unchanged'] and counts['notes']==13 and counts['tables']==2 and counts['pictures']==2
-print(json.dumps(report,ensure_ascii=False,indent=2))
+ texts=[];counts['notes']+=bool(s.notes_slide.notes_text_frame.text.strip())
+ for sh in walk(s.shapes):
+  if sh.has_text_frame:counts['textboxes']+=1;texts.append(sh.text)
+  if sh.has_table:counts['tables']+=1;texts.extend(c.text for row in sh.table.rows for c in row.cells)
+  for k,n in [('groups',6),('pictures',13),('connectors',9)]:counts[k]+=sh.shape_type==n
+  if sh.left<0 or sh.top<0 or sh.left+sh.width>p.slide_width+10 or sh.top+sh.height>p.slide_height+10:out.append([i,sh.name])
+ manifest.append({'slide':i,'text':texts})
+assert len(p.slides)==10 and counts['notes']==10
+for n in ['Iustin Fagateanu','Alex Pintilie','Fagateanu Eusebiu','Dezvoltare backend']:assert n in '\n'.join(manifest[8]['text'])
+assert len([s for s in p.slides[8].shapes if s.name.startswith('reveal:s09_member')])==3
+ns={'p':'http://schemas.openxmlformats.org/presentationml/2006/main'};motion=[]
+with zipfile.ZipFile(deck) as z:
+ assert z.testzip() is None
+ for i in range(1,11):
+  x=etree.fromstring(z.read(f'ppt/slides/slide{i}.xml'));tr=x.xpath('.//p:transition',namespaces=ns)
+  assert tr and all(t.get('advTm') in (None,'0') and t.get('advClick','1')=='1' and t.find('p:fade',ns) is not None for t in tr)
+  ids=set(x.xpath('.//p:cNvPr/@id',namespaces=ns));targets=x.xpath('.//p:spTgt/@spid',namespaces=ns);assert targets and all(t in ids for t in targets)
+  fx=x.xpath('.//p:cTn[@presetClass="entr"]',namespaces=ns);expected=[r for r in plan if r['slide']==i];actual=com['slides'][i-1]
+  assert len(fx)==len(expected)==len(actual['effects'])
+  clicks=sum(r['trigger']=='click' for r in expected);assert clicks==0
+  assert actual['transition']==3849 and abs(actual['transitionDuration']-.45)<.01 and actual['advanceOnTime']==0
+  for a,b in zip(expected,actual['effects']):assert a['shape']==b['shape'] and abs(a['duration']-b['duration'])<.01 and b['effectId'] in (10,22) and b['trigger']=={'click':1,'auto':2,'after':3}[a['trigger']]
+  motion.append({'slide':i,'effects':len(fx),'clicks':clicks,'targetsValid':True})
+files=sorted((args.preview).glob('Slide*.PNG'),key=lambda f:int(f.stem[5:]));assert len(files)==10
+for j in range(0,10,4):
+ sheet=Image.new('RGB',(1600,940),'white')
+ for k,f in enumerate(files[j:j+4]):
+  im=Image.open(f);assert im.size==(1920,1080);im.thumbnail((800,450));x=k%2*800;y=k//2*470;sheet.paste(im,(x,y));ImageDraw.Draw(sheet).text((x+10,y+450),f.stem,fill='black')
+ sheet.save(args.preview/f'contact-{j//4+1}.jpg')
+hash=hashlib.sha256((R/'archive/original-backup/Template-Pitch-Hackathon.backup.pptx').read_bytes()).hexdigest();assert hash=='56133b4d2fe6946ff4c5a246e4d0f8be0baa0ac2f6638a6e25f969994695d170'
+assert not overflow and not out,(overflow,out)
+result={'slides':10,'objects':counts,'rendered_slides':10,'text_bounds_checked':len(bounds),'text_overflow':overflow,'out_of_canvas':out,'backup_unchanged':True,'backup_sha256':hash,'pptx_sha256':hashlib.sha256(deck.read_bytes()).hexdigest(),'motion':motion,'effects':sum(x['effects'] for x in motion),'extra_click_reveals':sum(x['clicks'] for x in motion),'slide_transitions_seconds':sum(x['transitionDuration'] for x in com['slides']),'all_checks_passed':True}
+for name,value in [('qa-results.json',result),('deck-manifest.json',manifest)]:(R/'reports'/name).write_text(json.dumps(value,ensure_ascii=False,indent=2),encoding='utf-8')
+print(json.dumps(result,ensure_ascii=False,indent=2))

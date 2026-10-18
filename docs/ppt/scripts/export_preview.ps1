@@ -1,2 +1,2 @@
-param([string]$InputDeck = 'docs/ppt/Template-Pitch-Hackathon.pptx')
+param([string]$InputDeck = 'docs/ppt/ARTERIA.pptx')
 & (Join-Path $PSScriptRoot 'render_deck.ps1') -InputDeck $InputDeck -OutputDir 'docs/ppt/preview' -Pdf

@@ -1,0 +1,74 @@
+
+> arteria-frontend@0.1.0 check
+> npm run typecheck && npm test && npm run build
+
+
+> arteria-frontend@0.1.0 typecheck
+> npm run typecheck --workspaces --if-present
+
+
+> @arteria/web@0.1.0 typecheck
+> next typegen && tsc --noEmit
+
+Generating route types...
+✓ Types generated successfully
+
+> @arteria/mobile@0.1.0 typecheck
+> tsc --noEmit
+
+
+> @arteria/shared@0.1.0 typecheck
+> tsc -p tsconfig.json
+
+
+> arteria-frontend@0.1.0 test
+> node --experimental-strip-types --test shared/tests/*.test.ts web/tests/*.test.ts
+
+✔ analysis preserves wire names and backend evidence (33.9502ms)
+✔ validation errors preserve status and request identifier (1.3761ms)
+✔ HTML proxy failures never become demo success (0.6076ms)
+✔ cancelling a request aborts its transport (0.854ms)
+✔ demo has unknown values and no fabricated issues (0.2672ms)
+✔ SIM catalog includes 24 polygon and 7 point-only records (9.4467ms)
+✔ malformed features are skipped without throwing (0.505ms)
+✔ search is accent insensitive and polygon bounds include the source extent (3.3574ms)
+✔ points keep Point geometry and over-limit polygons require controlled analysis (3.9124ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 258.7941
+
+> arteria-frontend@0.1.0 build
+> npm run build --workspace @arteria/web
+
+
+> @arteria/web@0.1.0 build
+> next build
+
+▲ Next.js 16.4.2 (Turbopack)
+✓ Running next.config.mjs took 53ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 678ms
+  Running TypeScript ...
+  Finished TypeScript in 3.6s ...
+  Collecting page data using 5 workers ...
+  Generating static pages using 5 workers (0/4) ...
+  Generating static pages using 5 workers (1/4) 
+  Generating static pages using 5 workers (2/4) 
+  Generating static pages using 5 workers (3/4) 
+✓ Generating static pages using 5 workers (4/4) in 1411ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+└ ○ /app
+
+
+○  (Static)  prerendered as static content
+

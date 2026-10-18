@@ -1,26 +1,84 @@
 {
-  "slides": 13,
-  "slide_size_inches": [
-    13.333333333333334,
-    7.5
-  ],
+  "slides": 10,
   "objects": {
-    "textboxes": 142,
-    "tables": 2,
+    "groups": 42,
+    "textboxes": 118,
+    "tables": 3,
     "pictures": 2,
-    "connectors": 14,
-    "notes": 13
+    "connectors": 18,
+    "notes": 10
   },
-  "text_bounds_checked": 133,
+  "rendered_slides": 10,
+  "text_bounds_checked": 116,
   "text_overflow": [],
   "out_of_canvas": [],
-  "remaining_template_prompts": [],
-  "rendered_slides": 13,
-  "render_size": [
-    1920,
-    1080
-  ],
-  "backup_sha256": "56133b4d2fe6946ff4c5a246e4d0f8be0baa0ac2f6638a6e25f969994695d170",
   "backup_unchanged": true,
-  "pptx_sha256": "e9d3cb96e1eedff92a3263a64e4483afa5bd05fb13be2e9c4ebf8f93e5a2f543"
+  "backup_sha256": "56133b4d2fe6946ff4c5a246e4d0f8be0baa0ac2f6638a6e25f969994695d170",
+  "pptx_sha256": "b8ad994515d09022f9753b76b9961136ab990cde838d1a7eebc68bbfaf541283",
+  "motion": [
+    {
+      "slide": 1,
+      "effects": 3,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 2,
+      "effects": 6,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 3,
+      "effects": 4,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 4,
+      "effects": 5,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 5,
+      "effects": 4,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 6,
+      "effects": 7,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 7,
+      "effects": 3,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 8,
+      "effects": 3,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 9,
+      "effects": 3,
+      "clicks": 0,
+      "targetsValid": true
+    },
+    {
+      "slide": 10,
+      "effects": 4,
+      "clicks": 0,
+      "targetsValid": true
+    }
+  ],
+  "effects": 42,
+  "extra_click_reveals": 0,
+  "slide_transitions_seconds": 4.5,
+  "all_checks_passed": true
 }

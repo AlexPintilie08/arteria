@@ -1,5 +1,7 @@
 # ARTERIA — conținutul prezentării
 
+> Revizie de audit 18.10.2026: acest document rămâne intrarea istorică pentru generarea formelor V2. Textul/notelor finale este suprascris reproductibil de `../scripts/audited_content.py`; planul exact curent este `../reports/PPT_CONTENT_RESTRUCTURE_PLAN.md`. Codul și verificările, nu cercetarea pitch, sunt sursa de adevăr. Regulamentul verificat limitează depunerea la 10 slide-uri și prezentarea la 3 minute. Afirmațiile istorice de mai jos despre formatul de cinci minute și rolurile în engleză nu mai sunt instrucțiuni curente.
+
 Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui document. Română, conform template-ului. Zece slide-uri de pitch în ordinea originală, apoi trei anexe. Numerele de rezultate sunt limitate la verificări tehnice; nu se revendică efecte de trafic. Plan principal: cinci minute. Timpii sunt ținte de repetiție, nu o regulă oficială de concurs.
 
 ## 1. Titlu — ARTERIA
@@ -69,12 +71,12 @@ Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui docume
 > 01 Alege zona
 > 02 Examinează alternativele
 > 03 Compară scenariul
-> Astăzi: interfață și scenarii demonstrative
-> Urmează: date verificate și evaluare reproductibilă
+> Astăzi: API conectat și studii pe graf pietonal
+> Urmează: calibrare și validare cu un specialist
 
 **Dovezi:** C02–C05. **Vizual:** flux editabil cu trei noduri; sub el delimitarea prezent/viitor, pe două rânduri deschise, fără panouri repetitive.
 
-**Verbal (15 s):** „Am implementat parcursul de interfață. Datele și alternativele din demo sunt predefinite; legătura cu analiza reală este etapa următoare.”
+**Verbal (15 s):** „Am conectat interfața la API. Semaforizarea folosește date sintetice; separat, studiile pietonale evaluează alternative pe graf.”
 
 **Tranziție:** demonstrație pe Podu Roș.
 
@@ -86,14 +88,14 @@ Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui docume
 
 > Podu Roș, în prototip
 > Selectează reperul → Alege o alternativă → Deschide comparația
-> DEMO: date predefinite și ajustări locale
-> Fără analiză urbană sau rulare SUMO din interfață
-> Demo local: localhost:3000/app
+> DEMO: API conectat, date sintetice
+> Semaforizare estimată; fără SUMO din interfață
+> Demo local verificat: localhost:3001/app
 > Captură din aplicația existentă · OpenStreetMap © contributori
 
 **Dovezi:** C02–C05; browser local și capturi în `assets/`. **Vizual:** captură autentică a comparației, dominantă (circa 65% din slide). Textul de avertizare trebuie să fie lizibil, independent de etichetele posibil excesive din UI. Captura nu este o reconstrucție inventată.
 
-**Verbal / demo (75 s):** alege Podu Roș, pornește previzualizarea, inspectează problema predefinită, deschide Scenarii, schimbă alternativa, mișcă un reglaj, aplică în UI și deschide Compară. „Aceste valori ilustrează interacțiunea. Nu sunt rezultate măsurate la Podu Roș.” Dacă live-ul nu este disponibil, se folosește captura; nu se declară că există înregistrare video. Site-ul public anterior nu se promovează fără verificare.
+**Verbal / demo (75 s):** alege Podu Roș, analizează prin API, deschide propunerile, setează verde nord–sud la 70 s și compară. Verificarea conectată arată compromisul: nord–sud scade, est–vest crește. Modelul este sintetic. „Aceste valori ilustrează interacțiunea. Nu sunt rezultate măsurate la Podu Roș.” Dacă live-ul nu este disponibil, se folosește captura; nu se declară că există înregistrare video. Site-ul public anterior nu se promovează fără verificare.
 
 **Tranziție:** ce componente susțin prototipul și ce lipsește.
 
@@ -104,16 +106,16 @@ Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui docume
 **Text exact:**
 
 > Frontend · Backend · Sim
-> Frontend — Next.js / MapLibre; fixtures locale
-> Backend — FastAPI: /health; demo HTTP: /analyze, /propose, /evaluate
-> Sim — NetworkX sintetic; utilitar smoke SUMO
+> Frontend — Next.js / MapLibre; client API conectat
+> Backend — FastAPI / Pydantic / SQLite; analiză, propuneri, evaluare
+> Sim — graf pietonal / candidați / dovezi; SUMO opțional local
 > AI planificat — alternative structurate, validate înainte de evaluare
-> Linii întrerupte: integrări de construit
+> Linii continue: implementat · întrerupte: AI viitor
 > Stack și stare: surse repository, audit 2026
 
-**Dovezi:** C06–C11, C15. **Vizual:** diagramă editabilă cu exact trei componente principale, provider AI separat ca dependență viitoare. Endpoint-urile serverului HTTP sunt implementate ca fixture, fără analiză urbană reală. Săgeți frontend→backend→sim întrerupte pentru fluxul urban neintegrat; o etichetă separată precizează că clientul `/analyze` există în non-demo.
+**Dovezi:** C06–C11, C15. **Vizual:** diagramă editabilă cu exact trei componente principale, provider AI separat ca dependență viitoare. Legături frontend→backend→sim continue pentru fluxurile implementate. LLM separat, întrerupt. Semaforizarea rămâne sintetică; studiile spațiale folosesc graf și candidați validați.
 
-**Verbal (30 s):** „Prototipul web lucrează în principal local. FastAPI are health; serverul demonstrativ e separat și contractele trebuie unificate. Sim are un test sintetic și utilitar TraCI. Integrarea LLM este planificată: modelul va propune, calculele independente vor evalua.” Autorii decid arhitectura; ponderea codului generat de AI nu este stabilită.
+**Verbal (30 s):** „Web-ul este conectat la FastAPI, cu validare Pydantic și persistență SQLite. SIM evaluează grafuri pietonale și candidați. Semaforizarea este sintetică. SUMO local este opțional, fără legătură la UI; providerul LLM rămâne viitor.” Autorii decid arhitectura; ponderea codului generat de AI nu este stabilită.
 
 **Tranziție:** cine ar cumpăra această experiență dacă nevoia se confirmă.
 
@@ -189,14 +191,14 @@ Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui docume
 **Text exact:**
 
 > Prima comparație pe date verificate
-> Date și contract unic → Un indicator reproductibil → Test cu un specialist
+> Date documentate → Calibrare și verificare → Test cu un specialist
 > Măsurăm timpul pregătirii comparației și trasabilitatea rezultatului.
 > Cererea noastră: o introducere către un specialist și acces la un set de date local.
 > Un caz verificabil. Apoi extindere.
 
 **Dovezi:** roadmap și criterii recomandate, nu un angajament semnat. **Vizual:** roadmap editabil cu criterii de ieșire și o cerere dominantă. Fără deadline arbitrar sau reducere de trafic țintă prezentată ca validată.
 
-**Verbal (25 s):** „Vom unifica API-ul, documenta o zonă și calcula un indicator reproductibil. Cu un specialist vom măsura cât durează pregătirea comparației și dacă rezultatul se poate verifica. Căutăm introducerea și datele pentru acest prim caz.” După cerere, prezentarea se oprește.
+**Verbal (25 s):** „Vom documenta o zonă, verifica indicatorii și calibra ipotezele modelului. Cu un specialist vom măsura cât durează pregătirea comparației și dacă rezultatul se poate verifica. Căutăm introducerea și datele pentru acest prim caz.” După cerere, prezentarea se oprește.
 
 **Tranziție:** numai la întrebări, către anexe.
 
@@ -207,14 +209,14 @@ Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui docume
 **Text exact:**
 
 > Ce este verificat astăzi
-> 5 / 5 teste ale clientului API
+> 9 / 9 teste frontend
 > Typecheck: web · mobile · shared
 > Build web: / și /app
-> Date urbane reale / AI generativ / SUMO din UI — neintegrate
-> Testele Python și SUMO nu au fost rerulate în audit.
+> API și graf pietonal implementate; calibrarea rămâne de făcut
+> AI cloud și SUMO din UI — neintegrate
 > Sursă: verificări locale ale repository-ului, 2026
 
-**Dovezi:** C12–C14, §14. **Vizual:** cifra mare 5/5, două rânduri de rezultate și un rând clar de limite. **Verbal:** testele Node folosesc fetch mock și nu validează contractul serverului alternativ; smoke SUMO nu este o simulare de oraș. **Tranziție:** rolul AI.
+**Dovezi:** C12–C14, §14; 138 teste Python/backend/SIM trecute în runtime QA izolat (1 avertisment de depreciere), fără execuție SUMO. **Vizual:** cifra mare 9/9, două rânduri de rezultate și un rând clar de limite. **Verbal:** testele Node acoperă transportul API și geografia; nu probează impactul urban. SUMO necesită binare externe și calibrare. **Tranziție:** rolul AI.
 
 ## 12. Anexa B — Rolul AI în fluxul propus
 
@@ -223,13 +225,13 @@ Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui docume
 **Text exact:**
 
 > Rolul AI în fluxul propus
-> Dovezi și catalog → LLM: alternative → Reguli și geometrie → Evaluare independentă
-> Astăzi: catalog fix, fără apel LLM
-> Planificat: validare pe server și aprobare de către specialist
+> Dovezi și catalog → LLM viitor → Reguli și geometrie → Evaluare
+> Astăzi: propuneri deterministe și validare
+> Planificat: provider LLM; decizia rămâne la specialist
 > O recomandare nu constituie o măsurătoare.
 > Sursă: docs/ARCHITECTURE.md; stare verificată în cod, 2026
 
-**Dovezi:** C08, C15. **Vizual:** patru pași nativi cu toate legăturile viitoare întrerupte. **Verbal:** validarea de schemă este necesară, dar nu suficientă; sunt necesare reguli spațiale și calcule independente. Nu se cuantifică autorie AI a codului. **Tranziție:** metodologia de validare.
+**Dovezi:** C08, C15. **Vizual:** patru pași nativi cu legăturile către LLM viitor întrerupte și evaluarea implementată continuă. **Verbal:** validarea de schemă este necesară, dar nu suficientă; sunt necesare reguli spațiale și calcule independente. Nu se cuantifică autorie AI a codului. **Tranziție:** metodologia de validare.
 
 ## 13. Anexa C — Condițiile unei evaluări credibile
 
@@ -246,7 +248,7 @@ Sursa de adevăr: `PROJECT_RESEARCH_FULL.md`, încheiat înaintea acestui docume
 > Rulare repetată → rezultat verificabil
 > Nu există încă efecte de trafic validate în repository.
 
-**Dovezi:** C15, C19; SUMO Calibrator și arhitectură. **Vizual:** tabel nativ „intrare / condiție de acceptare”, cu etichete textuale în loc de procente. **Verbal:** diferența între observed/calculated/estimated/unknown; etichetele singure nu probează proveniența. Auth, jobs, persistență și Android sunt etape viitoare. **Tranziție:** revenire la cererea de pe slide-ul 10.
+**Dovezi:** C15, C19; SUMO Calibrator și arhitectură. **Vizual:** tabel nativ „intrare / condiție de acceptare”, cu etichete textuale în loc de procente. **Verbal:** diferența între observed/calculated/estimated/unknown; etichetele singure nu probează proveniența. Auth, jobs și Android complet rămân etape viitoare; persistența SQLite există. **Tranziție:** revenire la cererea de pe slide-ul 10.
 
 ## Reguli de folosire și repetiție
 

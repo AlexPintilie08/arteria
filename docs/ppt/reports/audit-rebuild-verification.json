@@ -1,0 +1,21 @@
+{
+  "content_audit_working_deck": {
+    "slides": 13,
+    "visible_content_equal": true,
+    "notes_equal": true,
+    "content_stage_idempotent": true,
+    "sha256_archived_as": "archive/premium-motion-20261018/ARTERIA-Audited-13-slides.pptx"
+  },
+  "audited_submission_before_motion": {
+    "slides": 10,
+    "pdf_pages": 10,
+    "archived_as": "archive/premium-motion-20261018/ARTERIA-Submission-pre-motion-10-slides.pptx"
+  },
+  "motion_master": {
+    "canonical": "ARTERIA.pptx",
+    "slides": 10,
+    "text_and_notes_match_audited_submission": true,
+    "sha256": "B8AD994515D09022F9753B76B9961136AB990CDE838D1A7EEBC68BBFAF541283"
+  },
+  "pre_audit_backup_sha256": "69DC4F6E03C33E8EB5050953D7C73EF7C68CFCD22CC45927FFB62EEFA32484E5"
+}
