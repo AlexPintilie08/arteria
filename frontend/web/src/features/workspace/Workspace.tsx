@@ -9,7 +9,7 @@ import {
 } from '@arteria/shared/fixtures';
 import type { AnalyzeResponse, LayerId, Area, AlternativeLevel } from '@arteria/shared/contracts';
 import { ConnectedWorkspace } from './ConnectedWorkspace';
-import { api, demoMode } from '../../lib/api';
+import { demoMode } from '../../lib/api';
 import { AnalysisPanel } from '../analysis/AnalysisPanel';
 import { ScenarioPanel, type ScenarioTuningParams } from '../scenarios/ScenarioPanel';
 import { ComparisonPanel } from '../comparison/ComparisonPanel';
@@ -91,7 +91,7 @@ export function PreviewApp() {
     setSelectedIssue(null);
     setHasAppliedScenario(false);
 
-    // Bookmarks are not verified area IDs. Live integration is deliberately gated below.
+    // This explicit demo route uses synthetic fixtures regardless of live-app mode.
     const area: Area = {
       city_id: 'iasi-ro',
       area_id: `preview-${selected.id}`,
@@ -101,20 +101,7 @@ export function PreviewApp() {
     };
 
     try {
-      const response = demoMode
-        ? createDemoAnalysis(area)
-        : await api.analyze(
-            {
-              area,
-              layers: requestedLayers,
-              analysis: {
-                network_modes: ['walk', 'bike'],
-                accessibility_thresholds: [{ value: 15, unit: 'minute', mode: 'walk' }],
-              },
-              data_as_of: null,
-            },
-            active.signal
-          );
+      const response = createDemoAnalysis(area);
       if (!active.signal.aborted) {
         setResult(response);
         // Pre-select first local issue for intuitive experience
@@ -168,7 +155,7 @@ export function PreviewApp() {
           <strong>Iași, România</strong>
         </div>
         <span className="mode-label">
-          {demoMode ? 'Previzualizare de interfață' : 'Conexiune API'}
+          Demo sintetic · fără AI / SUMO
         </span>
       </header>
       <nav className="rail" aria-label="Navigație principală">
@@ -210,7 +197,7 @@ export function PreviewApp() {
                 ))}
               </select>
               <p className="supporting" style={{ marginTop: 0, marginBottom: '16px', fontSize: '11px' }}>
-                Cele cinci repere demo existente. Catalogul OSM este separat mai jos.
+                Demo sintetic: problemele și valorile sunt fixture-uri ilustrative, nu măsurători din Iași. Catalogul OSM oferă separat geografia sursă.
               </p>
 
               <NeighborhoodExplorer
@@ -263,19 +250,10 @@ export function PreviewApp() {
                   style={{ width: '100%', marginBottom: '12px' }}
                 >
                   <ScanLine size={18} aria-hidden="true" />
-                  {loading
-                    ? 'Se analizează…'
-                    : demoMode
-                    ? 'Explorează previzualizarea'
-                    : 'Lansează Diagnoza Teritorială'}
+                  {loading ? 'Se încarcă…' : 'Explorează demonstrația sintetică'}
                 </button>
               )}
 
-              {!demoMode && (
-                <p className="notice" style={{ fontSize: '11px', margin: 0 }}>
-                  Conectează identificatorii reali ai zonelor înainte de activarea analizei.
-                </p>
-              )}
               {error && (
                 <p className="error" role="alert" style={{ fontSize: '11px' }}>
                   {error}
@@ -417,7 +395,7 @@ export function PreviewApp() {
                 />
               </div>
               <footer className="inspector-footer">
-                Model: Catalog-1 Pydantic · Valori verificate
+                Fixture-uri sintetice · formule demonstrative
                 <span>SUMO: nicio rulare</span>
               </footer>
             </aside>
@@ -453,13 +431,13 @@ export function PreviewApp() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '24px', borderBottom: '1px solid #42596a', paddingBottom: '20px' }}>
               <div>
                 <span style={{ fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', color: '#8bc9ed', fontWeight: 700 }}>
-                  Evaluare Comparativă · Matrice de Performanță
+                  Demo sintetic · Comparație ilustrativă
                 </span>
                 <h1 style={{ fontSize: '32px', margin: '6px 0', fontFamily: 'Space Grotesk', color: '#edf2f6' }}>
-                  Înainte. După. Cu dovezi.
+                  Înainte / După · demo sintetic
                 </h1>
                 <p style={{ margin: 0, color: '#a8bac9', fontSize: '14px' }}>
-                  Comparație între Situația Inițială (Baseline 2024) și Scenariul Virtual Evaluat pe aceeași rețea topologică.
+                  Valori de exemplu și formule locale pentru demonstrarea editorului. Nu sunt rezultate OSM, AI sau SUMO și nu dovedesc beneficii reale.
                 </p>
               </div>
               <button
@@ -489,7 +467,7 @@ export function PreviewApp() {
 
             <footer style={{ marginTop: 'auto', paddingTop: '32px', borderTop: '1px solid #42596a', fontSize: '12px', color: '#a8bac9', display: 'flex', justifyContent: 'space-between' }}>
               <span>ARTERIA Civic Intelligence Platform · Iași, România</span>
-              <span>SUMO Seed: 4092 (nelansat) · Calcule grafe OSM deterministe</span>
+              <span>Fixture-uri sintetice · AI indisponibil · SUMO: nicio rulare</span>
             </footer>
           </div>
         )}

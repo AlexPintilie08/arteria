@@ -1,7 +1,19 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import type { SpatialPlanningResult } from '@arteria/shared/contracts';
-import { geometryFeatureCollection, safeFeatureCollection, validatedRecommendations } from '../src/features/workspace/map-first-data.ts';
+import type { SpatialPlanningResult, SpatialStudy } from '@arteria/shared/contracts';
+import { geometryFeatureCollection, safeFeatureCollection, studyProblems, validatedRecommendations } from '../src/features/workspace/map-first-data.ts';
+
+test('legacy saved OSM graph findings preserve their IDs, evidence and uncertainty without invented findings', () => {
+  const issue = { id: 'issue-osm-1', type: 'disconnected_walk_component', description: 'Mapped component is disconnected.', severity: 'medium', evidence: [{ source: 'OpenStreetMap', osm_node_ids: ['123'] }], uncertainty: { description: 'Downloaded snapshot only.' }, geometry: { type: 'Point', coordinates: [27.61, 47.15] } };
+  const study = { analysis: { issues: [issue, { issue_id: 'issue-osm-2', title: 'Source title' }, { description: 'Missing identity' }] } } as unknown as SpatialStudy;
+  const results = studyProblems(study);
+  assert.equal(results.length, 2);
+  assert.deepEqual(results[0], { ...issue, problem_id: 'issue-osm-1', problem_type: issue.type });
+  assert.equal(results[1]?.problem_id, 'issue-osm-2');
+  assert.equal(results[1]?.title, 'Source title');
+  assert.deepEqual(studyProblems({ ...study, urban_issues: { problems: [] } }), []);
+  assert.deepEqual(studyProblems({ ...study, urban_issues: { problems: [{ problem_id: 'current-1', title: 'Current finding' }] } }), [{ problem_id: 'current-1', title: 'Current finding' }]);
+});
 
 function planning(overrides: Partial<SpatialPlanningResult> = {}): SpatialPlanningResult {
   return {

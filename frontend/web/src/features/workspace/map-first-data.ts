@@ -11,7 +11,14 @@ export function jsonArray(value: unknown): JsonRecord[] {
 }
 
 export function studyProblems(study: SpatialStudy): JsonRecord[] {
-  return jsonArray(study.urban_issues?.problems);
+  const currentProblems = study.urban_issues?.problems;
+  if (Array.isArray(currentProblems)) return jsonArray(currentProblems);
+  // Stored studies from before urban_issues retain the same graph findings in analysis.issues.
+  return jsonArray(study.analysis.issues).flatMap((issue) => {
+    const problemId = issue.problem_id ?? issue.issue_id ?? issue.id;
+    if (typeof problemId !== 'string' || !problemId) return [];
+    return [{ ...issue, problem_id: problemId, problem_type: issue.problem_type ?? issue.type }];
+  });
 }
 
 export function simSolutions(study: SpatialStudy): JsonRecord[] {

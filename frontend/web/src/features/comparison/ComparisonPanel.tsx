@@ -185,8 +185,8 @@ export function ComparisonPanel({
   if (!selectedIssue || !hasAppliedScenario) {
     return (
       <div className="empty-state">
-        <h3>Înainte. După. Cu dovezi.</h3>
-        <p>Comparația va folosi aceeași zonă, sursă și metodă pentru situația inițială și scenariul propus.</p>
+        <h3>Înainte / După · demo sintetic</h3>
+        <p>Comparația folosește fixture-uri și formule demonstrative; nu reprezintă o evaluare OSM, AI sau SUMO.</p>
         <div className="comparison-empty">
           <span>Situație inițială<strong>—</strong></span>
           <span>Scenariu<strong>—</strong></span>
@@ -196,7 +196,7 @@ export function ComparisonPanel({
         {/* Quick launch directly from here */}
         <div style={{ marginTop: '28px', borderTop: `1px solid ${colors.border}`, paddingTop: '20px', textAlign: 'left' }}>
           <h4 style={{ fontSize: '13px', textTransform: 'uppercase', letterSpacing: '0.8px', color: colors.muted, marginBottom: '12px', fontWeight: 700 }}>
-            Lansează direct evaluarea pe coridoarele modelate din Iași:
+            Lansează comparația sintetică pe un coridor demonstrativ:
           </h4>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
             {allDemoIssues.map((issue) => (
@@ -249,7 +249,8 @@ export function ComparisonPanel({
 
   function handleCopyReport() {
     const lines = [
-      `# Raport Tehnic de Evaluare Scenariu Mobilitate — ARTERIA Iași`,
+      `# Raport demonstrativ sintetic — ARTERIA Iași`,
+      `Sursă: fixture-uri sintetice și formule locale. Nu reprezintă măsurători sau rezultate OSM, AI ori SUMO.`,
       `Coridor: ${selectedIssue?.title}`,
       `Amplasament: ${selectedIssue?.locationName}`,
       `Scenariu Evaluat: Alternativa ${alternativeLabels[activeAlternativeLevel]}`,
@@ -264,7 +265,7 @@ export function ComparisonPanel({
         return `- ${row.indicator}: ${base} → ${scen} ${row.unit} (Delta: ${diff > '0' ? '+' : ''}${diff}) [Metodă: ${row.method}]`;
       }),
       ``,
-      `Generat de platforma ARTERIA · Model topologic verificat OpenStreetMap.`,
+      `Generat de platforma ARTERIA · Demo sintetic, fără validare în teren.`,
     ];
     navigator.clipboard.writeText(lines.join('\n'));
     setCopiedToast(true);
@@ -273,6 +274,9 @@ export function ComparisonPanel({
 
   function handleDownloadJson() {
     const payload = {
+      data_source: 'synthetic_fixture',
+      is_synthetic: true,
+      limitations: 'Illustrative fixture values; no OSM graph evaluation, cloud AI or SUMO execution.',
       issue_id: selectedIssue?.id,
       title: selectedIssue?.title,
       alternative: activeAlternativeLevel,
@@ -298,11 +302,12 @@ export function ComparisonPanel({
 
   return (
     <div style={styles.view}>
+      <p className="notice" role="status" style={{ margin: 0 }}>Demo sintetic: diferențele de mai jos sunt produse de fixture-uri și formule locale. Nu sunt îmbunătățiri reale demonstrate.</p>
       {/* HEADER CONTROLS */}
       <div style={styles.headerControls}>
         <div style={styles.topRow}>
           <div>
-            <span style={styles.badgePill}>Evaluare Tehnică Scenariu</span>
+            <span style={styles.badgePill}>Comparație sintetică de scenariu</span>
             <h3 style={{ margin: '6px 0 2px', fontSize: '18px', color: colors.text }}>{selectedIssue.title}</h3>
             <p style={{ margin: 0, fontSize: '12px', color: colors.muted }}>{selectedIssue.locationName}</p>
           </div>
@@ -473,7 +478,7 @@ export function ComparisonPanel({
 
               <div style={styles.methodNote}>
                 <Info size={13} />
-                <span>Metodă calcul: {row.method}</span>
+                <span>Etichetă din fixture (nevalidată): {row.method}</span>
               </div>
             </div>
           );
@@ -500,7 +505,7 @@ export function ComparisonPanel({
 
       <div style={styles.honestCard}>
         <p style={{ margin: 0 }}>
-          <strong>Rigoare metodologică & Decizie fundamentată:</strong> Rezultatele scenariului reprezintă valori calculate pe graful de rețea topologic și modele de capacitate Webster/HCM 2020. Datele de pornire reflectă măsurătorile buclelor inductive și recensământul de flux din Iași.
+          <strong>Limitele demonstrației:</strong> Valorile provin din fixture-uri sintetice și formule locale simplificate. Nu provin din măsurători de trafic din Iași, calcule pe graful OSM, validare Webster/HCM, AI cloud sau o rulare SUMO. Folosește studiul SIM conectat pentru comparații pe graful pietonal real.
         </p>
       </div>
     </div>
