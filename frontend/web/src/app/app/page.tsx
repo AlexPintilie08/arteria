@@ -1,2 +1,2 @@
-import { App } from '../../features/workspace/Workspace';
-export default function ProductPage() { return <App />; }
+import { MapFirstWorkspace } from '../../features/workspace/MapFirstWorkspace';
+export default function ProductPage() { return <MapFirstWorkspace />; }

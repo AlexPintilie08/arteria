@@ -43,9 +43,37 @@ Persisted result retrieval: GET `/analyses/{id}`, `/proposals/{id}`,
 `/evaluations/{id}`. These are local-demo records, not authenticated per-user history.
 The planned `/api/v1` auth/scenario CRUD/SUMO streaming APIs are not implemented.
 
-## Optional pedestrian graph workflow
+## Map-first SIM and AI workflow
 
-A separate `/api/v1/spatial/studies` API now exposes the colleague's engine, its
-GeoJSON, screened candidates and saved Before/After route comparisons. See
-[SPATIAL_API.md](SPATIAL_API.md). The dedicated SpatialPanel and typed client now consume these native graph payloads; do not pass them to the signal-timing client types. Display `source` and
-`execution:stored_graph_comparison` honestly. This API does not run SUMO.
+The product route `/app` now opens to the Iași MapLibre catalog. It loads the
+24 canonical OSM polygon/multipolygon records and 7 point-only places; map clicks
+and catalog search share the selected canonical SIM ID. Points never receive
+fabricated boundaries, and polygons are explicitly described as mapped OSM place
+extents rather than official administrative borders.
+
+For eligible polygons the client calls `POST /api/v1/spatial/studies` with
+`source: "osm"` and the selected `neighborhood_id`. It renders
+`urban_issues.problems`, the returned `problem_locations_geojson`,
+`solution_plan.solutions`, packet hash and source warnings. Only candidates with
+`candidate_backed_evaluated` validation can reach the stored comparison route.
+Before/After distances, outcomes and aggregate impacts are taken from SIM's
+`POST /api/v1/spatial/studies/{study_id}/evaluate` response.
+
+AI planning calls `POST /api/v1/spatial/studies/{study_id}/planning` with a
+stable `Idempotency-Key`. Only `ai_generated: true` responses in a completed
+status with SIM validation are shown. Candidate geometry and impact come from
+`authoritative_sim_solution`; other results stay labeled as deterministic SIM
+evidence. `GET /api/v1/spatial/studies/{study_id}/planning/{planning_id}` reloads
+the persisted result. The UI reports provider unavailable when cloud credentials
+are absent. The signal timing flow remains synthetic at `/app/demo`. Neither
+workflow runs SUMO or reports observed traffic or physical feasibility.
+
+The connected **Editor de intervenții** on `/app` follows problem, intervention
+type, intensity preference, SIM candidate, and graph evaluation. It offers the
+two graph operations present in the SIM catalog; a candidate is evaluable only
+when the study's SIM validation marks it `candidate_backed_evaluated`. Traffic
+signal timing, lanes, transit priority, road reconstruction, roundabouts, and
+underpasses stay explicitly conceptual or unavailable in real OSM studies.
+The Minimală / Moderată / Transformatoare choice is a local planning preference
+and is not sent as a numeric cost, physical scale, or impact. The older tuning
+controls remain isolated in the explicitly labeled `/app/demo` experience.

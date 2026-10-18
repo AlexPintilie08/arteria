@@ -130,6 +130,11 @@ export interface SpatialStudy {
   proposal_options: SpatialProposalOption[];
   proposal_validation: SpatialProposalValidation;
   evidence_packet: Record<string, unknown>;
+  urban_issues?: Record<string, unknown>;
+  solution_plan?: Record<string, unknown>;
+  ai_evidence_packet?: Record<string, unknown>;
+  problem_locations_geojson?: Record<string, unknown>;
+  evidence_packet_sha256?: string | null;
   warnings: string[];
 }
 /** SIM metadata is preserved as returned; fixture snapshots may have no retrieval time. */
@@ -165,8 +170,60 @@ export interface SpatialEvaluation {
   evaluated_at: string;
   impact: {
     aggregate: Record<string, number | null>;
-    routes: { origin_node_id: string; destination_node_id: string; outcome: string; distance_delta_m: number | null }[];
+    routes: {
+      origin_node_id: string; destination_node_id: string; outcome: string; distance_delta_m: number | null;
+      before?: { status?: string; network_distance_m?: number | null; geometry?: unknown };
+      after?: { status?: string; network_distance_m?: number | null; geometry?: unknown };
+    }[];
   };
   proposal_validation: { status: string; candidate_id: string | null; physical_feasibility: 'unknown'; findings: { code: string; message: string }[] };
+  warnings: string[];
+}
+
+export type SpatialPlanningStatus =
+  | 'provider_unavailable'
+  | 'timeout'
+  | 'provider_error'
+  | 'invalid_response'
+  | 'completed_with_rejections'
+  | 'completed';
+
+export interface SpatialPlanningRecommendation {
+  solution_id: string;
+  candidate_id: string;
+  problem_ids?: string[];
+  title?: string;
+  explanation?: string;
+  expected_benefit_type?: string;
+  evidence_ids?: string[];
+  field_verification_required?: boolean;
+  authoritative_sim_solution?: {
+    solution_id: string;
+    candidate_id: string;
+    geometry?: unknown;
+    intervention?: unknown;
+    shared_sample_impact?: unknown;
+  };
+}
+
+export interface SpatialPlanningResult {
+  planning_id: string;
+  study_id: string;
+  baseline_id: string;
+  source: 'fixture' | 'osm';
+  area_id: string;
+  engine_revision: string;
+  calculation: 'pedestrian_graph';
+  evidence_packet_sha256: string;
+  provider_status: SpatialPlanningStatus;
+  provider: string | null;
+  model_id: string | null;
+  ai_generated: boolean;
+  summary: string | null;
+  identified_problems: Record<string, unknown>[];
+  recommended_solutions: SpatialPlanningRecommendation[];
+  validation: Record<string, unknown> | null;
+  error_code: string | null;
+  created_at: string;
   warnings: string[];
 }

@@ -1,0 +1,43 @@
+.editor { display: grid; gap: 12px; margin: 12px 0; border: 1px solid #496477; border-radius: 10px; background: #15232d; padding: 13px; }
+.heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.heading h2 { margin: 3px 0 0; font: 600 17px/1.25 'Space Grotesk', sans-serif; }
+.eyebrow { margin: 0; color: #92a6b4; font-size: 9px; letter-spacing: .11em; text-transform: uppercase; }
+.step { border: 1px solid #3d5a6c; border-radius: 999px; padding: 4px 7px; color: #b6d4e0; font-size: 9px; white-space: nowrap; }
+.label, .fieldset legend { color: #dce8ed; font-size: 11px; font-weight: 700; }
+.select { width: 100%; min-height: 39px; border: 1px solid #536878; border-radius: 7px; background: #101a22; padding: 7px 9px; color: #eef4f7; font: inherit; font-size: 11px; }
+.fieldset { min-width: 0; margin: 0; border: 0; padding: 0; }
+.fieldset legend { margin-bottom: 7px; padding: 0; }
+.typeGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.typeButton, .typeSelected { display: flex; min-height: 54px; flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; border: 1px solid #354b58; border-radius: 7px; background: #111c24; padding: 7px 8px; color: #d7e3e9; text-align: left; cursor: pointer; }
+.typeButton:hover, .typeSelected { border-color: #75b6cb; background: #1c3441; }
+.typeSelected { box-shadow: inset 3px 0 #8ed3e4; }
+.typeButton span, .typeSelected span { font-size: 10px; line-height: 1.35; }
+.typeButton small, .typeSelected small { color: #a4c5d0; font-size: 8px; line-height: 1.35; }
+.intensity { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; border-radius: 8px; background: #101a22; padding: 4px; }
+.intensityButton, .intensitySelected { min-height: 34px; border: 1px solid transparent; border-radius: 6px; background: transparent; padding: 5px; color: #9db0bc; font: 600 9px 'Manrope', sans-serif; cursor: pointer; }
+.intensitySelected { border-color: #679bb0; background: #233d49; color: #d9f2f8; }
+.note { margin: 5px 0 0; color: #9db0bc; font-size: 9px; line-height: 1.5; }
+.problemSummary { border-left: 2px solid #e4867f; border-radius: 0 6px 6px 0; background: #261f22; padding: 8px 9px; }
+.problemSummary strong { color: #f3d9d5; font-size: 10px; }
+.problemId { display: block; margin-top: 2px; color: #ac9696; font: 8px ui-monospace, monospace; overflow-wrap: anywhere; }
+.problemSummary p { margin: 4px 0 0; color: #c6b5b5; font-size: 9px; line-height: 1.45; }
+.candidateSection h3 { margin: 0 0 7px; color: #dce8ed; font-size: 11px; }
+.candidateList { display: grid; gap: 6px; }
+.solution, .solutionSelected { display: flex; align-items: flex-start; gap: 8px; border: 1px solid #344b57; border-radius: 7px; background: #111c24; padding: 8px; cursor: pointer; }
+.solutionSelected { border-color: #65b897; background: #172d2b; }
+.solution input { margin: 2px 0 0; accent-color: #7bd3b1; }
+.solutionBody { display: grid; gap: 4px; min-width: 0; }
+.solutionBody strong { color: #e3edf1; font-size: 10px; }
+.solutionBody small { color: #91a6b0; font-size: 8px; overflow-wrap: anywhere; }
+.solutionBody > span { color: #bacbd3; font-size: 9px; line-height: 1.4; }
+.empty { margin: 0; border: 1px dashed #405867; border-radius: 7px; padding: 9px; color: #aabcc5; font-size: 10px; line-height: 1.5; }
+.actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.secondary, .primary { min-height: 34px; border: 1px solid #557687; border-radius: 7px; background: #1c303b; padding: 6px 9px; color: #d9eaf0; font: 600 9px 'Manrope', sans-serif; cursor: pointer; }
+.primary { border-color: #84cde7; background: #d3edf5; color: #11212b; }
+.primary:disabled, .secondary:disabled { opacity: .48; cursor: not-allowed; }
+.select:focus-visible, .typeButton:focus-visible, .typeSelected:focus-visible, .intensityButton:focus-visible, .intensitySelected:focus-visible, .solution:focus-within, .secondary:focus-visible, .primary:focus-visible { outline: 2px solid #98d8ee; outline-offset: 2px; }
+
+@media (max-width: 420px) {
+  .heading { flex-direction: column; }
+  .typeGrid { grid-template-columns: 1fr; }
+}

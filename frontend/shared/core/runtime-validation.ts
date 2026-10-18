@@ -113,9 +113,34 @@ function checkSpatialEvaluation(v: unknown) {
   field(impact, 'routes', (x, p) => array(x, p, (item, q) => { const r = objectAt(item, q); field(r, 'origin_node_id', string, q); field(r, 'destination_node_id', string, q); field(r, 'outcome', string, q); field(r, 'distance_delta_m', numberOrNull, q); }), 'impact');
   checkCandidateValidation(o.proposal_validation, 'proposal_validation'); field(o, 'warnings', strings);
 }
+function checkSpatialPlanning(v: unknown) {
+  const o = objectAt(v, 'response');
+  for (const k of ['planning_id', 'study_id', 'baseline_id', 'area_id', 'engine_revision', 'evidence_packet_sha256', 'created_at']) field(o, k, string);
+  if (!/^[a-f0-9]{64}$/.test(String(o.evidence_packet_sha256))) throw new Error('evidence_packet_sha256 invalid');
+  if (!['fixture', 'osm'].includes(String(o.source)) || o.calculation !== 'pedestrian_graph') throw new Error('source sau calculation invalid');
+  if (!['provider_unavailable', 'timeout', 'provider_error', 'invalid_response', 'completed_with_rejections', 'completed'].includes(String(o.provider_status))) throw new Error('provider_status invalid');
+  if (typeof o.ai_generated !== 'boolean') throw new Error('ai_generated trebuie să fie boolean');
+  nullableString(o.provider, 'provider'); nullableString(o.model_id, 'model_id'); nullableString(o.summary, 'summary'); nullableString(o.error_code, 'error_code');
+  field(o, 'identified_problems', (x, p) => array(x, p, (item, q) => objectAt(item, q)));
+  const recommendations = o.recommended_solutions;
+  field(o, 'recommended_solutions', (x, p) => array(x, p, (item, q) => {
+    const recommendation = objectAt(item, q);
+    field(recommendation, 'solution_id', string, q); field(recommendation, 'candidate_id', string, q);
+    if (recommendation.authoritative_sim_solution !== undefined) {
+      const authoritative = objectAt(recommendation.authoritative_sim_solution, `${q}.authoritative_sim_solution`);
+      field(authoritative, 'solution_id', string, `${q}.authoritative_sim_solution`);
+      field(authoritative, 'candidate_id', string, `${q}.authoritative_sim_solution`);
+      if (authoritative.candidate_id !== recommendation.candidate_id) throw new Error(`${q}.authoritative_sim_solution.candidate_id mismatch`);
+    }
+  }));
+  if (o.validation !== null) objectAt(o.validation, 'validation');
+  field(o, 'warnings', strings);
+  if (!o.ai_generated && Array.isArray(recommendations) && recommendations.length !== 0) throw new Error('recomandările nevalidate nu pot fi afișate ca AI');
+}
 const validators: Record<string, Check> = {
   analyze: checkAnalyze, propose: checkPropose, evaluate: checkEvaluate,
   spatialStudy: checkSpatialStudy, spatialNeighborhoodStudy: checkSpatialStudy, spatialEvaluate: checkSpatialEvaluation,
+  spatialPlanning: checkSpatialPlanning,
 };
 export function parseApiResponse<T>(value: unknown, endpoint: string): T {
   try { validators[endpoint]?.(value, 'response'); }

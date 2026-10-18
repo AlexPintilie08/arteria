@@ -6,6 +6,26 @@ button { color: inherit; }
 button:disabled { cursor: not-allowed; opacity: .6; }
 a { color: inherit; }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 4px; }
+
+.catalog-map { position: absolute; inset: 0; overflow: hidden; background: #111923; }
+.catalog-map-canvas { position: absolute; inset: 0; }
+.catalog-map-legend { position: absolute; z-index: 2; bottom: 44px; left: 18px; display: flex; flex-wrap: wrap; gap: 8px 14px; max-width: min(700px, calc(100% - 36px)); border: 1px solid #415867; border-radius: 8px; background: rgb(19 29 39 / 92%); padding: 8px 11px; color: #d5e2e8; font-size: 10px; pointer-events: none; }
+.catalog-map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.catalog-map-legend i { display: inline-block; width: 13px; height: 9px; border: 2px solid #83c8ea; border-radius: 2px; }
+.catalog-map-legend .legend-area { background: rgb(119 185 222 / 20%); }
+.catalog-map-legend .legend-point { width: 9px; height: 9px; border: 2px solid #18242d; border-radius: 50%; background: #f4c978; box-shadow: 0 0 0 1px #f4c978; }
+.catalog-map-legend .legend-problem { width: 9px; height: 9px; border: 0; border-radius: 50%; background: #ff817b; }
+.catalog-map-legend .legend-problem-selected { border-color: #ffe08c; background: rgb(245 199 109 / 28%); box-shadow: 0 0 0 1px #ffe08c; }
+.catalog-map-legend .legend-candidate { border-color: #73e0bb; background: rgb(104 210 173 / 24%); }
+.catalog-map-attribution { position: absolute; z-index: 2; right: 8px; bottom: 4px; border-radius: 3px; background: rgb(16 24 32 / 80%); padding: 2px 5px; color: #d3e0e6; font-size: 9px; pointer-events: none; }
+.catalog-map-error { position: absolute; z-index: 3; top: 72px; left: 18px; max-width: 340px; border: 1px solid #87634a; border-radius: 7px; background: #30271f; padding: 8px 11px; color: #f0d39d; font-size: 11px; }
+.catalog-map .maplibregl-ctrl-group { border-radius: 8px; background: #18232e; }
+.catalog-map .maplibregl-ctrl-group button { filter: invert(.86); }
+.catalog-map .maplibregl-ctrl-attrib { background: rgb(16 24 32 / 80%); color: #e3edf2; }
+@media (max-width: 720px) {
+  .catalog-map-legend { bottom: 36px; left: 10px; gap: 6px 9px; max-width: calc(100% - 20px); padding: 7px 8px; font-size: 9px; }
+  .catalog-map-error { top: 62px; left: 10px; right: 10px; }
+}
 h1, h2, h3, p { margin: 0; }
 h1, h2 { font-family: var(--font-display); font-weight: 500; }
 h3 { font-size: 15px; font-weight: 600; }

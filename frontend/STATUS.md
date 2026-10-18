@@ -2,23 +2,19 @@
 
 ## Working
 
-- The polished Next.js application preserves the marketing homepage, MapLibre workspace, Three.js junction visualization, original analysis/scenario/comparison screens, and responsive design.
+- The polished Next.js application preserves the marketing homepage and original synthetic signal-timing screens, with the five demo bookmarks available at `/app/demo`.
 - The connected workspace uses the FastAPI endpoints for analysis, proposal, and evaluation; server IDs and returned results drive connected views. The original fixture experience remains available only in explicit demo mode.
-- A separate pedestrian graph panel uses the optional spatial API. It labels fixture versus OSM sources and stored graph comparisons; it does not claim SUMO execution.
+- `/app` opens directly to the Iași MapLibre catalog with 24 sourced polygons and 7 point records, map/list selection, source uncertainty, SIM studies, problem geometry, evidence-linked solutions, validated AI planning, and stored graph comparisons.
+- The connected study includes an intervention editor for detected problems, SIM-supported graph candidates, and the Minimală / Moderată / Transformatoare preference. The preference is stored locally and is not converted into a cost or impact claim; unsupported traffic and construction types stay conceptual or unavailable.
 - The signal-timing API uses a deterministic synthetic model. Example corridor values remain synthetic and are not observed city measurements.
 - Accessible controls, keyboard-operable map markers, focus indicators, reduced-motion behavior, Romanian localization, and responsive layouts are retained.
 
 ## Verification
 
-The source backend/frontend branch reports passing TypeScript checks, frontend and backend tests, production build, and real-browser checks. Re-run the full project checks after branch integration and SIM v3 alignment; see [frontend/README.md](README.md) and [backend/FRONTEND_HANDOFF.md](../backend/FRONTEND_HANDOFF.md).
-
-## In progress
-
-- Restore the local SIM geography preview with 24 OSM Polygon/MultiPolygon place extents and 7 point-only records while keeping the five demo bookmarks separate.
-- Connect SIM v3 proposal evidence to the graph-study UI only through a versioned backend adapter; until then, label graph previews and signal-timing demos according to their actual source.
+TypeScript checks for all frontend workspaces and all 26 frontend tests pass. The web production build passes with the repo's Webpack build command. Browser QA completed a real OSM study, selected a returned problem, inspected a validated candidate, evaluated it, checked the AI provider status, and confirmed the demo and marketing routes. Backend pytest passes all 85 tests (one upstream Starlette/httpx deprecation warning). See [frontend/README.md](README.md) and [backend/FRONTEND_HANDOFF.md](../backend/FRONTEND_HANDOFF.md).
 
 ## Limitations
 
-- The browser does not call a cloud AI provider.
+- Cloud AI uses the optional backend provider; when credentials are absent, the workspace reports provider unavailable and continues to display SIM results.
 - The pedestrian graph workflow does not execute SUMO or provide calibrated traffic measurements.
 - Expo mobile screens remain a scaffold and do not call the connected API.
